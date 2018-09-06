@@ -393,6 +393,27 @@ Expression arg(const std::vector<Expression> & args){
   return Expression(result);
 
 };
+
+// conj Procedure:
+Expression conj(const std::vector<Expression> & args){
+  std::complex<double>result (0,0);
+
+  //preconditions
+  if(nargs_equal(args,1)){
+
+    if(args[0].isHeadComplex()){
+      result = conj(args[0].head().asComplex());
+    }
+    else{
+      throw SemanticError("Error in call to conj: invalid argument : argument must be complex.");
+    }
+  }
+  else{
+    throw SemanticError("Error in call to conj: invalid number of arguments.");
+  }
+  return Expression(result);
+
+};
 /*
 Expression Icomplex(const std::vector<Expression> & args){
   std::complex<double> result (0.0,0.0);
@@ -541,6 +562,9 @@ void Environment::reset(){
 
   //Adds Built in Procedure arg
   envmap.emplace("arg", EnvResult(ProcedureType, arg));
+
+  //Adds Built in Procedure conj
+  envmap.emplace("conj", EnvResult(ProcedureType, conj));
 
 
 }

@@ -3,6 +3,8 @@
 #include <cassert>
 #include <cmath>
 
+#include <complex>
+
 #include "environment.hpp"
 #include "semantic_error.hpp"
 
@@ -235,10 +237,26 @@ Expression tan(const std::vector<Expression> & args){
   return Expression(result);
 
 };
+/*
+Expression Icomplex(const std::vector<Expression> & args){
+  std::complex<double> result (0.0,0.0);
+  if (nargs_equal(args, 0)){
+    //result =(0.0,1.0);
+    throw SemanticError("Went into Complex");
+  }
+  else
+  {
+    throw SemanticError("Error in Call to complex: invalid");
+  }
+
+  return Expression(result);
+
+};*/
 
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
-//const double I = std::complex<double> myComplex;
+// Added the complex type
+const std::complex<double> I = std::complex<double>(0.0,1.0);
 
 Environment::Environment(){
 
@@ -319,10 +337,12 @@ void Environment::reset(){
   envmap.emplace("pi", EnvResult(ExpressionType, Expression(PI)));
 
   // Added Built in Eulers number
-  envmap.emplace("e", EnvResult(ExpressionType, Expression(std::exp(1))));
+  envmap.emplace("e", EnvResult(ExpressionType, Expression(EXP)));
 
   // Add Built in Symbol I: Complex numer I =sqrt(-1) = 0 + i
-  //envmap.emplace("I", EnvResult(ExpressionType, Expression(std::complex<double>));
+  envmap.emplace("I", EnvResult(ExpressionType, Expression(I)));
+
+  //envmap.emplace("I", EnvResult(ProcedureType, Icomplex));
 
   // Procedure: add;
   envmap.emplace("+", EnvResult(ProcedureType, add));

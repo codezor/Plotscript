@@ -182,6 +182,7 @@ Expression div(const std::vector<Expression> & args){
 Expression sqrt(const std::vector<Expression> & args ) {
 
   double result = 0;
+  std::complex<double> complexResult (0,0);
   // preconditions
   if (nargs_equal(args,1)){
 
@@ -189,11 +190,17 @@ Expression sqrt(const std::vector<Expression> & args ) {
 
       if(args[0].head().asNumber() >= 0 ){
         result =  sqrt(args[0].head().asNumber());
+        return Expression(result);
       }
 
       else {
-        throw SemanticError("Error in call to square root: Negitive arguments");
+        complexResult = std::sqrt(std::complex<double> (args[0].head().asNumber(), 0.0));
+        return Expression(complexResult);
       }
+    }
+    else if (args[0].isHeadComplex()){
+      complexResult = std::sqrt(args[0].head().asComplex());
+      return Expression(complexResult);
     }
     else {
       throw SemanticError("Error in call to square root: invalid argument.");
@@ -202,7 +209,6 @@ Expression sqrt(const std::vector<Expression> & args ) {
   else {
     throw SemanticError("Error in call to square root: invalid number of arguments.");
   }
-  return Expression(result);
 };
 //  exponential Procedure: biniary procedure
 Expression exp(const std::vector<Expression> & args){

@@ -210,26 +210,36 @@ Expression sqrt(const std::vector<Expression> & args ) {
     throw SemanticError("Error in call to square root: invalid number of arguments.");
   }
 };
-//  exponential Procedure: biniary procedure
+// exponential Procedure: biniary procedure
 Expression exp(const std::vector<Expression> & args){
 
   double result = 0;
-
+  std::complex<double> complexResult(0.0,0.0);
   //preconditions
   if(nargs_equal(args,2)){
     if( (args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
       result = std::pow(args[0].head().asNumber(), args[1].head().asNumber());
+       return Expression(result);
+    }
+    else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())){
+       complexResult =std::pow(args[0].head().asComplex(), args[1].head().asComplex());
+       return Expression(complexResult);
+    }
+    else if((args[0].isHeadComplex()) && (args[1].isHeadNumber())){
+       complexResult =std::pow(args[0].head().asComplex(), args[1].head().asNumber());
+       return Expression(complexResult);
+    }
+    else if((args[0].isHeadNumber()) && (args[1].isHeadComplex())){
+       complexResult =std::pow(args[0].head().asNumber(), args[1].head().asComplex());
+       return Expression(complexResult);
     }
     else{
       throw SemanticError("Error in call to exponential: invalid argument.");
     }
-
   }
   else{
     throw SemanticError("Error in call to exponential: invalid number of arguments.");
   }
-
-  return Expression(result);
 };
 
 // Natural Logarithm Procedure: Natural Log unary

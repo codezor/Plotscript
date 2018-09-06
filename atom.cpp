@@ -145,7 +145,7 @@ std::complex<double> Atom::asComplex() const noexcept{
      return complexValue;
     }
   else {
-	  return (0.0, 1.0);
+	  return (0.0, 0.0);
   }
   //return (m_type == ComplexKind) ? complexValue : (0.0, 1.0) ;
 }

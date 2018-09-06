@@ -294,7 +294,7 @@ Expression cos(const std::vector<Expression> & args){
 
 // Tan Procedure:
 Expression tan(const std::vector<Expression> & args){
-  double result =0;
+  double result = 0;
 
   //preconditions
   if(nargs_equal(args,1)){
@@ -315,7 +315,7 @@ Expression tan(const std::vector<Expression> & args){
 
 // real Procedure:
 Expression real(const std::vector<Expression> & args){
-   double result =0;
+   double result = 0;
 
   //preconditions
   if(nargs_equal(args,1)){
@@ -369,6 +369,26 @@ Expression mag(const std::vector<Expression> & args){
   }
   else{
     throw SemanticError("Error in call to mag: invalid number of arguments.");
+  }
+  return Expression(result);
+
+};
+// arg Procedure:
+Expression arg(const std::vector<Expression> & args){
+   double result =0;
+
+  //preconditions
+  if(nargs_equal(args,1)){
+
+    if(args[0].isHeadComplex()){
+      result = arg(args[0].head().asComplex());
+    }
+    else{
+      throw SemanticError("Error in call to arg: invalid argument : argument must be complex.");
+    }
+  }
+  else{
+    throw SemanticError("Error in call to arg: invalid number of arguments.");
   }
   return Expression(result);
 
@@ -516,9 +536,11 @@ void Environment::reset(){
   //Adds Built in Procedure imag
   envmap.emplace("imag", EnvResult(ProcedureType, imag));
 
-  //Adds Built in Procedure imag
+  //Adds Built in Procedure mag
   envmap.emplace("mag", EnvResult(ProcedureType, mag));
 
+  //Adds Built in Procedure arg
+  envmap.emplace("arg", EnvResult(ProcedureType, arg));
 
 
 }

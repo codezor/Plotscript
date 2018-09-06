@@ -72,10 +72,19 @@ Expression mul(const std::vector<Expression> & args){
 
   // check all aruments are numbers, while multiplying
   double result = 1;
+  double imagResult = 1;
+  std::complex<double> complexResult(0,0);
   for( auto & a :args){
     if(a.isHeadNumber()){
       result *= a.head().asNumber();
     }
+    //If complex
+    /*if(a.isHeadComplex()){
+      double tempReal = result  - imagResult*a.head().asComplex().imag();
+      double tempImag = result *a.head().asComplex().imag() - result *a.head().asComplex().imag();
+      result = tempReal;
+      imagResult = tempImag;
+    } */
     else{
       throw SemanticError("Error in call to mul, argument not a number");
     }
@@ -84,6 +93,7 @@ Expression mul(const std::vector<Expression> & args){
   return Expression(result);
 };
 
+//TODO: Refactor this functions
 Expression subneg(const std::vector<Expression> & args){
 
   double result = 0;
@@ -96,8 +106,8 @@ Expression subneg(const std::vector<Expression> & args){
     }
     else if(args[0].isHeadComplex())
     {
-     result = -args[0].head().asComplex().real();
-     imagResult = -args[0].head().asComplex().imag();
+      result = -args[0].head().asComplex().real();
+      imagResult = -args[0].head().asComplex().imag();
     }
     else{
       throw SemanticError("Error in call to negate: invalid argument.");
@@ -222,7 +232,7 @@ Expression ln(const std::vector<Expression> & args){
   double result =0;
 
   // preconditions
-  if(nargs_equal(args,1)){
+  if(nargs_equal(args,1)){       //TODO: This structure is repeated manytimes should these checks be turned into a general function
     if(args[0].isHeadNumber()){
       if (args[0].head().asNumber() < 0){
         throw SemanticError("Error in call to natural log: invalid argument.");
@@ -298,6 +308,67 @@ Expression tan(const std::vector<Expression> & args){
   }
   else{
     throw SemanticError("Error in call to tan: invalid number of arguments.");
+  }
+  return Expression(result);
+
+};
+
+// real Procedure:
+Expression real(const std::vector<Expression> & args){
+   double result =0;
+
+  //preconditions
+  if(nargs_equal(args,1)){
+
+    if(args[0].isHeadComplex()){
+      result = args[0].head().asComplex().real();
+    }
+    else{
+      throw SemanticError("Error in call to real: invalid argument : argument must be complex.");
+    }
+  }
+  else{
+    throw SemanticError("Error in call to real: invalid number of arguments.");
+  }
+  return Expression(result);
+
+};
+// imag Procedure:
+Expression imag(const std::vector<Expression> & args){
+   double result =0;
+
+  //preconditions
+  if(nargs_equal(args,1)){
+
+    if(args[0].isHeadComplex()){
+      result = args[0].head().asComplex().imag();
+    }
+    else{
+      throw SemanticError("Error in call to imag: invalid argument : argument must be complex.");
+    }
+  }
+  else{
+    throw SemanticError("Error in call to imag: invalid number of arguments.");
+  }
+  return Expression(result);
+
+};
+// mag Procedure:
+Expression mag(const std::vector<Expression> & args){
+   double result =0;
+
+  //preconditions
+  if(nargs_equal(args,1)){
+
+    if(args[0].isHeadComplex()){
+      result = abs(args[0].head().asComplex());
+    }
+    else{
+      throw SemanticError("Error in call to mag: invalid argument : argument must be complex.");
+    }
+  }
+  else{
+    throw SemanticError("Error in call to mag: invalid number of arguments.");
   }
   return Expression(result);
 
@@ -438,6 +509,16 @@ void Environment::reset(){
 
   //Added Built in Procuedure tan
   envmap.emplace("tan", EnvResult(ProcedureType, tan));
+
+  //Adds Built in Procedure real
+  envmap.emplace("real", EnvResult(ProcedureType, real));
+
+  //Adds Built in Procedure imag
+  envmap.emplace("imag", EnvResult(ProcedureType, imag));
+
+  //Adds Built in Procedure imag
+  envmap.emplace("mag", EnvResult(ProcedureType, mag));
+
 
 
 }

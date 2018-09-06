@@ -77,7 +77,7 @@ private:
     std::string stringValue;
   };
 
-  // complex number member TO-DO: Rename m_complexValue through out
+  // complex number member TO-DO: Rename m_complexValue through out for th member variable
   std::complex<double> complexValue;
 
   // helper to set type and value of Number

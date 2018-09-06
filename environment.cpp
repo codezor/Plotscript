@@ -31,17 +31,41 @@ Expression default_proc(const std::vector<Expression> & args){
 Expression add(const std::vector<Expression> & args){
 
   // check all aruments are numbers, while adding
-  double result = 0;
+  double result = 0.0;
+  double imagResult = 0.0;
+  // maybe add the real bits together here
+  std::complex<double>complexResult=std::complex<double>(0.0,0.0);
   for( auto & a :args){
     if(a.isHeadNumber()){
+      //this will be the result of real numbers
       result += a.head().asNumber();
+      //complexResult.std::real += a.head().asNumber(); // use this for one output
+
+    }
+    // Logic needs to be added some where to determine if there is a complex number involve in addition
+    else if (a.isHeadComplex()){
+        // Add the real results
+        result += a.head().asComplex().real();
+
+        // Add the imaginary results
+        imagResult += a.head().asComplex().imag();
     }
     else{
       throw SemanticError("Error in call to add, argument not a number");
     }
   }
-
-  return Expression(result);
+  // if the result is complex return a complex number.
+  if (imagResult > 0){
+      // set the complex results
+      complexResult = std::complex<double>(result,imagResult);
+      // returns complex result
+      return Expression(complexResult);
+    }
+  // if the results are doubles return the results asNumber
+  else{
+    return Expression(result);
+    }
+  //return Expression(complexResult);
 };
 
 Expression mul(const std::vector<Expression> & args){
@@ -63,19 +87,48 @@ Expression mul(const std::vector<Expression> & args){
 Expression subneg(const std::vector<Expression> & args){
 
   double result = 0;
-
+  double imagResult = 0;
+  std::complex<double>complexResult=std::complex<double>(0.0,0.0);
   // preconditions
   if(nargs_equal(args,1)){
     if(args[0].isHeadNumber()){
       result = -args[0].head().asNumber();
+    }
+    else if(args[0].isHeadComplex())
+    {
+     result = -args[0].head().asComplex().real();
+     imagResult = -args[0].head().asComplex().imag();
     }
     else{
       throw SemanticError("Error in call to negate: invalid argument.");
     }
   }
   else if(nargs_equal(args,2)){
+    // Two real numbers
     if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
       result = args[0].head().asNumber() - args[1].head().asNumber();
+    }
+    // Two Complex numbers
+    else if(args[0].isHeadComplex() && (args[1].isHeadComplex()))
+    {
+     result = args[0].head().asComplex().real() - args[1].head().asComplex().real();
+     imagResult = args[0].head().asComplex().imag()- args[1].head().asComplex().imag();
+    }
+    // First number is real and the second is complex
+    else if (args[0].isHeadNumber() && (args[1].isHeadComplex())) //TODO: try to consolidate mixed numbers
+    {
+      // First and real number remains positive
+      result = args[0].head().asNumber();
+      // second/ imaginary number becomes negitive
+      imagResult = -args[1].head().asComplex().imag();  //TODO: This seems redundent figure out how to call the neg operation on this
+    }
+    // First Number is Imaginenary number and the second is real
+    else if (args[1].isHeadNumber() && (args[0].isHeadComplex())) //TODO: try to consolidate mixed numbers
+    {
+      // First and real number becomes negitive
+      result = -args[1].head().asNumber();
+      // second/ imaginary number remains positive
+      imagResult = args[0].head().asComplex().imag();  //TODO: This seems redundent figure out how to call the neg operation on this
     }
     else{
       throw SemanticError("Error in call to subtraction: invalid argument.");
@@ -84,8 +137,18 @@ Expression subneg(const std::vector<Expression> & args){
   else{
     throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
   }
-
-  return Expression(result);
+    // if the result is complex return a complex number.
+  if (std::abs(imagResult) > 0){
+      // set the complex results
+      complexResult = std::complex<double>(result,imagResult);
+      // returns complex result
+      return Expression(complexResult);
+    }
+  // if the results are doubles return the results asNumber
+  else{
+    return Expression(result);
+    }
+  //return Expression(result);
 };
 
 Expression div(const std::vector<Expression> & args){
@@ -160,12 +223,14 @@ Expression ln(const std::vector<Expression> & args){
 
   // preconditions
   if(nargs_equal(args,1)){
-
     if(args[0].isHeadNumber()){
+      if (args[0].head().asNumber() < 0){
+        throw SemanticError("Error in call to natural log: invalid argument.");
+      }
       result = std::log(args[0].head().asNumber());
     }
     else{
-      throw SemanticError("Error in call to natural log: invalid argument.");
+      throw SemanticError("Error in call to natural log: invalid argument must be positive.");
     }
   }
   else{

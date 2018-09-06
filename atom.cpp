@@ -8,6 +8,7 @@
 
 Atom::Atom()
   : m_type(NoneKind)
+  //,complexValue (0.0,1.0)
 {
 }
 
@@ -117,7 +118,7 @@ void Atom::setNumber(double value){
 void Atom::setComplex(std::complex<double> value){
   m_type = ComplexKind;
   //numberValue = std::real(value);
-  complexValue = (real(value),imag(value));
+  complexValue = value;
   //complexValue=(0.0,value);
 }
 
@@ -174,10 +175,20 @@ bool Atom::operator==(const Atom & right) const noexcept{
       double dleft = numberValue;
       double dright = right.numberValue;
       double diff = fabs(dleft - dright);
-      if(std::isnan(diff) ||
-	 (diff > std::numeric_limits<double>::epsilon())) return false;
+      if(std::isnan(diff) || (diff > std::numeric_limits<double>::epsilon()))
+        return false;
     }
     break;
+    /*case ComplexKind://TODO: ADD this mehod
+    {
+      if(right.m_type != ComplexKind) return false;
+      double dleft = complexValue.real();
+      double dright = right.complexValue.imag();
+      double diff = fabs(dleft-dright);
+      if(std::isnan(diff) || (diff > std::numeric_limits<double>::epsilon()))
+        return false;
+    }
+    break;*/
   case SymbolKind:
     {
       if(right.m_type != SymbolKind) return false;
@@ -185,12 +196,6 @@ bool Atom::operator==(const Atom & right) const noexcept{
       return stringValue == right.stringValue;
     }
     break;
-  /*case ComplexKind://TODO: ADD this mehod
-    {
-      if (right.m_type != ComplexKind) return false;
-      double dleft =complexValue;
-      double dright =
-    }*/
   default:
     return false;
   }
@@ -209,7 +214,7 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
     out << a.asNumber();
   }
   if (a.isComplex()){
-    std::complex<double> value (0,1);
+    std::complex<double> value = a.asComplex();
 	  //a.asComplex();
     out<< std::real(value)<<","<< std::imag(value);
     // TO_DO : Use the Atom a to pass complex value back

@@ -75,7 +75,7 @@ Expression mul(const std::vector<Expression> & args){
   double result = 1;
   double imagResult = 0;
   std::complex<double>complexResult=std::complex<double>(0.0,0.0);
-
+  bool print = false;
   for( auto & a :args){
     // Pre-conditions check if the previous result is number is complex or not
     if (abs(imagResult) <= 0){
@@ -92,12 +92,13 @@ Expression mul(const std::vector<Expression> & args){
         result = tempReal;
         imagResult = tempImag;
         complexResult=std::complex<double>(result,imagResult);
+        print =true;
       }
 
     }
     // If the current result is a complex the multiplication must be done  diffrently
     else if (abs (imagResult) > 0){
-
+    print = true;
       if(a.isHeadNumber()){
         //result *= a.head().asNumber();
         double tempReal = complexResult.real() *a.head().asNumber();
@@ -120,7 +121,7 @@ Expression mul(const std::vector<Expression> & args){
       throw SemanticError("Error in call to mul, argument not a number");
     }
   }
-  if (abs(complexResult.imag()) > 0){
+  if (print){
     return Expression(complexResult);
   }
   else{

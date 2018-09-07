@@ -8,7 +8,6 @@
 
 Atom::Atom()
   : m_type(NoneKind)
-  //,complexValue (0.0,1.0)
 {
 }
 
@@ -19,7 +18,6 @@ Atom::Atom(double value){
 
 Atom::Atom(std::complex<double> value){
   setComplex(value);
-
 }
 
 Atom::Atom(const Token & token): Atom(){
@@ -33,7 +31,7 @@ Atom::Atom(const Token & token): Atom(){
       setNumber(temp);
     }
   }
-  else{ // else assume symbol
+  else{
     // make sure does not start with number
     if(!std::isdigit(token.asString()[0])){
         // Testing symbol for I type
@@ -41,10 +39,8 @@ Atom::Atom(const Token & token): Atom(){
         {
           setComplex(std::complex<double>(0.0,1.0));
         }
-
       setSymbol(token.asString());
     }
-
   }
 }
 
@@ -85,7 +81,6 @@ Atom & Atom::operator=(const Atom & x){
 }
 
 Atom::~Atom(){
-
   // we need to ensure the destructor of the symbol string is called
   if(m_type == SymbolKind){
     stringValue.~basic_string();
@@ -116,10 +111,9 @@ void Atom::setNumber(double value){
 }
 
 void Atom::setComplex(std::complex<double> value){
+
   m_type = ComplexKind;
-  //numberValue = std::real(value);
   complexValue = value;
-  //complexValue=(0.0,value);
 }
 
 void Atom::setSymbol(const std::string & value){
@@ -147,7 +141,6 @@ std::complex<double> Atom::asComplex() const noexcept{
   else {
 	  return (0.0, 0.0);
   }
-  //return (m_type == ComplexKind) ? complexValue : (0.0, 1.0) ;
 }
 
 std::string Atom::asSymbol() const noexcept{
@@ -179,7 +172,7 @@ bool Atom::operator==(const Atom & right) const noexcept{
         return false;
     }
     break;
-    case ComplexKind://TODO: ADD this mehod
+    case ComplexKind:
     {
       if(right.m_type != ComplexKind) return false;
       double dleft = complexValue.imag();
@@ -215,9 +208,7 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
   }
   if (a.isComplex()){
     std::complex<double> value = a.asComplex();
-	  //a.asComplex();
-    out<< std::real(value)<<","<< std::imag(value);
-    // TO_DO : Use the Atom a to pass complex value back
+	  out<< std::real(value)<<","<< std::imag(value);
   }
   if(a.isSymbol()){
     out << a.asSymbol();

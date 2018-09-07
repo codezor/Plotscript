@@ -39,8 +39,6 @@ Expression add(const std::vector<Expression> & args){
     if(a.isHeadNumber()){
       //this will be the result of real numbers
       result += a.head().asNumber();
-      //complexResult.std::real += a.head().asNumber(); // use this for one output
-
     }
     // Logic needs to be added some where to determine if there is a complex number involve in addition
     else if (a.isHeadComplex()){
@@ -58,31 +56,27 @@ Expression add(const std::vector<Expression> & args){
   if (imagResult > 0){
       // set the complex results
       complexResult = std::complex<double>(result,imagResult);
-      // returns complex result
       return Expression(complexResult);
     }
   // if the results are doubles return the results asNumber
   else{
     return Expression(result);
     }
-  //return Expression(complexResult);
 };
 
 Expression mul(const std::vector<Expression> & args){
 
-  // check all aruments are numbers, while multiplying
-  // handling the next thing incorrectly
   double result = 1;
   double imagResult = 0;
   std::complex<double>complexResult=std::complex<double>(0.0,0.0);
   bool print = false;
+
   for( auto & a :args){
     // Pre-conditions check if the previous result is number is complex or not
     if (abs(imagResult) <= 0){
       if(a.isHeadNumber()){
         imagResult =imagResult* result;
         result *= a.head().asNumber();
-
         complexResult= std::complex<double>(result, imagResult);
       }
       //If complex then its a complex times a number here
@@ -94,19 +88,19 @@ Expression mul(const std::vector<Expression> & args){
         complexResult=std::complex<double>(result,imagResult);
         print =true;
       }
-
     }
+
     // If the current result is a complex the multiplication must be done  diffrently
     else if (abs (imagResult) > 0){
     print = true;
       if(a.isHeadNumber()){
-        //result *= a.head().asNumber();
         double tempReal = complexResult.real() *a.head().asNumber();
         double tempImag = complexResult.imag() *a.head().asNumber();
         result = tempReal;
         imagResult = tempImag;
         complexResult= std::complex<double> (tempReal,tempImag);
       }
+
       else if(a.isHeadComplex()){
        double tempReal = complexResult.real() *a.head().asComplex().real() - complexResult.imag() *a.head().asComplex().imag();
        double tempImag = complexResult.imag() *a.head().asComplex().real() + complexResult.real() *a.head().asComplex().imag();
@@ -114,9 +108,7 @@ Expression mul(const std::vector<Expression> & args){
        imagResult = tempImag;
        complexResult= std::complex<double> (tempReal,tempImag);
       }
-
     }
-
     else{
       throw SemanticError("Error in call to mul, argument not a number");
     }
@@ -125,30 +117,30 @@ Expression mul(const std::vector<Expression> & args){
     return Expression(complexResult);
   }
   else{
-    //result = complexResult.real();
     return Expression(result);
   }
 };
 
-//TODO: Refactor this functions
+
 Expression subneg(const std::vector<Expression> & args){
 
   double result = 0;
-  double imagResult = 0;
   std::complex<double>complexResult=std::complex<double>(0.0,0.0);
+
   // preconditions
   if(nargs_equal(args,1)){
-    if(args[0].isHeadNumber()){
+    if(args[0].isHeadNumber())
+    {
       result = -args[0].head().asNumber();
       return Expression(result);
     }
+
     else if(args[0].isHeadComplex())
     {
-      result = -args[0].head().asComplex().real();
-      imagResult = -args[0].head().asComplex().imag();
-      complexResult = std::complex<double>(result,imagResult);
+      complexResult = -args[0].head().asComplex();
       return Expression(complexResult);
     }
+
     else{
       throw SemanticError("Error in call to negate: invalid argument.");
     }
@@ -162,29 +154,19 @@ Expression subneg(const std::vector<Expression> & args){
     // Two Complex numbers
     else if(args[0].isHeadComplex() && (args[1].isHeadComplex()))
     {
-     result = args[0].head().asComplex().real() - args[1].head().asComplex().real();
-     imagResult = args[0].head().asComplex().imag()- args[1].head().asComplex().imag();
-     complexResult = std::complex<double>(result,imagResult);
-    return Expression(complexResult);
+      complexResult = args[0].head().asComplex()-args[1].head().asComplex();
+      return Expression(complexResult);
     }
     // First number is real and the second is complex
-    else if (args[0].isHeadNumber() && (args[1].isHeadComplex())) //TODO: try to consolidate mixed numbers
+    else if (args[0].isHeadNumber() && (args[1].isHeadComplex()))
     {
-      // First and real number remains positive
-      result = args[0].head().asNumber();
-      // second/ imaginary number becomes negitive
-      imagResult = -args[1].head().asComplex().imag();  //TODO: This seems redundent figure out how to call the neg operation on this
-      complexResult = std::complex<double>(result,imagResult);
+      complexResult = args[0].head().asNumber()-args[1].head().asComplex();
       return Expression(complexResult);
     }
     // First Number is Imaginenary number and the second is real
-    else if (args[1].isHeadNumber() && (args[0].isHeadComplex())) //TODO: try to consolidate mixed numbers
+    else if (args[1].isHeadNumber() && (args[0].isHeadComplex()))
     {
-      // First and real number becomes negitive
-      result = -args[1].head().asNumber();
-      // second/ imaginary number remains positive
-      imagResult = args[0].head().asComplex().imag();  //TODO: This seems redundent figure out how to call the neg operation on this
-      complexResult = std::complex<double>(result,imagResult);
+      complexResult =args[0].head().asComplex()-args[1].head().asNumber();
       return Expression(complexResult);
     }
     else{
@@ -194,7 +176,6 @@ Expression subneg(const std::vector<Expression> & args){
   else{
     throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
   }
-
 };
 
 Expression div(const std::vector<Expression> & args){
@@ -584,37 +565,37 @@ void Environment::reset(){
   // Procedure: div;
   envmap.emplace("/", EnvResult(ProcedureType, div));
 
-  //Added Built-in Procedure sqrt
+  // Added Built-in Procedure sqrt
   envmap.emplace("sqrt", EnvResult(ProcedureType, sqrt));
 
-  //Added Built-in Procedure exponential
+  // Added Built-in Procedure exponential
   envmap.emplace("^", EnvResult(ProcedureType, exp));
 
-  //Added Built-in Procedure ln
+  // Added Built-in Procedure ln
   envmap.emplace("ln", EnvResult(ProcedureType, ln));
 
-  //Added Built in Procuedure sin
+  // Added Built in Procuedure sin
   envmap.emplace("sin", EnvResult(ProcedureType, sin));
 
-  //Added Built in Procuedure cos
+  // Added Built in Procuedure cos
   envmap.emplace("cos", EnvResult(ProcedureType, cos));
 
-  //Added Built in Procuedure tan
+  // Added Built in Procuedure tan
   envmap.emplace("tan", EnvResult(ProcedureType, tan));
 
-  //Adds Built in Procedure real
+  // Adds Built in Procedure real
   envmap.emplace("real", EnvResult(ProcedureType, real));
 
-  //Adds Built in Procedure imag
+  // Adds Built in Procedure imag
   envmap.emplace("imag", EnvResult(ProcedureType, imag));
 
-  //Adds Built in Procedure mag
+  // Adds Built in Procedure mag
   envmap.emplace("mag", EnvResult(ProcedureType, mag));
 
-  //Adds Built in Procedure arg
+  // Adds Built in Procedure arg
   envmap.emplace("arg", EnvResult(ProcedureType, arg));
 
-  //Adds Built in Procedure conj
+  // Adds Built in Procedure conj
   envmap.emplace("conj", EnvResult(ProcedureType, conj));
 
 

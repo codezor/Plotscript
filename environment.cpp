@@ -292,7 +292,6 @@ Expression ln(const std::vector<Expression> & args){
   else{
     throw SemanticError("Error in call to natural log: invalid number of arguments.");
   }
-
   return Expression(result);
 };
 

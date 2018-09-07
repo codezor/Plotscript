@@ -72,25 +72,31 @@ Expression mul(const std::vector<Expression> & args){
 
   // check all aruments are numbers, while multiplying
   double result = 1;
-  double imagResult = 1;
-  std::complex<double> complexResult(0,0);
+  double imagResult = 0;
+  std::complex<double>complexResult=std::complex<double>(0.0,0);
   for( auto & a :args){
     if(a.isHeadNumber()){
       result *= a.head().asNumber();
+
     }
     //If complex
-    /*if(a.isHeadComplex()){
-      double tempReal = result  - imagResult*a.head().asComplex().imag();
-      double tempImag = result *a.head().asComplex().imag() - result *a.head().asComplex().imag();
+    else if(a.isHeadComplex()){
+      double tempReal = result*a.head().asComplex().real()  - imagResult *a.head().asComplex().imag();
+      double tempImag = result *a.head().asComplex().imag() + imagResult *a.head().asComplex().real();
       result = tempReal;
       imagResult = tempImag;
-    } */
+      complexResult=std::complex<double>(result,imagResult);
+    }
     else{
       throw SemanticError("Error in call to mul, argument not a number");
     }
   }
-
+  if (abs(complexResult.imag()) > 0){
+    return Expression(complexResult);
+  }
+  else{
   return Expression(result);
+  }
 };
 
 //TODO: Refactor this functions
@@ -442,21 +448,7 @@ Expression conj(const std::vector<Expression> & args){
   return Expression(result);
 
 };
-/*
-Expression Icomplex(const std::vector<Expression> & args){
-  std::complex<double> result (0.0,0.0);
-  if (nargs_equal(args, 0)){
-    //result =(0.0,1.0);
-    throw SemanticError("Went into Complex");
-  }
-  else
-  {
-    throw SemanticError("Error in Call to complex: invalid");
-  }
 
-  return Expression(result);
-
-};*/
 
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);

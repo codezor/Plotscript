@@ -103,11 +103,14 @@ Expression subneg(const std::vector<Expression> & args){
   if(nargs_equal(args,1)){
     if(args[0].isHeadNumber()){
       result = -args[0].head().asNumber();
+      return Expression(result);
     }
     else if(args[0].isHeadComplex())
     {
       result = -args[0].head().asComplex().real();
       imagResult = -args[0].head().asComplex().imag();
+      complexResult = std::complex<double>(result,imagResult);
+      return Expression(complexResult);
     }
     else{
       throw SemanticError("Error in call to negate: invalid argument.");
@@ -117,12 +120,15 @@ Expression subneg(const std::vector<Expression> & args){
     // Two real numbers
     if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
       result = args[0].head().asNumber() - args[1].head().asNumber();
+      return Expression(result);
     }
     // Two Complex numbers
     else if(args[0].isHeadComplex() && (args[1].isHeadComplex()))
     {
      result = args[0].head().asComplex().real() - args[1].head().asComplex().real();
      imagResult = args[0].head().asComplex().imag()- args[1].head().asComplex().imag();
+     complexResult = std::complex<double>(result,imagResult);
+    return Expression(complexResult);
     }
     // First number is real and the second is complex
     else if (args[0].isHeadNumber() && (args[1].isHeadComplex())) //TODO: try to consolidate mixed numbers
@@ -131,6 +137,8 @@ Expression subneg(const std::vector<Expression> & args){
       result = args[0].head().asNumber();
       // second/ imaginary number becomes negitive
       imagResult = -args[1].head().asComplex().imag();  //TODO: This seems redundent figure out how to call the neg operation on this
+      complexResult = std::complex<double>(result,imagResult);
+      return Expression(complexResult);
     }
     // First Number is Imaginenary number and the second is real
     else if (args[1].isHeadNumber() && (args[0].isHeadComplex())) //TODO: try to consolidate mixed numbers
@@ -139,6 +147,8 @@ Expression subneg(const std::vector<Expression> & args){
       result = -args[1].head().asNumber();
       // second/ imaginary number remains positive
       imagResult = args[0].head().asComplex().imag();  //TODO: This seems redundent figure out how to call the neg operation on this
+      complexResult = std::complex<double>(result,imagResult);
+      return Expression(complexResult);
     }
     else{
       throw SemanticError("Error in call to subtraction: invalid argument.");
@@ -147,27 +157,29 @@ Expression subneg(const std::vector<Expression> & args){
   else{
     throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
   }
-    // if the result is complex return a complex number.
-  if (std::abs(imagResult) > 0){
-      // set the complex results
-      complexResult = std::complex<double>(result,imagResult);
-      // returns complex result
-      return Expression(complexResult);
-    }
-  // if the results are doubles return the results asNumber
-  else{
-    return Expression(result);
-    }
-  //return Expression(result);
+
 };
 
 Expression div(const std::vector<Expression> & args){
 
   double result = 0;
-
+  std::complex<double>complexResult=std::complex<double>(0.0,0.0);
   if(nargs_equal(args,2)){
     if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
       result = args[0].head().asNumber() / args[1].head().asNumber();
+      return Expression(result);
+    }
+    else if((args[0].isHeadComplex()) && (args[1].isHeadComplex())){
+      complexResult = args[0].head().asComplex() / args[1].head().asComplex();
+      return Expression(complexResult);
+    }
+    else if((args[0].isHeadNumber()) && (args[1].isHeadComplex())){
+      complexResult = args[0].head().asNumber() / args[1].head().asComplex();
+      return Expression(complexResult);
+    }
+    else if((args[0].isHeadComplex()) && (args[1].isHeadNumber())){
+      complexResult = args[0].head().asComplex() / args[1].head().asNumber();
+      return Expression(complexResult);
     }
     else{
       throw SemanticError("Error in call to division: invalid argument.");
@@ -176,7 +188,7 @@ Expression div(const std::vector<Expression> & args){
   else{
     throw SemanticError("Error in call to division: invalid number of arguments.");
   }
-  return Expression(result);
+
 };
 // Sqrt Procedure : Square root procedure unary
 Expression sqrt(const std::vector<Expression> & args ) {

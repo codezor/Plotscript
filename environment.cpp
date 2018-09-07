@@ -71,22 +71,51 @@ Expression add(const std::vector<Expression> & args){
 Expression mul(const std::vector<Expression> & args){
 
   // check all aruments are numbers, while multiplying
+  // handling the next thing incorrectly
   double result = 1;
   double imagResult = 0;
-  std::complex<double>complexResult=std::complex<double>(0.0,0);
+  std::complex<double>complexResult=std::complex<double>(0.0,0.0);
+
   for( auto & a :args){
-    if(a.isHeadNumber()){
-      result *= a.head().asNumber();
+    // Pre-conditions check if the previous result is number is complex or not
+    if (abs(imagResult) <= 0){
+      if(a.isHeadNumber()){
+        imagResult =imagResult* result;
+        result *= a.head().asNumber();
+
+        complexResult= std::complex<double>(result, imagResult);
+      }
+      //If complex then its a complex times a number here
+      else if(a.isHeadComplex()){
+        double tempReal = result *a.head().asComplex().real()  - imagResult *a.head().asComplex().imag();
+        double tempImag = imagResult *a.head().asComplex().real() + result *a.head().asComplex().imag();
+        result = tempReal;
+        imagResult = tempImag;
+        complexResult=std::complex<double>(result,imagResult);
+      }
 
     }
-    //If complex
-    else if(a.isHeadComplex()){
-      double tempReal = result*a.head().asComplex().real()  - imagResult *a.head().asComplex().imag();
-      double tempImag = result *a.head().asComplex().imag() + imagResult *a.head().asComplex().real();
-      result = tempReal;
-      imagResult = tempImag;
-      complexResult=std::complex<double>(result,imagResult);
+    // If the current result is a complex the multiplication must be done  diffrently
+    else if (abs (imagResult) > 0){
+
+      if(a.isHeadNumber()){
+        //result *= a.head().asNumber();
+        double tempReal = complexResult.real() *a.head().asNumber();
+        double tempImag = complexResult.imag() *a.head().asNumber();
+        result = tempReal;
+        imagResult = tempImag;
+        complexResult= std::complex<double> (tempReal,tempImag);
+      }
+      else if(a.isHeadComplex()){
+       double tempReal = complexResult.real() *a.head().asComplex().real() - complexResult.imag() *a.head().asComplex().imag();
+       double tempImag = complexResult.imag() *a.head().asComplex().real() + complexResult.real() *a.head().asComplex().imag();
+       result = tempReal;
+       imagResult = tempImag;
+       complexResult= std::complex<double> (tempReal,tempImag);
+      }
+
     }
+
     else{
       throw SemanticError("Error in call to mul, argument not a number");
     }
@@ -95,7 +124,8 @@ Expression mul(const std::vector<Expression> & args){
     return Expression(complexResult);
   }
   else{
-  return Expression(result);
+    //result = complexResult.real();
+    return Expression(result);
   }
 };
 

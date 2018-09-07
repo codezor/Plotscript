@@ -179,16 +179,16 @@ bool Atom::operator==(const Atom & right) const noexcept{
         return false;
     }
     break;
-    /*case ComplexKind://TODO: ADD this mehod
+    case ComplexKind://TODO: ADD this mehod
     {
       if(right.m_type != ComplexKind) return false;
-      double dleft = complexValue.real();
+      double dleft = complexValue.imag();
       double dright = right.complexValue.imag();
       double diff = fabs(dleft-dright);
       if(std::isnan(diff) || (diff > std::numeric_limits<double>::epsilon()))
         return false;
     }
-    break;*/
+    break;
   case SymbolKind:
     {
       if(right.m_type != SymbolKind) return false;

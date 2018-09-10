@@ -17,6 +17,7 @@ Atom::Atom(double value){
 }
 
 Atom::Atom(std::complex<double> value){
+
   setComplex(value);
 }
 
@@ -172,12 +173,14 @@ bool Atom::operator==(const Atom & right) const noexcept{
         return false;
     }
     break;
+
+    //TODO: check that this is correct
     case ComplexKind:
     {
       if(right.m_type != ComplexKind) return false;
-      double dleft = complexValue.imag();
-      double dright = right.complexValue.imag();
-      double diff = fabs(dleft-dright);
+      std::complex<double>dleft = complexValue;
+      std::complex<double> dright = right.complexValue;
+      double diff = fabs(abs(dleft-dright));
       if(std::isnan(diff) || (diff > std::numeric_limits<double>::epsilon()))
         return false;
     }

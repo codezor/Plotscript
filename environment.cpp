@@ -40,7 +40,7 @@ Expression add(const std::vector<Expression> & args){
       //this will be the result of real numbers
       result += a.head().asNumber();
     }
-    // Logic needs to be added some where to determine if there is a complex number involve in addition
+    // Logic needs to be added some where to determine if there is a complex number involved in addition
     else if (a.isHeadComplex()){
         // Add the real results
         result += a.head().asComplex().real();
@@ -564,37 +564,37 @@ void Environment::reset(){
   // Procedure: div;
   envmap.emplace("/", EnvResult(ProcedureType, div));
 
-  // Added Built-in Procedure sqrt
+  // Procedure: sqrt;
   envmap.emplace("sqrt", EnvResult(ProcedureType, sqrt));
 
-  // Added Built-in Procedure exponential
+  // Procedure: exp;
   envmap.emplace("^", EnvResult(ProcedureType, exp));
 
-  // Added Built-in Procedure ln
+  // Procedure: ln;
   envmap.emplace("ln", EnvResult(ProcedureType, ln));
 
-  // Added Built in Procuedure sin
+  // Procuedure: sin;
   envmap.emplace("sin", EnvResult(ProcedureType, sin));
 
-  // Added Built in Procuedure cos
+  // Procuedure: cos;
   envmap.emplace("cos", EnvResult(ProcedureType, cos));
 
-  // Added Built in Procuedure tan
+  // Procuedure: tan;
   envmap.emplace("tan", EnvResult(ProcedureType, tan));
 
-  // Adds Built in Procedure real
+  // Procedure: real;
   envmap.emplace("real", EnvResult(ProcedureType, real));
 
-  // Adds Built in Procedure imag
+  // Procedure: imag;
   envmap.emplace("imag", EnvResult(ProcedureType, imag));
 
-  // Adds Built in Procedure mag
+  // Procedure: mag;
   envmap.emplace("mag", EnvResult(ProcedureType, mag));
 
-  // Adds Built in Procedure arg
+  // Procedure: arg;
   envmap.emplace("arg", EnvResult(ProcedureType, arg));
 
-  // Adds Built in Procedure conj
+  // Procedure: conj;
   envmap.emplace("conj", EnvResult(ProcedureType, conj));
 
 

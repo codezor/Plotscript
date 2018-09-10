@@ -74,6 +74,7 @@ private:
   // when setting non POD values (see setSymbol)
   union {
     double numberValue;
+    //std::complex<double> complexValue;
     std::string stringValue;
   };
 

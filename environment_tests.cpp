@@ -12,6 +12,12 @@ TEST_CASE( "Test default constructor", "[environment]" ) {
   REQUIRE(env.is_known(Atom("pi")));
   REQUIRE(env.is_exp(Atom("pi")));
 
+  REQUIRE(env.is_known(Atom("e")));
+  REQUIRE(env.is_exp(Atom("e")));
+
+  REQUIRE(env.is_known(Atom("I")));
+  REQUIRE(env.is_exp(Atom("I")));
+
   REQUIRE(!env.is_known(Atom("hi")));
   REQUIRE(!env.is_exp(Atom("hi")));
 
@@ -19,6 +25,17 @@ TEST_CASE( "Test default constructor", "[environment]" ) {
   REQUIRE(env.is_proc(Atom("-")));
   REQUIRE(env.is_proc(Atom("*")));
   REQUIRE(env.is_proc(Atom("/")));
+  REQUIRE(env.is_proc(Atom("sqrt")));
+  REQUIRE(env.is_proc(Atom("^")));
+  REQUIRE(env.is_proc(Atom("ln")));
+  REQUIRE(env.is_proc(Atom("sin")));
+  REQUIRE(env.is_proc(Atom("cos")));
+  REQUIRE(env.is_proc(Atom("tan")));
+  REQUIRE(env.is_proc(Atom("real")));
+  REQUIRE(env.is_proc(Atom("imag")));
+  REQUIRE(env.is_proc(Atom("mag")));
+  REQUIRE(env.is_proc(Atom("arg")));
+  REQUIRE(env.is_proc(Atom("conj")));
   REQUIRE(!env.is_proc(Atom("op")));
 }
 
@@ -26,6 +43,8 @@ TEST_CASE( "Test get expression", "[environment]" ) {
   Environment env;
 
   REQUIRE(env.get_exp(Atom("pi")) == Expression(std::atan2(0, -1)));
+  REQUIRE(env.get_exp(Atom("e")) == Expression(std::exp(1)));
+  REQUIRE(env.get_exp(Atom("I")) == Expression(std::complex<double>(0.0,1.0)));
   REQUIRE(env.get_exp(Atom("hi")) == Expression());
 }
 
@@ -88,8 +107,7 @@ TEST_CASE( "Test semeantic errors", "[environment]" ) {
 
   {
     Expression exp(Atom("begin"));
-    
+
     REQUIRE_THROWS_AS(exp.eval(env), SemanticError);
   }
 }
-

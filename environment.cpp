@@ -33,6 +33,7 @@ Expression add(const std::vector<Expression> & args){
   // check all aruments are numbers, while adding
   double result = 0.0;
   double imagResult = 0.0;
+  bool complexPrint = false;
   // maybe add the real bits together here
   std::complex<double>complexResult=std::complex<double>(0.0,0.0);
   for( auto & a :args){
@@ -47,13 +48,14 @@ Expression add(const std::vector<Expression> & args){
 
         // Add the imaginary results
         imagResult += a.head().asComplex().imag();
+        complexPrint = true;
     }
     else{
       throw SemanticError("Error in call to add, argument not a number");
     }
   }
   // if the result is complex return a complex number.
-  if (imagResult > 0){
+  if (complexPrint){
       // set the complex results
       complexResult = std::complex<double>(result,imagResult);
       return Expression(complexResult);
@@ -275,7 +277,7 @@ Expression exp(const std::vector<Expression> & args){
 // Natural Logarithm Procedure: Natural Log unary
 Expression ln(const std::vector<Expression> & args){
 
-  double result =0;
+  double result = 0;
 
   // preconditions
   if(nargs_equal(args,1)){       //TODO: This structure is repeated manytimes should these checks be turned into a general function

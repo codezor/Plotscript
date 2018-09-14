@@ -296,13 +296,22 @@ TEST_CASE("Test exp double double", "[environment]"){
   std::vector<Expression> args;
 
   INFO("ln procedure");
- }
+  {
+    Procedure p = env.get_proc(Atom("ln"));
+    args.emplace_back(4.0);
+    REQUIRE(p(args) == Expression(std::log(4.0)));
+
+  }
+}
 TEST_CASE("Test sin", "[environment]"){
   Environment env;
   std::vector<Expression> args;
 
   INFO("sin procedure");
   {
+    Procedure p = env.get_proc(Atom("sin"));
+    args.emplace_back(4.0);
+    REQUIRE(p(args) == Expression(std::sin(4.0)));
 
   }
 }
@@ -311,7 +320,12 @@ TEST_CASE("Test cos", "[environment]"){
   Environment env;
   std::vector<Expression> args;
   INFO("cos procedure");
-  {}
+  {
+    Procedure p = env.get_proc(Atom("cos"));
+    args.emplace_back(4.0);
+    REQUIRE(p(args) == Expression(std::cos(4.0)));
+
+  }
 }
 TEST_CASE("Test tan", "[environment]"){
   Environment env;
@@ -319,6 +333,9 @@ TEST_CASE("Test tan", "[environment]"){
 
   INFO("tan procedure");
   {
+    Procedure p = env.get_proc(Atom("tan"));
+    args.emplace_back(4.0);
+    REQUIRE(p(args) == Expression(std::tan(4.0)));
 
   }
 }
@@ -327,32 +344,57 @@ TEST_CASE("Test real", "[environment]"){
   Environment env;
   std::vector<Expression> args;
   INFO("real procedure");
-  {}
+  {
+    Procedure p = env.get_proc(Atom("real"));
+    args.emplace_back(std::complex<double>(4.0,2.0));
+    REQUIRE(p(args) == Expression(4.0));
+
+  }
 }
 TEST_CASE("Test imag", "[environment]"){
   Environment env;
   std::vector<Expression> args;
   INFO("imag procedure");
-  {}
+  {
+    Procedure p = env.get_proc(Atom("imag"));
+    args.emplace_back(std::complex<double>(4.0,2.0));
+    REQUIRE(p(args) == Expression(2.0));
+
+  }
 }
 TEST_CASE("Test mag", "[environment]"){
   Environment env;
   std::vector<Expression> args;
   INFO("mag procedure");
-  {}
+  {
+    Procedure p = env.get_proc(Atom("mag"));
+    args.emplace_back(std::complex<double>(0.0,2.0));
+    REQUIRE(p(args) == Expression(2.0));
+
+  }
 }
 TEST_CASE("Test arg", "[environment]"){
   Environment env;
   std::vector<Expression> args;
 
   INFO("arg procedure");
-  {}
+  {
+    Procedure p = env.get_proc(Atom("arg"));
+    args.emplace_back(std::complex<double>(4.0,2.0));
+    REQUIRE(p(args) == Expression(arg(std::complex<double>(4.0,2.0))));
+
+  }
 }
 TEST_CASE("Test conj", "[environment]"){
   Environment env;
   std::vector<Expression> args;
   INFO("conj procedure");
-  {}
+  {
+    Procedure p = env.get_proc(Atom("conj"));
+    args.emplace_back(std::complex<double>(4.0,2.0));
+    REQUIRE(p(args) == Expression(conj(std::complex<double>(4.0,2.0))));
+
+  }
 }
 
 

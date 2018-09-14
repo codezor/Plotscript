@@ -26,7 +26,7 @@ TEST_CASE( "Test constructors", "[atom]" ) {
 
   {
     INFO("Complex Constructor");
-    Atom a(std::complex<double>(1.0,1.0));
+    Atom a(std::complex<double>(0.0,1.0));
 
     REQUIRE(!a.isNone());
     REQUIRE(!a.isNumber());
@@ -229,6 +229,7 @@ TEST_CASE( "Test assignment", "[atom]" ) {
 
   {
     INFO("complex to complex");
+
     Atom a(std::complex<double>(1.0,1.0));
     Atom b(std::complex<double>(2.0,2.0));
     b = a;

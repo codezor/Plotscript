@@ -180,7 +180,7 @@ bool Atom::operator==(const Atom & right) const noexcept{
     {
       if(right.m_type != ComplexKind) return false;
       std::complex<double>dleft = complexValue;
-      std::complex<double> dright = right.complexValue;
+      std::complex<double>dright = right.complexValue;
       double diff = fabs(abs(dleft-dright));
       if(std::isnan(diff) || (diff > std::numeric_limits<double>::epsilon()))
         return false;

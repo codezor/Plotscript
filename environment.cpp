@@ -90,6 +90,10 @@ Expression mul(const std::vector<Expression> & args){
         complexResult=std::complex<double>(result,imagResult);
         print =true;
       }
+      else{
+      throw SemanticError("Error in call to mul, argument not a number");
+      }
+
     }
 
     // If the current result is a complex the multiplication must be done  diffrently
@@ -110,10 +114,14 @@ Expression mul(const std::vector<Expression> & args){
        imagResult = tempImag;
        complexResult= std::complex<double> (tempReal,tempImag);
       }
-    }
-    else{
+      else{
       throw SemanticError("Error in call to mul, argument not a number");
+      }
     }
+
+  //else{
+    //  throw SemanticError("Error in call to mul, argument not a number");
+      //}
   }
   if (print){
     return Expression(complexResult);

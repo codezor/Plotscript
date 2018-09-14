@@ -74,12 +74,12 @@ private:
   // when setting non POD values (see setSymbol)
   union {
     double numberValue;
-    //std::complex<double> complexValue;
+    std::complex<double> complexValue;
     std::string stringValue;
   };
 
   // complex number member TO-DO: Rename m_complexValue through out for th member variable
-  std::complex<double> complexValue;
+ // std::complex<double> complexValue;
 
   // helper to set type and value of Number
   void setNumber(double value);

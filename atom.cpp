@@ -55,7 +55,7 @@ Atom::Atom(const Atom & x): Atom(){
     setNumber(x.numberValue);
   }
   else if(x.isComplex()){
-    setComplex(x.numberValue);
+    setComplex(x.complexValue);
   }
   else if(x.isSymbol()){
     setSymbol(x.stringValue);
@@ -137,11 +137,12 @@ double Atom::asNumber() const noexcept{
 
 std::complex<double> Atom::asComplex() const noexcept{
   if (m_type == ComplexKind) {
-     return complexValue;
-    }
-  else {
-	  return (0.0, 0.0);
+    return complexValue;
   }
+  else {
+	  return (std::complex<double>(0.0, 0.0));
+  }
+  //return ((m_type == ComplexKind) ? complexValue : std::complex<double>(0.0,0.0));
 }
 
 std::string Atom::asSymbol() const noexcept{

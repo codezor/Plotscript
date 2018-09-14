@@ -120,7 +120,7 @@ TEST_CASE( "Test assignment", "[atom]" ) {
   {
     INFO("default to complex");
     Atom a;
-    Atom b((1.0,1.0));
+    Atom b(std::complex<double>(1.0,1.0));
     b = a;
     REQUIRE(b.isNone());
     REQUIRE(!b.isNumber());

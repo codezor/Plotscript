@@ -82,6 +82,7 @@ TEST_CASE( "Test get built-in procedure", "[environment]" ) {
   args.emplace_back(1.0);
   args.emplace_back(2.0);
   REQUIRE(padd(args) == Expression(3.0));
+
 }
 
 TEST_CASE( "Test reset", "[environment]" ) {
@@ -108,6 +109,11 @@ TEST_CASE( "Test semeantic errors", "[environment]" ) {
   {
     Expression exp(Atom("begin"));
 
+    REQUIRE_THROWS_AS(exp.eval(env), SemanticError);
+  }
+
+  {
+    Expression exp (Atom(" "));
     REQUIRE_THROWS_AS(exp.eval(env), SemanticError);
   }
 }

@@ -17,6 +17,12 @@ bool nargs_equal(const std::vector<Expression> & args, unsigned nargs){
   return args.size() == nargs;
 }
 
+void require_numeric(const Expression &e, const std::string function_name) {
+	if (!e.isHeadNumber() && !e.isHeadComplex()) {
+		throw SemanticError("Error in call to " + function_name + ", argument not a number");
+	}
+}
+
 /***********************************************************************
 Each of the functions below have the signature that corresponds to the
 typedef'd Procedure function pointer.
@@ -31,168 +37,102 @@ Expression default_proc(const std::vector<Expression> & args){
 Expression add(const std::vector<Expression> & args){
 
   // check all aruments are numbers, while adding
-  double result = 0.0;
-  double imagResult = 0.0;
-  bool complexPrint = false;
-  // maybe add the real bits together here
-  std::complex<double>complexResult=std::complex<double>(0.0,0.0);
-  for( auto & a :args){
-    if(a.isHeadNumber()){
-      //this will be the result of real numbers
-      result += a.head().asNumber();
-    }
-    // Logic needs to be added some where to determine if there is a complex number involved in addition
-    else if (a.isHeadComplex()){
-        // Add the real results
-        result += a.head().asComplex().real();
+  bool is_complex = false;
+  std::complex<double>sum=std::complex<double>(0.0, 0.0);
 
-        // Add the imaginary results
-        imagResult += a.head().asComplex().imag();
-        complexPrint = true;
-    }
-    else{
-      throw SemanticError("Error in call to add, argument not a number");
-    }
-  }
-  // if the result is complex return a complex number.
-  if (complexPrint){
-      // set the complex results
-      complexResult = std::complex<double>(result,imagResult);
-      return Expression(complexResult);
-    }
-  // if the results are doubles return the results asNumber
-  else{
-    return Expression(result);
-    }
+	for (auto & arg :args){
+		require_numeric(arg, "add");
+
+		std::complex<double> a;
+
+		if (arg.isHeadNumber()){
+			a = std::complex<double>(arg.head().asNumber(), 0.0);
+		}
+		else if (arg.isHeadComplex()) {
+			is_complex = true;
+			a = arg.head().asComplex();
+		}
+		sum += a;
+	}
+
+	if (is_complex){
+		return Expression(sum);
+	}
+	return Expression(sum.real());
 };
 
 Expression mul(const std::vector<Expression> & args){
 
-  double result = 1;
-  double imagResult = 0;
-  std::complex<double>complexResult=std::complex<double>(0.0,0.0);
-  bool print = false;
+	bool is_complex = false;
+	std::complex<double> product = std::complex<double>(1.0, 0.0);
 
-  for( auto & a :args){
-    // Pre-conditions check if the previous result is number is complex or not
-    if (abs(imagResult) <= 0){
-      if(a.isHeadNumber()){
-        imagResult =imagResult* result;
-        result *= a.head().asNumber();
-        complexResult= std::complex<double>(result, imagResult);
-      }
-      //If complex then its a complex times a number here
-      else if(a.isHeadComplex()){
-        double tempReal = result *a.head().asComplex().real()  - imagResult *a.head().asComplex().imag();
-        double tempImag = imagResult *a.head().asComplex().real() + result *a.head().asComplex().imag();
-        result = tempReal;
-        imagResult = tempImag;
-        complexResult=std::complex<double>(result,imagResult);
-        print =true;
-      }
-      else{
-      throw SemanticError("Error in call to mul, argument not a number");
-      }
+	for (auto &arg : args) {
+		require_numeric(arg, "mul");
 
-    }
+		std::complex<double> a;
 
-    // If the current result is a complex the multiplication must be done  diffrently
-    else if (abs (imagResult) > 0){
-    print = true;
-      if(a.isHeadNumber()){
-        double tempReal = complexResult.real() *a.head().asNumber();
-        double tempImag = complexResult.imag() *a.head().asNumber();
-        result = tempReal;
-        imagResult = tempImag;
-        complexResult= std::complex<double> (tempReal,tempImag);
-      }
+		if (arg.isHeadNumber()) {
+			double imag = 0.0;
+			if (is_complex) {
+				imag = 1.0;
+			}
+			a = std::complex<double>(arg.head().asNumber(), imag);
+		}
+		else if (arg.isHeadComplex()) {
+			is_complex = true;
+			a = arg.head().asComplex();
+		}
+		else {
+			throw SemanticError("Error in call to mul, argument not a number");
+		}
 
-      else if(a.isHeadComplex()){
-       double tempReal = complexResult.real() *a.head().asComplex().real() - complexResult.imag() *a.head().asComplex().imag();
-       double tempImag = complexResult.imag() *a.head().asComplex().real() + complexResult.real() *a.head().asComplex().imag();
-       result = tempReal;
-       imagResult = tempImag;
-       complexResult= std::complex<double> (tempReal,tempImag);
-      }
-      else{
-      throw SemanticError("Error in call to mul, argument not a number");
-      }
-    }
+		product *= a;
+	}
 
-  //else{
-    //  throw SemanticError("Error in call to mul, argument not a number");
-      //}
-  }
-  if (print){
-    return Expression(complexResult);
-  }
-  else{
-    return Expression(result);
-  }
+	if (is_complex) {
+		return Expression(product);
+	}
+	return Expression(product.real());
 };
 
 
 Expression subneg(const std::vector<Expression> & args){
+	const Expression NEG = Expression(-1.0);
 
-  double result = 0;
-  std::complex<double>complexResult=std::complex<double>(0.0,0.0);
+	require_numeric(args[0], "subneg");
+	Expression x = args[0];
 
-  // preconditions
-  if(nargs_equal(args,1)){
-    if(args[0].isHeadNumber())
-    {
-      result = -args[0].head().asNumber();
-      return Expression(result);
-    }
-
-    else if(args[0].isHeadComplex())
-    {
-      complexResult = -args[0].head().asComplex();
-      return Expression(complexResult);
-    }
-
-    else{
-      throw SemanticError("Error in call to negate: invalid argument.");
-    }
-  }
-  else if(nargs_equal(args,2)){
-    // Two real numbers
-    if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
-      result = args[0].head().asNumber() - args[1].head().asNumber();
-      return Expression(result);
-    }
-    // Two Complex numbers
-    else if(args[0].isHeadComplex() && (args[1].isHeadComplex()))
-    {
-      complexResult = args[0].head().asComplex()-args[1].head().asComplex();
-      return Expression(complexResult);
-    }
-    // First number is real and the second is complex
-    else if (args[0].isHeadNumber() && (args[1].isHeadComplex()))
-    {
-      complexResult = args[0].head().asNumber()-args[1].head().asComplex();
-      return Expression(complexResult);
-    }
-    // First Number is Imaginenary number and the second is real
-    else if (args[1].isHeadNumber() && (args[0].isHeadComplex()))
-    {
-      complexResult =args[0].head().asComplex()-args[1].head().asNumber();
-      return Expression(complexResult);
-    }
-    else{
-      throw SemanticError("Error in call to subtraction: invalid argument.");
-    }
-  }
-  else{
-    throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
-  }
+	if (nargs_equal(args, 1)) {
+		Expression y = NEG;
+		return mul(std::vector<Expression>{x, y});
+	}
+	else if (nargs_equal(args, 2)) {
+		require_numeric(args[1], "subneg");
+		Expression y = mul(std::vector<Expression>{args[1], NEG});
+		return add(std::vector<Expression>{x, y});
+	}
+	throw SemanticError("Error in call to subneg: invalid number of arguments.");
 };
 
 Expression div(const std::vector<Expression> & args){
+	if (!nargs_equal(args, 2)) {
+		throw SemanticError("Error in call to division: invalid number of arguments.");
+	}
 
-  double result = 0;
+	require_numeric(args[0], "div");
+	require_numeric(args[1], "div");
+
+	Expression x = args[0];
+
+	Expression y;
+	if (args[1].isHeadNumber()) {
+		y = Expression(1.0 / args[1].head().asNumber());
+	}
+	else if (args[1].isHeadComplex())
+	return Expression(mul(std::vector<Expresion> &{x, y}));
+	double result = 0;
   std::complex<double>complexResult=std::complex<double>(0.0,0.0);
-  if(nargs_equal(args,2)){
+  
     if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
       result = args[0].head().asNumber() / args[1].head().asNumber();
       return Expression(result);
@@ -212,11 +152,6 @@ Expression div(const std::vector<Expression> & args){
     else{
       throw SemanticError("Error in call to division: invalid argument.");
     }
-  }
-  else{
-    throw SemanticError("Error in call to division: invalid number of arguments.");
-  }
-
 };
 // Sqrt Procedure : Square root procedure unary
 Expression sqrt(const std::vector<Expression> & args ) {

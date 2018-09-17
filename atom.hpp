@@ -65,7 +65,12 @@ public:
 private:
 
   // internal enum of known types
-  enum Type {NoneKind, NumberKind, ComplexKind, SymbolKind};
+  enum Type {
+	  NoneKind, 
+	  NumberKind, 
+	  ComplexKind, 
+	  SymbolKind
+};
 
   // track the type
   Type m_type;
@@ -73,13 +78,13 @@ private:
   // values for the known types. Note the use of a union requires care
   // when setting non POD values (see setSymbol)
   union {
-    double numberValue;
-    std::complex<double> complexValue;
-    std::string stringValue;
+    double m_numberValue;
+    std::complex<double> m_complexValue;
+    std::string m_stringValue;
   };
 
   // complex number member TO-DO: Rename m_complexValue through out for th member variable
- // std::complex<double> complexValue;
+ // std::complex<double> m_complexValue;
 
   // helper to set type and value of Number
   void setNumber(double value);

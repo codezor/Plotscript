@@ -4,7 +4,6 @@
 #include <cctype>
 #include <cmath>
 #include <limits>
-#include <complex>
 
 Atom::Atom()
   : m_type(NoneKind)
@@ -181,7 +180,7 @@ bool Atom::operator==(const Atom & right) const noexcept{
       if(right.m_type != ComplexKind) return false;
       std::complex<double>dleft = m_complexValue;
       std::complex<double>dright = right.m_complexValue;
-      double diff = fabs(abs(dleft-dright));
+      double diff = fabs((abs(dleft)-abs(dright)));
       if(std::isnan(diff) || (diff > std::numeric_limits<double>::epsilon()))
         return false;
     }

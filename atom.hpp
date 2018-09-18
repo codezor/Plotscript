@@ -6,6 +6,7 @@ Defines the Atom type and associated functions.
 
 #include "token.hpp"
 #include <complex>
+#include <list>
 /*! \class Atom
 \brief A variant type that may be a Number or Symbol or the default type None.
 
@@ -70,7 +71,7 @@ private:
 	  NumberKind, 
 	  ComplexKind, 
 	  SymbolKind
-};
+	};
 
   // track the type
   Type m_type;

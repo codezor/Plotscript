@@ -1,7 +1,7 @@
 #include "expression.hpp"
 
 #include <sstream>
-#include <list>
+
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -12,6 +12,16 @@ Expression::Expression(const Atom & a){
 
   m_head = a;
 }
+
+Expression::Expression(const std::list<Atom> & a) {
+
+	//m_head = a.front();
+	m_tail.clear();
+	for (auto e : a) {
+		m_tail.push_back(e);
+	}// m_tail.back(a.back());
+}
+
 
 // recursive copy
 Expression::Expression(const Expression & a){
@@ -56,6 +66,10 @@ bool Expression::isHeadComplex() const noexcept{
 bool Expression::isHeadSymbol() const noexcept{
   return m_head.isSymbol();
 }
+
+//bool Expression::isHeadList() const noexcept {
+	//return m_head.isList();
+//}
 
 
 void Expression::append(const Atom & a){

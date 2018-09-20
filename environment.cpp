@@ -395,26 +395,27 @@ Expression conj(const std::vector<Expression> & args){
     }
 	return Expression(result);
 };
-/*Expression list(const std::vector<Expression> & args) {
-
+Expression list(const std::vector<Expression>  & args) {
+	
 	// check all aruments are numbers, while adding
-	//bool is_complex = false;
-	std::list<Atom> myList;
+	// bool is_complex7 = false;
+	std::list<Atom>  myList;//std::list<Atom>();
 	//For 
 	for (auto & arg : args) {
-		require_numeric(arg, "list");
+		
+		//require_numeric(arg, "list");
 		//std::complex<double> a;
 
-		//if (arg.isHeadNumber()) {
-			
-		//}
-		//else if (arg.isHeadComplex()) {
-			
-		//}
-		myList.emplace_back(arg);		
-	}	
+		if (arg.isHeadNumber()) {
+			myList.emplace_back(arg.head().asNumber());
+		}
+		else if (arg.isHeadComplex()) {
+			myList.emplace_back(arg.head().asComplex());
+		}
+		//myList->emplace_back(arg);
+	}
 	return Expression(myList);
-*/
+};
 
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
@@ -552,5 +553,5 @@ void Environment::reset(){
   envmap.emplace("conj", EnvResult(ProcedureType, conj));
 
   // Procedure: list;
-  //envmap.emplace("list", EnvResult(ProcedureType, list));
+  envmap.emplace("list", EnvResult(ProcedureType, list));
 }

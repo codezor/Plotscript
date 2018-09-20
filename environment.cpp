@@ -395,24 +395,28 @@ Expression conj(const std::vector<Expression> & args){
     }
 	return Expression(result);
 };
-Expression list(const std::vector<Expression>  & args) {
+Expression list(const std::vector<Expression> & args) {
 	
 	// check all aruments are numbers, while adding
 	// bool is_complex7 = false;
-	std::list<Atom>  myList;//std::list<Atom>();
-	//For 
+	std::list<Expression> myList = std::list<Expression>();// nullptr;
+	//if (nargs_equal(args, 0)) {
+		//myList.emplace_back(args[0].head().asSymbol());
+		//return(myList);
+	//}
+	
 	for (auto & arg : args) {
 		
 		//require_numeric(arg, "list");
 		//std::complex<double> a;
 
-		if (arg.isHeadNumber()) {
-			myList.emplace_back(arg.head().asNumber());
-		}
-		else if (arg.isHeadComplex()) {
-			myList.emplace_back(arg.head().asComplex());
-		}
-		//myList->emplace_back(arg);
+		//if (arg.isHeadNumber()) {
+			//myList.emplace_back(arg.head().asNumber());
+		//}
+		//else if (arg.isHeadComplex()) {
+			//myList.emplace_back(arg.head().asComplex());
+		//}
+		myList.emplace_back(arg);
 	}
 	return Expression(myList);
 };
@@ -504,9 +508,7 @@ void Environment::reset(){
 
   // Add Built in Symbol I: Complex numer I =sqrt(-1) = 0 + i
   envmap.emplace("I", EnvResult(ExpressionType, Expression(I)));
-
-  //envmap.emplace("I", EnvResult(ProcedureType, Icomplex));
-
+    
   // Procedure: add;
   envmap.emplace("+", EnvResult(ProcedureType, add));
 

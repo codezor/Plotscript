@@ -7,6 +7,7 @@ Defines the Atom type and associated functions.
 #include "token.hpp"
 #include <complex>
 #include <list>
+
 /*! \class Atom
 \brief A variant type that may be a Number or Symbol or the default type None.
 
@@ -26,10 +27,7 @@ public:
 
   /// Construct an Atom of type Symbol named value
   Atom(const std::string & value);
-  
-  /// Construct an Atom of type List named value
-  //Atom(const std::list<Atom> & value);
-
+    
   /// Construct an Atom directly from a Token
   Atom(const Token & token);
 
@@ -54,9 +52,6 @@ public:
   /// predicate to determine if an Atom is of type Symbol
   bool isSymbol() const noexcept;
 
-  /// predicate to determine if an Atom is of type List
-  //bool isList() const noexcept;
-
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
 
@@ -65,9 +60,6 @@ public:
 
   /// value of Atom as a number, returns empty-string if not a Symbol
   std::string asSymbol() const noexcept;
-
-  /// value of Atom as a List, returns empty-list if not a List
-  //std::list<Atom> asList() const noexcept;
 
   /// equality comparison based on type and value
   bool operator==(const Atom & right) const noexcept;
@@ -80,7 +72,7 @@ private:
 		NumberKind,
 		ComplexKind,
 		SymbolKind,
-		//ListKind
+		ListKind,
 	};
 
   // track the type
@@ -92,7 +84,8 @@ private:
     double m_numberValue;
     std::complex<double> m_complexValue;
     std::string m_stringValue;
-	//std::list<Atom> *m_list= nullptr;
+	//std::list<Atom> m_list;
+	
   };
 
   // complex number member TO-DO: Rename m_complexValue through out for th member variable
@@ -107,8 +100,9 @@ private:
   // helper to set type and value of Symbol
   void setSymbol(const std::string & value);
 
-  // helper to set type and value of Symbol
-  //void setList(const std::list<Atom> & value);
+  // helper to set type and value of List
+  //void setList(const std::List<Atom> & value);
+
 };
 
 /// inequality comparison for Atom

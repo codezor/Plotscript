@@ -13,13 +13,12 @@ Expression::Expression(const Atom & a){
   m_head = a;
 }
 
-Expression::Expression(const std::list<Atom> & a) {
-
-	//m_head = a.front();
+Expression::Expression(const std::list<Expression> & a) {
+	
 	m_tail.clear();
 	for (auto e : a) {
-		m_tail.push_back(e);
-	}// m_tail.back(a.back());
+		m_tail.emplace_back(e);
+	}
 }
 
 
@@ -66,11 +65,6 @@ bool Expression::isHeadComplex() const noexcept{
 bool Expression::isHeadSymbol() const noexcept{
   return m_head.isSymbol();
 }
-
-//bool Expression::isHeadList() const noexcept {
-	//return m_head.isList();
-//}
-
 
 void Expression::append(const Atom & a){
   m_tail.emplace_back(a);
@@ -119,6 +113,7 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
       if(env.is_exp(head)){
 	return env.get_exp(head);
       }
+	
       else{
 	throw SemanticError("Error during evaluation: unknown symbol");
       }
@@ -217,12 +212,18 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
   out << "(";
   out << exp.head();
 
-  for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
+  for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ) {
     out << *e;
+	++e;
+	if (e != exp.tailConstEnd()) {
+		out << " ";
+	}
+	
   }
-
+   
   out << ")";
-
+  //if (e.li)
+ 
   return out;
 }
 

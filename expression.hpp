@@ -6,7 +6,7 @@ Defines the Expression type and assiciated functions.
 
 #include <string>
 #include <vector>
-#include <list>
+#include<list>
 
 #include "token.hpp"
 #include "atom.hpp"
@@ -33,7 +33,9 @@ public:
   */
   Expression(const Atom & a);
 
-  Expression(const std::list<Atom> & a);
+
+  /// construct a list of Atoms as an expression (recursive) 
+  Expression(const std::list<Expression> & a);
 
   /// deep-copy construct an expression (recursive)
   Expression(const Expression & a);
@@ -67,9 +69,6 @@ public:
 
   /// convienience member to determine if head atom is a symbol
   bool isHeadSymbol() const noexcept;
-
-  /// convienience member to determine if head atom is a list
-  //bool isHeadList() const noexcept;
 
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment & env);

@@ -4,7 +4,6 @@
 #include <cctype>
 #include <cmath>
 #include <limits>
-#include <list>
 
 Atom::Atom()
   : m_type(NoneKind)
@@ -50,11 +49,6 @@ Atom::Atom(const std::string & value): Atom() {
   setSymbol(value);
 }
 
-
-//Atom::Atom(const std::list<Atom> & value): Atom()
-//{
-	//setList(value);
-//}
 
 Atom::Atom(const Atom & x): Atom(){
   if(x.isNumber()){
@@ -110,11 +104,6 @@ bool Atom::isSymbol() const noexcept{
   return m_type == SymbolKind;
 }
 
-//bool Atom::isList() const noexcept {
-	//return m_type == ListKind;
-//}
-
-
 void Atom::setNumber(double value){
 
   m_type = NumberKind;
@@ -139,20 +128,6 @@ void Atom::setSymbol(const std::string & value){
   // copy construct in place
   new (&m_stringValue) std::string(value);
 }
-
-//void Atom::setList(const std::list<Atom> & value) {
-
-	// we need to ensure the destructor of the symbol string is called
-	//if (m_type == ListKind) {
-		//m_list.~basic_string();
-	//}
-
-	//m_type = ListKind;
-	//new(&m_list) =*value;
-	// copy construct in place
-	//new (m_list) std::list(value);
-	
-//}
 
 double Atom::asNumber() const noexcept{
 
@@ -179,17 +154,6 @@ std::string Atom::asSymbol() const noexcept{
 
   return result;
 }
-
-//std::list<Atom> Atom::asList() const noexcept {
-
-	//std::list<Atom> result;
-
-	//if (m_type == ListKind) {
-		//result =  *m_list;
-	//}
-
-//	return result;
-//}
 
 bool Atom::operator==(const Atom & right) const noexcept{
 

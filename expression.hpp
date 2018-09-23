@@ -68,12 +68,12 @@ public:
   bool isHeadNumber() const noexcept;
 
   /// convienience member to determine if head atom is a number
-  bool isHeadComplex() const noexcept;
-
-  
+  bool isHeadComplex() const noexcept;  
 
   /// convienience member to determine if head atom is a symbol
   bool isHeadSymbol() const noexcept;
+  
+  // create a islist operator?
 
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment &env);

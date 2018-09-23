@@ -27,6 +27,7 @@ Expression::Expression(const Expression &a)
 //Expression::Expression(const std::vector<Expression> &es)
 Expression::Expression(const std::list<Expression> &es)
 {
+	
 	m_head = Atom("");
 	m_tail.clear();
 	for (auto e : es) {
@@ -177,7 +178,7 @@ Expression Expression::handle_begin(Environment &env)
 Expression Expression::handle_define(Environment &env)
 {
 
-  // tail must have size 3 or error
+  // tail must have size 2 or error
   if (m_tail.size() != 2)
   {
     throw SemanticError("Error during evaluation: invalid number of arguments to define");

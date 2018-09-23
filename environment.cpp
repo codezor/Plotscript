@@ -27,7 +27,11 @@ void require_numeric(const Expression &e, const std::string function_name)
 	{
 		throw SemanticError("Error in call to " + function_name + ", argument not a number");
 	}
+	//should make this a function of both numer and complex
 }
+
+// Is number 
+// Is complex 
 
 /***********************************************************************
 Each of the functions below have the signature that corresponds to the
@@ -487,39 +491,76 @@ Expression list(const std::vector<Expression> &args)
 Expression first(const std::vector<Expression> &args) {
 	if (!nargs_equal(args, 1))
 	{
-		throw SemanticError("Error in call to conj: invalid number of arguments.");
+		throw SemanticError("Error in call to first: more than one argument in call to first.");
 	}
-	//args.get_allocator();
-	//args.front().tailConstBegin();
-
-	return Expression(*args.front().tailConstBegin());
+	
+	Expression list = args.front();
+	
+	
+	auto begin = list.tailConstBegin();
+	auto end = list.tailConstEnd();
+	std::list<Expression> first(begin,end);
+	if (begin != end)
+	{
+		return Expression(first.front());
+		//return Expression(*args.front().tailConstBegin());
+	}
+	else {
+		throw SemanticError("Error: argument to first is an empty list");
+	}
 };
 
 Expression rest(const std::vector<Expression> &args) 
 {
 	if (!nargs_equal(args, 1))
 	{
-		throw SemanticError("Error in call to conj: invalid number of arguments.");
+		throw SemanticError("Error in call to rest: invalid number of arguments.");
 	}
 	Expression list = args.front();
 	//std::list<Expression> m_list(*args.begin(), *args.end());
 	//std::list<Expression> rest;// = Expression(*m_list);
-	std::list<Expression>rest(list.tailConstBegin(), list.tailConstEnd());
-	rest.pop_front();
-	return Expression(rest);
+	auto begin = list.tailConstBegin();
+	auto end = list.tailConstEnd();
+	std::list<Expression>whole(begin, end);
+	if (begin!= end)
+	{
+		++ begin;
+		std::list<Expression>rest(begin, end);
+		//std::list<Expression>rest =whol
+		return Expression(rest);
+	}
+	else
+	{
+		throw SemanticError("Error: argument to rest is an empty list");
+	}
+	
+	
 };
 
 Expression length(const std::vector<Expression> &args)
 {
 	if (!nargs_equal(args, 1))
 	{
-		throw SemanticError("Error in call to conj: invalid number of arguments.");
+		throw SemanticError("Error in call to length: invalid number of arguments.");
 	}
 
-	Expression list = args.front();
-	std::list<Expression>length(list.tailConstBegin(), list.tailConstEnd());
+	Expression list = args.front();	
+	auto begin = list.tailConstBegin();
+	auto end = list.tailConstEnd();
+	//std::list<Expression>length(list.tailConstBegin(), list.tailConstEnd());
+	
+	if (begin != end)
+	{
+	   
+		std::list<Expression>length(begin, end);
+		return Expression(length.size());
+	}
+	else
+	{
+		throw SemanticError("Error: not a list");
+	}
 
-	return Expression(length.size());
+	//return Expression(length.size());
 
 };
 
@@ -527,29 +568,83 @@ Expression append(const std::vector<Expression> &args)
 {
 	if (!nargs_equal(args, 2))
 	{
-		throw SemanticError("Error in call to conj: invalid number of arguments.");
+		throw SemanticError("Error in call to append: invalid number of arguments.");
 	}
-	Expression list1 = args.front();
+	
+	Expression listy = args.front();	
+	auto begin = listy.tailConstBegin();
+	auto end = listy.tailConstEnd();
 	Expression arg_add = args[1];
 	require_numeric(arg_add, "append");
-	std::list<Expression>frontList(list1.tailConstBegin(), list1.tailConstEnd());
-	//std::list<Expression>backList(list2.tailConstBegin(), list2.tailConstEnd());
-	frontList.emplace_back(arg_add);
-	return Expression(frontList);
+	if (begin != end){
+
+		std::list<Expression>og_list(begin, end);
+		//std::list<Expression>frontList =
+		Expression y = list(std::vector<Expression> {arg_add});
+		std::list<Expression>frontList = og_list;
+			
+		frontList.emplace_back(y);
+		return Expression(frontList);
+		
+	}
+	else
+	{
+		throw SemanticError("Error: not a list");
+	}	
 };
 
 Expression join(const std::vector<Expression> &args)
 {
 	if (!nargs_equal(args, 2))
 	{
-		throw SemanticError("Error in call to conj: invalid number of arguments.");
+		throw SemanticError("Error in call to join: invalid number of arguments.");
 	}
 	Expression list1 = args.front();
+	auto begin1 = list1.tailConstBegin();
+	auto end1 = list1.tailConstEnd();
 	Expression list2 = args[1];
-	std::list<Expression>frontList(list1.tailConstBegin(), list1.tailConstEnd());
-	std::list<Expression>backList(list2.tailConstBegin(), list2.tailConstEnd());
-	frontList.splice(frontList.end(), backList);
-	return Expression(frontList);
+	auto begin2 = list2.tailConstBegin();
+	auto end2 = list2.tailConstEnd();
+	std::list<Expression>frontList(begin1, end1);
+	std::list<Expression>backList(begin2, end2);
+	if (begin1 == end1 || begin2 == end2 )
+	{
+		throw SemanticError("Error: argument to join not a list");
+	}
+	std::list<Expression>joinedList = frontList;
+	joinedList.splice(joinedList.end(), backList);
+	return Expression(joinedList);
+};
+
+Expression range(const std::vector<Expression> &args)
+{
+	if (!nargs_equal(args, 3))
+	{
+		throw SemanticError("Error in call to range: invalid number of arguments.");
+	}
+	//require_numeric(lowerBound, "range");
+	//require_numeric(upperBound, "range");
+	//require_numeric(increment, "range");
+	double lowerBound = args[0].head().asNumber();
+	double upperBound = args[1].head().asNumber();
+	double increment = args[2].head().asNumber();
+
+	std::list<Expression>rangeList;
+
+	if (!(lowerBound < upperBound) || !(increment > 0)) {
+		throw SemanticError("Error in call to range: Arguments not what they should be");
+	}
+	else {
+		
+		double i = lowerBound;
+		while (i <= upperBound) {
+			rangeList.emplace_back(Expression (i));
+				i = i + increment;
+		}
+		return Expression(rangeList);
+	}
+
+
 };
 
 
@@ -712,7 +807,7 @@ void Environment::reset()
 	// Procedure rest
 	envmap.emplace("rest", EnvResult(ProcedureType, rest));
 	
-	// Procedure length
+	// Procedure lengths
 	envmap.emplace("length", EnvResult(ProcedureType, length));
 
 	// Procedure append
@@ -720,6 +815,8 @@ void Environment::reset()
 
 	// Procedure join
 	envmap.emplace("join", EnvResult(ProcedureType, join));
-
+	
+	// Procedure range
+	envmap.emplace("range", EnvResult(ProcedureType, range));
 
 }

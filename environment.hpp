@@ -13,7 +13,6 @@ needed.
 // system includes
 #include <map>
 
-
 // module includes
 #include "atom.hpp"
 #include "expression.hpp"
@@ -22,7 +21,7 @@ needed.
 \brief A Procedure is a C++ function pointer taking a vector of
        Expressions as arguments and returning an Expression.
 */
-typedef Expression (*Procedure)(const std::vector<Expression> & args);
+typedef Expression (*Procedure)(const std::vector<Expression> &args);
 
 /*! \class Environment
 \brief A class representing the interpreter environment.
@@ -38,14 +37,15 @@ the mapped-to value using get_exp or get_proc.
 
 To add an symbol to expression mapping use the add_exp member function.
  */
-class Environment {
+class Environment
+{
 public:
   /*! Construct the default environment with built-in procedures and
    * definitions. */
   Environment();
 
   /*! Determine if a symbol is known to the environment.
-    \param sym the sumbol to lookup
+    \param sym the symbol to lookup
     \return true if the symbol has been defined in the environment
    */
   bool is_known(const Atom &sym) const;
@@ -88,11 +88,15 @@ public:
   void reset();
 
 private:
-
   // Environment is a mapping from symbols to expressions or procedures
-  enum EnvResultType { ExpressionType, ProcedureType };
+  enum EnvResultType
+  {
+    ExpressionType,
+    ProcedureType
+  };
 
-  struct EnvResult {
+  struct EnvResult
+  {
     EnvResultType type;
     Expression exp; // used when type is ExpressionType
     Procedure proc; // used when type is ProcedureType

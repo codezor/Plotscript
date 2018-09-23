@@ -13,9 +13,9 @@ Defines the Atom type and associated functions.
 
 This class provides value semantics.
 */
-class Atom {
+class Atom
+{
 public:
-
   /// Construct a default Atom of type None
   Atom();
 
@@ -25,17 +25,20 @@ public:
   /// ATOM with coomplex value real
   Atom(std::complex<double> value);
 
+  ///
+  //Atom(std::list<Atom> myList);
+
   /// Construct an Atom of type Symbol named value
-  Atom(const std::string & value);
-    
+  Atom(const std::string &value);
+
   /// Construct an Atom directly from a Token
-  Atom(const Token & token);
+  Atom(const Token &token);
 
   /// Copy-construct an Atom
-  Atom(const Atom & x);
+  Atom(const Atom &x);
 
   /// Assign an Atom
-  Atom & operator=(const Atom & x);
+  Atom &operator=(const Atom &x);
 
   /// Atom destructor
   ~Atom();
@@ -44,13 +47,15 @@ public:
   bool isNone() const noexcept;
 
   /// predicate to determine if an Atom is of type Number
-  bool isNumber() const  noexcept;
+  bool isNumber() const noexcept;
 
   /// predicate to determine if an Atom is of type complex
-  bool isComplex() const  noexcept;
+  bool isComplex() const noexcept;
 
   /// predicate to determine if an Atom is of type Symbol
   bool isSymbol() const noexcept;
+
+  bool isList() const noexcept;
 
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
@@ -62,18 +67,18 @@ public:
   std::string asSymbol() const noexcept;
 
   /// equality comparison based on type and value
-  bool operator==(const Atom & right) const noexcept;
+  bool operator==(const Atom &right) const noexcept;
 
 private:
-
   // internal enum of known types
-	enum Type {
-		NoneKind,
-		NumberKind,
-		ComplexKind,
-		SymbolKind,
-		ListKind,
-	};
+  enum Type
+  {
+    NoneKind,
+    NumberKind,
+    ComplexKind,
+    SymbolKind,
+    ListKind,
+  };
 
   // track the type
   Type m_type;
@@ -84,12 +89,11 @@ private:
     double m_numberValue;
     std::complex<double> m_complexValue;
     std::string m_stringValue;
-	//std::list<Atom> m_list;
-	
+    std::list<Atom> m_list;
   };
 
   // complex number member TO-DO: Rename m_complexValue through out for th member variable
- // std::complex<double> m_complexValue;
+  // std::complex<double> m_complexValue;
 
   // helper to set type and value of Number
   void setNumber(double value);
@@ -98,17 +102,18 @@ private:
   void setComplex(std::complex<double> value);
 
   // helper to set type and value of Symbol
-  void setSymbol(const std::string & value);
+  void setSymbol(const std::string &value);
+
+  //void setList(const std::list<Atom>& myList);
 
   // helper to set type and value of List
-  //void setList(const std::List<Atom> & value);
-
+  // void setList(const std::list<Atom> & value);
 };
 
 /// inequality comparison for Atom
-bool operator!=(const Atom &left, const Atom & right) noexcept;
+bool operator!=(const Atom &left, const Atom &right) noexcept;
 
 /// output stream rendering
-std::ostream & operator<<(std::ostream & out, const Atom & a);
+std::ostream &operator<<(std::ostream &out, const Atom &a);
 
 #endif

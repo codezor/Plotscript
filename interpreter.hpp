@@ -22,12 +22,12 @@ Interpreter has an Environment, which starts at a default.
 The parse method builds an internal AST.
 The eval method updates Environment and returns last result.
 */
-class Interpreter {
+class Interpreter
+{
 public:
-
   /*! Parse into an internal Expression from a stream
     \param expression the raw text stream repreenting the candidate expression
-    \return true on successful parsing 
+    \return true on successful parsing
    */
   bool parseStream(std::istream &expression) noexcept;
 
@@ -38,7 +38,6 @@ public:
   Expression evaluate();
 
 private:
-
   // the environment
   Environment env;
 

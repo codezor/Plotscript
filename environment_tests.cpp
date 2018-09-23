@@ -5,7 +5,8 @@
 
 #include <cmath>
 
-TEST_CASE( "Test default constructor", "[environment]" ) {
+TEST_CASE("Test default constructor", "[environment]")
+{
 
   Environment env;
 
@@ -43,18 +44,20 @@ TEST_CASE( "Test default constructor", "[environment]" ) {
   REQUIRE(!env.is_proc(Atom("op")));
 }
 
-TEST_CASE( "Test get expression", "[environment]" ) {
+TEST_CASE("Test get expression", "[environment]")
+{
   Environment env;
 
   INFO("Built-in constants should have correct value when interpreter starts");
 
   REQUIRE(env.get_exp(Atom("pi")) == Expression(std::atan2(0, -1)));
   REQUIRE(env.get_exp(Atom("e")) == Expression(std::exp(1)));
-  REQUIRE(env.get_exp(Atom("I")) == Expression(std::complex<double>(0.0,1.0)));
+  REQUIRE(env.get_exp(Atom("I")) == Expression(std::complex<double>(0.0, 1.0)));
   REQUIRE(env.get_exp(Atom("hi")) == Expression());
 }
 
-TEST_CASE( "Test add expression", "[environment]" ) {
+TEST_CASE("Test add expression", "[environment]")
+{
   Environment env;
 
   INFO("Retrieving a stored variable should give the original.");
@@ -76,7 +79,7 @@ TEST_CASE( "Test add expression", "[environment]" ) {
   }
 
   {
-    Expression a(Atom(std::complex<double>(1.0,2.0)));
+    Expression a(Atom(std::complex<double>(1.0, 2.0)));
     env.add_exp(Atom("onetwo"), a);
     REQUIRE(env.is_known(Atom("onetwo")));
     REQUIRE(env.is_exp(Atom("onetwo")));
@@ -86,7 +89,7 @@ TEST_CASE( "Test add expression", "[environment]" ) {
   {
     Atom s = Atom("s");
     Atom n = Atom(1.0);
-    Atom c = Atom(std::complex<double>(2.0,3.0));
+    Atom c = Atom(std::complex<double>(2.0, 3.0));
 
     INFO("Variable names should only be strings.");
 
@@ -104,7 +107,8 @@ TEST_CASE( "Test add expression", "[environment]" ) {
   }
 }
 
-TEST_CASE( "Test get built-in procedure", "[environment]" ) {
+TEST_CASE("Test get built-in procedure", "[environment]")
+{
   Environment env;
 
   INFO("Procedures that do not exist should return the default procedure.");
@@ -128,16 +132,17 @@ TEST_CASE( "Test get built-in procedure", "[environment]" ) {
     REQUIRE(padd(args) == Expression(std::complex<double>(4.0, 8.0)));
   }
 }
-TEST_CASE("Test add arg", "[environment]"){
+TEST_CASE("Test add arg", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
   //INFO("add no arguments")
   //{
-    //Procedure p = env.get_proc(Atom("+"));
-    //REQUIRE_THROWS_AS(p(args), SemanticError);
-    //args.emplace_back(std::complex<double>(3.0, 8.0));
-    //REQUIRE(p(args) == Expression(std::complex<double>(3.0, 8.0)));
+  //Procedure p = env.get_proc(Atom("+"));
+  //REQUIRE_THROWS_AS(p(args), SemanticError);
+  //args.emplace_back(std::complex<double>(3.0, 8.0));
+  //REQUIRE(p(args) == Expression(std::complex<double>(3.0, 8.0)));
   //}
   INFO("add procedure")
 
@@ -146,17 +151,17 @@ TEST_CASE("Test add arg", "[environment]"){
     args.emplace_back(std::complex<double>(3.0, 8.0));
     REQUIRE(p(args) == Expression(std::complex<double>(3.0, 8.0)));
   }
-
 }
 
-TEST_CASE("Test subneg mixed type", "[environment]"){
+TEST_CASE("Test subneg mixed type", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
   //INFO ("subneg procedure no arguments")
   //{
-    //Procedure p = env.get_proc(Atom("-"));
-    //REQUIRE_THROWS_AS(p(args), SemanticError);
+  //Procedure p = env.get_proc(Atom("-"));
+  //REQUIRE_THROWS_AS(p(args), SemanticError);
   //}
   INFO("subneg procedure doble complex")
 
@@ -168,7 +173,8 @@ TEST_CASE("Test subneg mixed type", "[environment]"){
   }
 }
 
-TEST_CASE("Test subneg complex double", "[environment]"){
+TEST_CASE("Test subneg complex double", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
@@ -180,7 +186,8 @@ TEST_CASE("Test subneg complex double", "[environment]"){
     REQUIRE(p(args) == Expression(std::complex<double>(2.0, 8.0)));
   }
 }
-TEST_CASE("Test subneg complex", "[environment]"){
+TEST_CASE("Test subneg complex", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   INFO("subneg procedure negitive complex")
@@ -196,7 +203,8 @@ TEST_CASE("Test subneg complex", "[environment]"){
     REQUIRE(p(args) == Expression(std::complex<double>(2.0, 6.0)));
   }
 }
-TEST_CASE("Test subneg double", "[environment]"){
+TEST_CASE("Test subneg double", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
@@ -205,14 +213,15 @@ TEST_CASE("Test subneg double", "[environment]"){
     REQUIRE(p(args) == Expression(7.0));
   }
 }
-TEST_CASE("Test mul double zero", "[environment]"){
+TEST_CASE("Test mul double zero", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
   //INFO ("mul procedure no arguments")
   //{
-    //Procedure p = env.get_proc(Atom("*"));
-    //REQUIRE_THROWS_AS(p(args), SemanticError);
+  //Procedure p = env.get_proc(Atom("*"));
+  //REQUIRE_THROWS_AS(p(args), SemanticError);
   //}
 
   INFO("mul procedure")
@@ -223,7 +232,8 @@ TEST_CASE("Test mul double zero", "[environment]"){
     REQUIRE(p(args) == Expression(0.0));
   }
 }
-TEST_CASE("Test mul double Idenity", "[environment]"){
+TEST_CASE("Test mul double Idenity", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
@@ -234,25 +244,27 @@ TEST_CASE("Test mul double Idenity", "[environment]"){
   }
 }
 
-TEST_CASE("Test mul double and Complex", "[environment]"){
+TEST_CASE("Test mul double and Complex", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   INFO("mul procedure");
   {
     Procedure p = env.get_proc(Atom("*"));
-    args.emplace_back(std::complex<double>(1.0,2.0));
+    args.emplace_back(std::complex<double>(1.0, 2.0));
     args.emplace_back(8.0);
-    REQUIRE(p(args) == Expression(std::complex<double>(8.0,16.0)));
+    REQUIRE(p(args) == Expression(std::complex<double>(8.0, 16.0)));
   }
 
   INFO("mul procedure multiply aditional complex number");
   {
     Procedure p = env.get_proc(Atom("*"));
-    args.emplace_back(std::complex<double>(1.0,2.0));
-    REQUIRE(p(args) == Expression(std::complex<double>(-24.0,32.0)));
+    args.emplace_back(std::complex<double>(1.0, 2.0));
+    REQUIRE(p(args) == Expression(std::complex<double>(-24.0, 32.0)));
   }
 }
-TEST_CASE("Test mul double negaitive", "[environment]"){
+TEST_CASE("Test mul double negaitive", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
@@ -262,11 +274,12 @@ TEST_CASE("Test mul double negaitive", "[environment]"){
     REQUIRE(p(args) == Expression(-6.0));
   }
 }
-TEST_CASE("Test div double zero", "[environment]"){
+TEST_CASE("Test div double zero", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("div procedure no arguments")
+  INFO("div procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("/"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -280,7 +293,8 @@ TEST_CASE("Test div double zero", "[environment]"){
     REQUIRE(p(args) == Expression(2.0));
   }
 }
-TEST_CASE("Test div double Idenity", "[environment]"){
+TEST_CASE("Test div double Idenity", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
@@ -291,42 +305,46 @@ TEST_CASE("Test div double Idenity", "[environment]"){
   }
 }
 
-TEST_CASE("Test div complex-complex", "[environment]"){
+TEST_CASE("Test div complex-complex", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
     Procedure p = env.get_proc(Atom("/"));
-    args.emplace_back(std::complex<double>(6.0,4.0));
-    args.emplace_back(std::complex<double>(2.0,2.0));
-    REQUIRE(p(args) == Expression(std::complex<double>(2.5,-0.5)));
+    args.emplace_back(std::complex<double>(6.0, 4.0));
+    args.emplace_back(std::complex<double>(2.0, 2.0));
+    REQUIRE(p(args) == Expression(std::complex<double>(2.5, -0.5)));
   }
 }
-TEST_CASE("Test div double-complex negitive", "[environment]"){
+TEST_CASE("Test div double-complex negitive", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
     Procedure p = env.get_proc(Atom("/"));
     args.emplace_back(-2.0);
-    args.emplace_back(std::complex<double>(0.5,1));
-    REQUIRE(p(args) == Expression(std::complex<double>(-0.8,1.6)));
+    args.emplace_back(std::complex<double>(0.5, 1));
+    REQUIRE(p(args) == Expression(std::complex<double>(-0.8, 1.6)));
   }
 }
-TEST_CASE("Test div complex-double negitive", "[environment]"){
+TEST_CASE("Test div complex-double negitive", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
     Procedure p = env.get_proc(Atom("/"));
-    args.emplace_back(std::complex<double>(4.0,1.0));
+    args.emplace_back(std::complex<double>(4.0, 1.0));
     args.emplace_back(-2.0);
-    REQUIRE(p(args) == Expression(std::complex<double>(-2.0,-0.5)));
+    REQUIRE(p(args) == Expression(std::complex<double>(-2.0, -0.5)));
   }
 }
 
-TEST_CASE("Test sqrt double", "[environment]"){
+TEST_CASE("Test sqrt double", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("sqrt procedure no arguments")
+  INFO("sqrt procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("sqrt"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -339,32 +357,34 @@ TEST_CASE("Test sqrt double", "[environment]"){
     REQUIRE(p(args) == Expression(2.0));
   }
 }
-TEST_CASE("Test sqrt double negitive", "[environment]"){
+TEST_CASE("Test sqrt double negitive", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
     Procedure p = env.get_proc(Atom("sqrt"));
     args.emplace_back(-4.0);
-    REQUIRE(p(args) == Expression(std::complex<double>(0.0,2.0)));
+    REQUIRE(p(args) == Expression(std::complex<double>(0.0, 2.0)));
   }
 }
-TEST_CASE("Test sqrt complex ", "[environment]"){
+TEST_CASE("Test sqrt complex ", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
   {
     Procedure p = env.get_proc(Atom("sqrt"));
     args.emplace_back(std::complex<double>(0.0, 2.0));
-    REQUIRE(p(args) == Expression(std::complex<double>(1.0,1.0)));
+    REQUIRE(p(args) == Expression(std::complex<double>(1.0, 1.0)));
   }
 }
-TEST_CASE("Test exp double double", "[environment]"){
+TEST_CASE("Test exp double double", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
-  INFO ("exp procedure no arguments")
+  INFO("exp procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("^"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
-
   }
 
   INFO("exp procedure");
@@ -375,50 +395,51 @@ TEST_CASE("Test exp double double", "[environment]"){
     REQUIRE(p(args) == Expression(16.0));
   }
 }
-TEST_CASE("Test exp complex complex", "[environment]"){
+TEST_CASE("Test exp complex complex", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
-
 
   INFO("exp procedure complex ");
   {
     Procedure p = env.get_proc(Atom("^"));
-    args.emplace_back(std::complex<double>(4.0,1.0));
-    args.emplace_back(std::complex<double>(4.0,1.0));
-    REQUIRE(p(args) == Expression(std::pow(std::complex<double>(4.0,1.0),std::complex<double>(4.0,1.0))));
+    args.emplace_back(std::complex<double>(4.0, 1.0));
+    args.emplace_back(std::complex<double>(4.0, 1.0));
+    REQUIRE(p(args) == Expression(std::pow(std::complex<double>(4.0, 1.0), std::complex<double>(4.0, 1.0))));
   }
 }
-TEST_CASE("Test exp complex double", "[environment]"){
+TEST_CASE("Test exp complex double", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
-
 
   INFO("exp procedure complex ");
   {
     Procedure p = env.get_proc(Atom("^"));
-    args.emplace_back(std::complex<double>(4.0,1.0));
+    args.emplace_back(std::complex<double>(4.0, 1.0));
     args.emplace_back(4.0);
-    REQUIRE(p(args) == Expression(std::pow(std::complex<double>(4.0,1.0),4.0)));
+    REQUIRE(p(args) == Expression(std::pow(std::complex<double>(4.0, 1.0), 4.0)));
   }
 }
-TEST_CASE("Test exp double-complex", "[environment]"){
+TEST_CASE("Test exp double-complex", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
-
 
   INFO("exp procedure complex ");
   {
     Procedure p = env.get_proc(Atom("^"));
     args.emplace_back(4.0);
-    args.emplace_back(std::complex<double>(4.0,1.0));
-    REQUIRE(p(args) == Expression(std::pow(4.0,std::complex<double>(4.0,1.0))));
+    args.emplace_back(std::complex<double>(4.0, 1.0));
+    REQUIRE(p(args) == Expression(std::pow(4.0, std::complex<double>(4.0, 1.0))));
   }
 }
-  TEST_CASE("Test ln", "[environment]"){
+TEST_CASE("Test ln", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("ln procedure no arguments")
+  INFO("ln procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("ln"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -429,14 +450,14 @@ TEST_CASE("Test exp double-complex", "[environment]"){
     Procedure p = env.get_proc(Atom("ln"));
     args.emplace_back(4.0);
     REQUIRE(p(args) == Expression(std::log(4.0)));
-
   }
 }
-TEST_CASE("Test sin", "[environment]"){
+TEST_CASE("Test sin", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("sin procedure no arguments")
+  INFO("sin procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("sin"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -447,15 +468,15 @@ TEST_CASE("Test sin", "[environment]"){
     Procedure p = env.get_proc(Atom("sin"));
     args.emplace_back(4.0);
     REQUIRE(p(args) == Expression(std::sin(4.0)));
-
   }
 }
 
-TEST_CASE("Test cos", "[environment]"){
+TEST_CASE("Test cos", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("cos procedure no arguments")
+  INFO("cos procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("cos"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -466,14 +487,14 @@ TEST_CASE("Test cos", "[environment]"){
     Procedure p = env.get_proc(Atom("cos"));
     args.emplace_back(4.0);
     REQUIRE(p(args) == Expression(std::cos(4.0)));
-
   }
 }
-TEST_CASE("Test tan", "[environment]"){
+TEST_CASE("Test tan", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("tan procedure no arguments")
+  INFO("tan procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("tan"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -483,15 +504,15 @@ TEST_CASE("Test tan", "[environment]"){
     Procedure p = env.get_proc(Atom("tan"));
     args.emplace_back(4.0);
     REQUIRE(p(args) == Expression(std::tan(4.0)));
-
   }
 }
 
-TEST_CASE("Test real", "[environment]"){
+TEST_CASE("Test real", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("real procedure no arguments")
+  INFO("real procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("real"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -500,16 +521,16 @@ TEST_CASE("Test real", "[environment]"){
   INFO("real procedure");
   {
     Procedure p = env.get_proc(Atom("real"));
-    args.emplace_back(std::complex<double>(4.0,2.0));
+    args.emplace_back(std::complex<double>(4.0, 2.0));
     REQUIRE(p(args) == Expression(4.0));
-
   }
 }
-TEST_CASE("Test imag", "[environment]"){
+TEST_CASE("Test imag", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("imag procedure no arguments")
+  INFO("imag procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("imag"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -518,15 +539,15 @@ TEST_CASE("Test imag", "[environment]"){
   INFO("imag procedure");
   {
     Procedure p = env.get_proc(Atom("imag"));
-    args.emplace_back(std::complex<double>(4.0,2.0));
+    args.emplace_back(std::complex<double>(4.0, 2.0));
     REQUIRE(p(args) == Expression(2.0));
-
   }
 }
-TEST_CASE("Test mag", "[environment]"){
+TEST_CASE("Test mag", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
-  INFO ("mag procedure no arguments")
+  INFO("mag procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("mag"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -535,16 +556,16 @@ TEST_CASE("Test mag", "[environment]"){
   INFO("mag procedure");
   {
     Procedure p = env.get_proc(Atom("mag"));
-    args.emplace_back(std::complex<double>(0.0,2.0));
+    args.emplace_back(std::complex<double>(0.0, 2.0));
     REQUIRE(p(args) == Expression(2.0));
-
   }
 }
-TEST_CASE("Test arg", "[environment]"){
+TEST_CASE("Test arg", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("arg procedure no arguments")
+  INFO("arg procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("arg"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -553,16 +574,16 @@ TEST_CASE("Test arg", "[environment]"){
   INFO("arg procedure");
   {
     Procedure p = env.get_proc(Atom("arg"));
-    args.emplace_back(std::complex<double>(4.0,2.0));
-    REQUIRE(p(args) == Expression(arg(std::complex<double>(4.0,2.0))));
-
+    args.emplace_back(std::complex<double>(4.0, 2.0));
+    REQUIRE(p(args) == Expression(arg(std::complex<double>(4.0, 2.0))));
   }
 }
-TEST_CASE("Test conj", "[environment]"){
+TEST_CASE("Test conj", "[environment]")
+{
   Environment env;
   std::vector<Expression> args;
 
-  INFO ("conj procedure no arguments")
+  INFO("conj procedure no arguments")
   {
     Procedure p = env.get_proc(Atom("conj"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
@@ -571,14 +592,13 @@ TEST_CASE("Test conj", "[environment]"){
   INFO("conj procedure");
   {
     Procedure p = env.get_proc(Atom("conj"));
-    args.emplace_back(std::complex<double>(4.0,2.0));
-    REQUIRE(p(args) == Expression(conj(std::complex<double>(4.0,2.0))));
-
+    args.emplace_back(std::complex<double>(4.0, 2.0));
+    REQUIRE(p(args) == Expression(conj(std::complex<double>(4.0, 2.0))));
   }
 }
 
-
-TEST_CASE( "Test reset", "[environment]" ) {
+TEST_CASE("Test reset", "[environment]")
+{
   Environment env;
 
   Expression a(Atom(1.0));
@@ -595,7 +615,8 @@ TEST_CASE( "Test reset", "[environment]" ) {
   REQUIRE(env.get_exp(Atom("hi")) == Expression());
 }
 
-TEST_CASE( "Test semeantic errors", "[environment]" ) {
+TEST_CASE("Test semeantic errors", "[environment]")
+{
 
   Environment env;
   std::vector<Expression> args;

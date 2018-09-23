@@ -10,7 +10,8 @@
 #include "environment.hpp"
 #include "semantic_error.hpp"
 
-bool Interpreter::parseStream(std::istream & expression) noexcept{
+bool Interpreter::parseStream(std::istream &expression) noexcept
+{
 
   TokenSequenceType tokens = tokenize(expression);
 
@@ -18,9 +19,9 @@ bool Interpreter::parseStream(std::istream & expression) noexcept{
 
   return (ast != Expression());
 };
-				     
 
-Expression Interpreter::evaluate(){
+Expression Interpreter::evaluate()
+{
 
   return ast.eval(env);
 }

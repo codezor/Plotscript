@@ -2,7 +2,8 @@
 
 #include "token.hpp"
 
-TEST_CASE( "Test Token creation", "[token]" ) {
+TEST_CASE("Test Token creation", "[token]")
+{
 
   Token tko(Token::OPEN);
 
@@ -20,7 +21,8 @@ TEST_CASE( "Test Token creation", "[token]" ) {
   REQUIRE(tks.asString() == "thevalue");
 }
 
-TEST_CASE( "Test tokenize", "[token]" ) {
+TEST_CASE("Test tokenize", "[token]")
+{
   std::string input = R"(
 ( A a aa )aal ; a comment
 
@@ -33,7 +35,7 @@ TEST_CASE( "Test tokenize", "[token]" ) {
 
   REQUIRE(tokens.front().type() == Token::OPEN);
   tokens.pop_front();
-  
+
   REQUIRE(tokens.front().type() == Token::STRING);
   REQUIRE(tokens.front().asString() == "A");
   tokens.pop_front();
@@ -72,4 +74,3 @@ TEST_CASE( "Test tokenize", "[token]" ) {
 
   REQUIRE(tokens.empty());
 }
-

@@ -522,17 +522,20 @@ Expression rest(const std::vector<Expression> &args)
 	auto begin = list.tailConstBegin();
 	auto end = list.tailConstEnd();
 	std::list<Expression>whole(begin, end);
-	if (begin!= end)
+	
+	if ((list.head().asSymbol() != ""))
+	{
+		throw SemanticError("Error: not a list");
+
+	}
+	else 
 	{
 		++ begin;
 		std::list<Expression>rest(begin, end);
 		//std::list<Expression>rest =whol
 		return Expression(rest);
 	}
-	else
-	{
-		throw SemanticError("Error: argument to rest is an empty list");
-	}
+	
 	
 	
 };
@@ -549,15 +552,21 @@ Expression length(const std::vector<Expression> &args)
 	auto end = list.tailConstEnd();
 	//std::list<Expression>length(list.tailConstBegin(), list.tailConstEnd());
 	
-	if (begin != end)
+	if ((list.head().asSymbol() != ""))
 	{
+		throw SemanticError("Error: not a list");
 	   
+	}
+	else if (begin == end) {
 		std::list<Expression>length(begin, end);
 		return Expression(length.size());
 	}
 	else
 	{
-		throw SemanticError("Error: not a list");
+
+		std::list<Expression>length(begin, end);
+		return Expression(length.size());
+		
 	}
 
 	//return Expression(length.size());
@@ -576,20 +585,20 @@ Expression append(const std::vector<Expression> &args)
 	auto end = listy.tailConstEnd();
 	Expression arg_add = args[1];
 	require_numeric(arg_add, "append");
-	if (begin != end){
+	if ((listy.head().asSymbol() != ""))
+	{
+		throw SemanticError("Error: not a list");
 
-		std::list<Expression>og_list(begin, end);
-		//std::list<Expression>frontList =
-		Expression y = list(std::vector<Expression> {arg_add});
-		std::list<Expression>frontList = og_list;
-			
-		frontList.emplace_back(y);
-		return Expression(frontList);
-		
 	}
 	else
 	{
-		throw SemanticError("Error: not a list");
+		std::list<Expression>og_list(begin, end);
+		//std::list<Expression>frontList =
+		//Expression y = list(std::vector<Expression> {arg_add});
+		std::list<Expression>frontList = og_list;//.emplace_back(arg_add);
+		frontList.emplace_back(arg_add);
+		return Expression(frontList);
+		
 	}	
 };
 
@@ -607,7 +616,8 @@ Expression join(const std::vector<Expression> &args)
 	auto end2 = list2.tailConstEnd();
 	std::list<Expression>frontList(begin1, end1);
 	std::list<Expression>backList(begin2, end2);
-	if (begin1 == end1 || begin2 == end2 )
+	
+	if ((list1.head().asSymbol() != "") || (list2.head().asSymbol() != ""))
 	{
 		throw SemanticError("Error: argument to join not a list");
 	}

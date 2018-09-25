@@ -11,6 +11,7 @@ Expression::Expression(const Atom &a)
 {
 
   m_head = a;
+ 
 }
 
 // recursive copy
@@ -29,11 +30,16 @@ Expression::Expression(const std::list<Expression> &es)
 {
 	
 	m_head = Atom("");
-	m_tail.clear();
+	//m_head.setList();
+	m_isList = true;
+	
+	//m_tail.clear();
 	for (auto e : es) {
 		m_tail.emplace_back(e);
+		
+		m_isList = true;
 	}
-	//es.head()
+	Atom(m_tail);
 }
 
 
@@ -80,6 +86,15 @@ bool Expression::isHeadSymbol() const noexcept
   return m_head.isSymbol();
 }
 
+bool Expression::isHeadList() const noexcept
+{
+	return m_head.isList();
+}
+
+bool Expression::isList() const noexcept
+{
+	return m_isList;
+}
 
 void Expression::append(const Atom &a)
 {
@@ -129,19 +144,25 @@ Expression apply(const Atom &op, const std::vector<Expression> &args, const Envi
   // call proc with args
   return proc(args);
 }
-#include <iostream>
+//#include <iostream>
 Expression Expression::handle_lookup(const Atom &head, const Environment &env)
 {
+	
   if (head.isSymbol())
-  { // if symbol is in env return value
-    if (env.is_exp(head))
-    {
-      return env.get_exp(head);
-    }
-    else
-    {
-      throw SemanticError("Error during evaluation: unknown symbol");
-    }
+  { 
+	  if (env.is_exp(head))
+	  {
+		  // LIST SHOULD NEVER GET HERE
+		  Expression e = env.get_exp(head);
+		  
+			  return e;
+		  
+		
+	  }
+	  else
+	  {
+		  throw SemanticError("Error during evaluation: unknown symbol");
+	  }
   }
   else if (head.isNumber())
   {
@@ -150,7 +171,7 @@ Expression Expression::handle_lookup(const Atom &head, const Environment &env)
   else if (head.isComplex())
   {
     return Expression(head);
-  }
+  }  
   else
   {
     throw SemanticError("Error during evaluation: Invalid type in terminal expression");
@@ -222,7 +243,7 @@ Expression Expression::handle_define(Environment &env)
 Expression Expression::eval(Environment &env)
 {
 
-  if (m_tail.empty())
+  if (m_tail.empty() && m_head.asSymbol() != "list")
   {
     return handle_lookup(m_head, env);
   }
@@ -239,6 +260,7 @@ Expression Expression::eval(Environment &env)
   // else attempt to treat as procedure
   else
   {
+	  
     std::vector<Expression> results;
     for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it)
     {

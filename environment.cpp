@@ -483,8 +483,9 @@ Expression conj(const std::vector<Expression> &args)
 };
 Expression list(const std::vector<Expression> &args)
 {
+	
 	std::list<Expression> m_list(args.begin(),args.end());
-
+	//bool isList = true;
 	return Expression(m_list);
 };
 
@@ -516,26 +517,29 @@ Expression rest(const std::vector<Expression> &args)
 	{
 		throw SemanticError("Error in call to rest: invalid number of arguments.");
 	}
-	Expression list = args.front();
-	//std::list<Expression> m_list(*args.begin(), *args.end());
-	//std::list<Expression> rest;// = Expression(*m_list);
-	auto begin = list.tailConstBegin();
-	auto end = list.tailConstEnd();
-	std::list<Expression>whole(begin, end);
 	
-	if ((list.head().asSymbol() != ""))
+	Expression lists = args.front();	
+	auto begin = lists.tailConstBegin();
+	auto end = lists.tailConstEnd();	
+	if ( begin != end)
 	{
-		throw SemanticError("Error: not a list");
+		
+		begin++;
+			std::list<Expression>rests(begin, end);
+			//std::list<Expression>rest =whol
+			return lists = Expression(rests);
+		
+		
+	}
 
-	}
-	else 
+	else if (args[0].isHeadSymbol())
 	{
-		++ begin;
-		std::list<Expression>rest(begin, end);
-		//std::list<Expression>rest =whol
-		return Expression(rest);
+		throw SemanticError("Error: argument to rest is an empty list");
 	}
-	
+	else
+	{
+		throw SemanticError("Error: argument to rest is not a list");
+	}
 	
 	
 };
@@ -551,22 +555,23 @@ Expression length(const std::vector<Expression> &args)
 	auto begin = list.tailConstBegin();
 	auto end = list.tailConstEnd();
 	//std::list<Expression>length(list.tailConstBegin(), list.tailConstEnd());
-	
-	if ((list.head().asSymbol() != ""))
+
+	if (begin != end)
 	{
-		throw SemanticError("Error: not a list");
 	   
-	}
-	else if (begin == end) {
 		std::list<Expression>length(begin, end);
 		return Expression(length.size());
 	}
-	else
-	{
+	else if (args[0].isHeadSymbol())	{
+
 
 		std::list<Expression>length(begin, end);
 		return Expression(length.size());
-		
+
+	}
+	else
+	{
+		throw SemanticError("Error: not a list");
 	}
 
 	//return Expression(length.size());
@@ -584,22 +589,18 @@ Expression append(const std::vector<Expression> &args)
 	auto begin = listy.tailConstBegin();
 	auto end = listy.tailConstEnd();
 	Expression arg_add = args[1];
-	require_numeric(arg_add, "append");
-	if ((listy.head().asSymbol() != ""))
+	//require_numeric(arg_add, "append");
+	
+	if (!args[0].isHeadSymbol())
 	{
 		throw SemanticError("Error: not a list");
-
-	}
-	else
-	{
-		std::list<Expression>og_list(begin, end);
-		//std::list<Expression>frontList =
-		//Expression y = list(std::vector<Expression> {arg_add});
-		std::list<Expression>frontList = og_list;//.emplace_back(arg_add);
-		frontList.emplace_back(arg_add);
-		return Expression(frontList);
-		
 	}	
+	std::list<Expression>og_list(begin, end);
+
+	std::list<Expression>frontList = og_list;
+
+	frontList.emplace_back(arg_add);
+	return Expression(frontList);
 };
 
 Expression join(const std::vector<Expression> &args)
@@ -616,8 +617,7 @@ Expression join(const std::vector<Expression> &args)
 	auto end2 = list2.tailConstEnd();
 	std::list<Expression>frontList(begin1, end1);
 	std::list<Expression>backList(begin2, end2);
-	
-	if ((list1.head().asSymbol() != "") || (list2.head().asSymbol() != ""))
+	if (!args[0].isHeadSymbol() || !args[1].isHeadSymbol())
 	{
 		throw SemanticError("Error: argument to join not a list");
 	}
@@ -683,6 +683,7 @@ bool Environment::is_exp(const Atom &sym) const
 		return false;
 
 	auto result = envmap.find(sym.asSymbol());
+
 	return (result != envmap.end()) && ((result->first == "list") || (result->second.type == ExpressionType));
 }
 
@@ -697,6 +698,10 @@ Expression Environment::get_exp(const Atom &sym) const
 		if ((result != envmap.end()) && (result->second.type == ExpressionType))
 		{
 			exp = result->second.exp;
+		}
+		else if (((result != envmap.end()) && (sym.asSymbol() == "list")) || sym.isList()) 
+		{
+			exp = Expression(std::list<Expression>());
 		}
 	}
 	return exp;

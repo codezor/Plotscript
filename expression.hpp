@@ -36,9 +36,7 @@ public:
   /// deep-copy construct an expression (recursive)
   Expression(const Expression &a);
 
-
-  //list
-  
+    
   //Expression(const std::vector<Expression> &es);
   Expression(const std::list<Expression> &es);
 
@@ -74,13 +72,17 @@ public:
   bool isHeadSymbol() const noexcept;
   
   // create a islist operator?
-
+  bool isHeadList() const noexcept;
+  
+  //
+  bool isList() const noexcept;
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment &env);
 
   /// equality comparison for two expressions (recursive)
   bool operator==(const Expression &exp) const noexcept;
 
+  
 private:
   // the head of the expression
   Atom m_head;
@@ -96,6 +98,9 @@ private:
   Expression handle_lookup(const Atom &head, const Environment &env);
   Expression handle_define(Environment &env);
   Expression handle_begin(Environment &env);
+  
+  //list
+  bool m_isList = false;
 };
 
 /// Render expression to output stream

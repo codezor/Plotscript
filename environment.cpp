@@ -699,7 +699,7 @@ Expression Environment::get_exp(const Atom &sym) const
 		{
 			exp = result->second.exp;
 		}
-		else if (((result != envmap.end()) && (sym.asSymbol() == "list")) || sym.isList()) 
+		else if (((result != envmap.end()) && (sym.asSymbol() == "list"))) 
 		{
 			exp = Expression(std::list<Expression>());
 		}

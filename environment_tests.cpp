@@ -41,7 +41,17 @@ TEST_CASE("Test default constructor", "[environment]")
   REQUIRE(env.is_proc(Atom("mag")));
   REQUIRE(env.is_proc(Atom("arg")));
   REQUIRE(env.is_proc(Atom("conj")));
+  REQUIRE(env.is_proc(Atom("list")));
+  REQUIRE(env.is_proc(Atom("first")));
+  REQUIRE(env.is_proc(Atom("rest")));
+  REQUIRE(env.is_proc(Atom("length")));
+  REQUIRE(env.is_proc(Atom("append")));
+  REQUIRE(env.is_proc(Atom("join")));
+  REQUIRE(env.is_proc(Atom("range")));
+  REQUIRE(env.is_proc(Atom("range")));
+
   REQUIRE(!env.is_proc(Atom("op")));
+
 }
 
 TEST_CASE("Test get expression", "[environment]")
@@ -595,6 +605,29 @@ TEST_CASE("Test conj", "[environment]")
     args.emplace_back(std::complex<double>(4.0, 2.0));
     REQUIRE(p(args) == Expression(conj(std::complex<double>(4.0, 2.0))));
   }
+}
+
+TEST_CASE("Test List", "[environment]")
+{
+	Environment env;
+	
+	std::vector<Expression> args;
+	INFO("List procedure no arguments")
+	{
+		Procedure p = env.get_proc(Atom("list"));
+		//args.emplace_back(4.0);
+		REQUIRE(p(args) == Expression());
+	}
+
+	INFO("List procedure one arguments")
+	{
+		Procedure p = env.get_proc(Atom("list"));
+		args.emplace_back(4.0);
+		REQUIRE(p(args) == Expression((4)));
+	}
+
+	
+	
 }
 
 TEST_CASE("Test reset", "[environment]")

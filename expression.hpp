@@ -72,10 +72,10 @@ public:
   bool isHeadSymbol() const noexcept;
   
   // create a islist operator?
-  bool isHeadList() const noexcept;
+  //bool isHeadList() const noexcept;
   
   //
-  bool isList() const noexcept;
+  //bool isList() const noexcept;
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment &env);
 

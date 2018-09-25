@@ -9,10 +9,10 @@ Atom::Atom()
     : m_type(NoneKind)
 {
 }
-void Atom::setList()
-{
-	m_type = ListKind;
-}
+//void Atom::setList()
+//{
+	//m_type = ListKind;
+//}
 
 Atom::Atom(double value)
 {
@@ -25,10 +25,10 @@ Atom::Atom(std::complex<double> value)
 
   setComplex(value);
 }
-Atom::Atom(std::list<Atom> myList) {
+//Atom::Atom(std::list<Atom> myList) {
 
- buildList(myList);
-}
+ //buildList(myList);
+//}
 
 Atom::Atom(const Token &token) : Atom()
 {
@@ -135,10 +135,10 @@ bool Atom::isSymbol() const noexcept
   return m_type == SymbolKind;
 }
 
-bool Atom::isList() const noexcept
-{
-	return m_type == ListKind;
-}
+//bool Atom::isList() const noexcept
+//{
+	//return m_type == ListKind;
+//}
 
 void Atom::setNumber(double value)
 {
@@ -169,11 +169,11 @@ void Atom::setSymbol(const std::string &value)
   new (&m_stringValue) std::string(value);
 }
 
-void Atom::buildList(const std::list<Atom>& myList)
-{
-	m_type = ListKind;
-    m_list.emplace_back(myList);
-}
+//void Atom::buildList(const std::list<Atom>& myList)
+//{
+	//m_type = ListKind;
+   // m_list.emplace_back(myList);
+//}
 
 double Atom::asNumber() const noexcept
 {

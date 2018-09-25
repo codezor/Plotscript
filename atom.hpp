@@ -26,7 +26,7 @@ public:
   Atom(std::complex<double> value);
 
   ///
-  Atom(std::list<Atom> myList);
+  //Atom(std::list<Atom> myList);
 
   /// Construct an Atom of type Symbol named value
   Atom(const std::string &value);
@@ -56,10 +56,10 @@ public:
   /// predicate to determine if an Atom is of type Symbol
   bool isSymbol() const noexcept;
 
-  bool isList() const noexcept;
+  //bool isList() const noexcept;
   
   // helper to set type and value of List
-  void setList();
+  //void setList();
 
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
@@ -108,7 +108,7 @@ private:
   // helper to set type and value of Symbol
   void setSymbol(const std::string &value);
 
-  void buildList(const std::list<Atom>& myList);
+  //void buildList(const std::list<Atom>& myList);
 
   
 };

@@ -31,7 +31,7 @@ Expression::Expression(const std::list<Expression> &es)
 	
 	m_head = Atom("");
 	//m_head.setList();
-	m_isList = true;
+	//m_isList = true;
 	
 	//m_tail.clear();
 	for (auto e : es) {
@@ -39,7 +39,7 @@ Expression::Expression(const std::list<Expression> &es)
 		
 		m_isList = true;
 	}
-	Atom(m_tail);
+	//Atom(m_tail);
 }
 
 
@@ -86,15 +86,15 @@ bool Expression::isHeadSymbol() const noexcept
   return m_head.isSymbol();
 }
 
-bool Expression::isHeadList() const noexcept
-{
-	return m_head.isList();
-}
+//bool Expression::isHeadList() const noexcept
+//{
+	//return m_head.isList();
+//}
 
-bool Expression::isList() const noexcept
-{
-	return m_isList;
-}
+//bool Expression::isList() const noexcept
+//{
+	//return m_isList;
+//}
 
 void Expression::append(const Atom &a)
 {

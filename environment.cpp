@@ -560,13 +560,15 @@ Expression length(const std::vector<Expression> &args)
 	{
 	   
 		std::list<Expression>length(begin, end);
-		return Expression(length.size());
+		double result = double(length.size());
+		return Expression(result);
 	}
 	else if (args[0].isHeadSymbol())	{
 
 
 		std::list<Expression>length(begin, end);
-		return Expression(length.size());
+		double result = double(length.size());
+		return Expression(result);
 
 	}
 	else

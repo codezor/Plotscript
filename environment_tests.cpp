@@ -607,26 +607,61 @@ TEST_CASE("Test conj", "[environment]")
   }
 }
 
-TEST_CASE("Test List", "[environment]")
+TEST_CASE("Test Empty List", "[environment]")
 {
 	Environment env;
-	
+
 	std::vector<Expression> args;
-	INFO("List procedure no arguments")
+	INFO("List procedure with empty List")
 	{
 		Procedure p = env.get_proc(Atom("list"));
-		//args.emplace_back(4.0);
-		REQUIRE(p(args) == Expression());
+		//args.emplace_back("list");
+		CHECK(p(args) == Expression(std::list<Expression>()));
 	}
 
-	INFO("List procedure one arguments")
+	INFO("First Procedure with empthy list")
+	{
+		Procedure p = env.get_proc(Atom("first"));
+		args.emplace_back(std::list<Expression>());
+		REQUIRE_THROWS_AS(p(args), SemanticError);
+	}
+	INFO("Rest procedure empty list")
+	{
+		Procedure p = env.get_proc(Atom("rest"));
+		REQUIRE_THROWS_AS(p(args), SemanticError);
+	}
+	INFO("Length procedure empty list")
+	{
+		Procedure p = env.get_proc(Atom("length"));
+		REQUIRE(p(args) == Expression(0));
+	}
+}
+TEST_CASE("Test List One arg", "[environment]")
+{
+	Environment env;
+
+	std::vector<Expression> args;
+	INFO("List procedure with one list item")
 	{
 		Procedure p = env.get_proc(Atom("list"));
-		args.emplace_back(4.0);
+		args.emplace_back(4);
 		REQUIRE(p(args) == Expression((4)));
 	}
-
-	
+	INFO("First procedure with one list item")
+	{
+		Procedure p = env.get_proc(Atom("first"));
+		REQUIRE(p(args) == Expression(4));
+	}
+	INFO("rest procedure with one list item")
+	{
+		Procedure p = env.get_proc(Atom("rest"));
+		REQUIRE_THROWS_AS(p(args), SemanticError);
+	}
+	INFO("length procedure with one list item")
+	{
+		Procedure p = env.get_proc(Atom("length"));
+		REQUIRE(p(args) == Expression(1));
+	}
 	
 }
 

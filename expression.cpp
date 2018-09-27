@@ -1,7 +1,7 @@
 #include "expression.hpp"
 
 #include <sstream>
-
+#include <utility>
 #include "environment.hpp"
 #include "semantic_error.hpp"
 
@@ -155,8 +155,7 @@ Expression Expression::handle_lookup(const Atom &head, const Environment &env)
 		  // LIST SHOULD NEVER GET HERE
 		  Expression e = env.get_exp(head);
 		  
-			  return e;
-		  
+			  return e;  
 		
 	  }
 	  else
@@ -237,6 +236,58 @@ Expression Expression::handle_define(Environment &env)
   return result;
 }
 
+Expression Expression::handle_lambda(Environment &env)
+{
+	// tail must have size 2 or error
+	if (m_tail.size() != 2)
+	{
+		throw SemanticError("Error during evaluation: invalid number of arguments to define");
+	}
+
+	// tail[0] must be symbol
+	if (!m_tail[0].isHeadSymbol())
+	{
+		throw SemanticError("Error during evaluation: first argument to define not symbol");
+	}
+
+	// but tail[0] must not be a special-form or procedure
+	std::string s = m_tail[0].head().asSymbol();
+	if ((s == "define") || (s == "begin"))
+	{
+		throw SemanticError("Error during evaluation: attempt to redefine a special-form");
+	}
+	Expression Parameters;
+	//Parameters.emplace_back(m_tail[0].head());
+	//Expression result;
+	//Parameters.emplace_back(m_tail[0].tailConstBegin)
+	//Parameters.push_front = Atom("");
+	//for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it)
+	//{
+	//Parameter = Atom("");
+
+	Parameters.m_tail.emplace_back(m_tail.front().head());
+	Parameters.m_tail.emplace_back(m_tail.front().m_tail[0]);
+	//}
+	//Parameters.m_tail.emplace_back(m_tail[1]);
+	//Parameters.m_head = Atom("");
+	//Parameters.m_tail.emplace_back( m_tail[0]);
+	Expression second;
+	//second.head() = m_tail[1].head();
+	//for (Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].tailConstEnd(); ++it)
+	//{
+		//second.m_tail.emplace_back(*it);
+	//}
+	//second.m_tail.emplace_back(m_tail[1].m_tail);
+
+	second =m_tail[1];
+	//std::Expression result;
+	std::list<Expression>result;
+	result.push_back(Parameters);
+	result.push_back(second);
+		//={ Parameters, second };
+	return Expression(result);
+}
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
@@ -257,6 +308,11 @@ Expression Expression::eval(Environment &env)
   {
     return handle_define(env);
   }
+  //handle lamda special-form 
+  else if (m_head.isSymbol() && m_head.asSymbol() == "lambda")
+  {
+	  return handle_lambda(env);
+  }
   // else attempt to treat as procedure
   else
   {
@@ -274,16 +330,18 @@ std::ostream &operator<<(std::ostream &out, const Expression &exp)
 {
 
   out << "(";
-  out << exp.head();
-
-  for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd();)
+  out << exp.head();// << " ";
+  
+  for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd();++e)
   {
-    out << *e;
-    ++e;
-    if (e != exp.tailConstEnd())
+   //out << *e;
+    //++e;
+	  
+    if (e != exp.tailConstBegin() || (exp.isHeadSymbol() && exp.head().asSymbol()!=""))
     {
       out << " ";
     }
+	out << *e;
   }
 
   out << ")";

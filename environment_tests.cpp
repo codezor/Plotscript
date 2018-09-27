@@ -645,7 +645,7 @@ TEST_CASE("Test List One arg", "[environment]")
 	{
 		Procedure p = env.get_proc(Atom("list"));
 		args.emplace_back(4);
-		REQUIRE(p(args) == Expression((4)));
+		REQUIRE(p(args) == std::list<Expression>(4));
 	}
 	INFO("First procedure with one list item")
 	{

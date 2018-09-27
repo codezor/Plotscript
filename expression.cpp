@@ -13,6 +13,9 @@ Expression::Expression(const Atom &a)
   m_head = a;
  
 }
+Expression::Expression(const std::list<Atom> &a) {
+	m_head = Atom(a);
+}
 
 // recursive copy
 Expression::Expression(const Expression &a)
@@ -24,6 +27,7 @@ Expression::Expression(const Expression &a)
     m_tail.push_back(e);
   }
 }
+
 
 //Expression::Expression(const std::vector<Expression> &es)
 Expression::Expression(const std::list<Expression> &es)
@@ -251,11 +255,11 @@ Expression Expression::handle_lambda(Environment &env)
 	}
 
 	// but tail[0] must not be a special-form or procedure
-	std::string s = m_tail[0].head().asSymbol();
-	if ((s == "define") || (s == "begin"))
-	{
-		throw SemanticError("Error during evaluation: attempt to redefine a special-form");
-	}
+	//std::string s = m_tail[0].head().asSymbol();
+	//if ((s == "define") || (s == "begin"))
+	//{
+		//throw SemanticError("Error during evaluation: attempt to redefine a special-form");
+	//}
 	Expression Parameters;
 	//Parameters.emplace_back(m_tail[0].head());
 	//Expression result;
@@ -280,12 +284,18 @@ Expression Expression::handle_lambda(Environment &env)
 	//second.m_tail.emplace_back(m_tail[1].m_tail);
 
 	second =m_tail[1];
+	second.m_tail.front();
 	//std::Expression result;
 	std::list<Expression>result;
 	result.push_back(Parameters);
 	result.push_back(second);
+	//Expression results =m_tail[1].eval(env);
+	env.add_exp(m_tail[0].head(), m_tail[1].m_tail.front());
+	//env.add_exp(m_tail[0].m_tail.front(), m_tail[1].m_tail.back());
 		//={ Parameters, second };
 	return Expression(result);
+
+
 }
 
 // this is a simple recursive version. the iterative version is more

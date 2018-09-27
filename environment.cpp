@@ -489,6 +489,14 @@ Expression list(const std::vector<Expression> &args)
 	return Expression(m_list);
 };
 
+/*Expression alist(const std::vector<Expression> &args)
+{
+
+	//std::list<Atom>am_list(args.begin(), args.end());
+	//bool isList = true;
+	return Expression(Atom(std::list<Atom>(args.begin(),args.end())));
+};*/
+
 Expression first(const std::vector<Expression> &args) {
 	if (!nargs_equal(args, 1))
 	{
@@ -835,5 +843,8 @@ void Environment::reset()
 	
 	// Procedure range
 	envmap.emplace("range", EnvResult(ProcedureType, range));
+
+	// Procedure: list;
+	//envmap.emplace("alist", EnvResult(ProcedureType, alist));
 
 }

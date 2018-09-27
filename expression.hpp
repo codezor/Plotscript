@@ -39,7 +39,7 @@ public:
     
   //Expression(const std::vector<Expression> &es);
   Expression(const std::list<Expression> &es);
-
+  Expression(const std::list<Atom>& es);
 
   /// deep-copy assign an expression  (recursive)
   Expression &operator=(const Expression &a);

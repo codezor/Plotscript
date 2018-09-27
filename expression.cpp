@@ -4,7 +4,7 @@
 #include <utility>
 #include "environment.hpp"
 #include "semantic_error.hpp"
-
+#include <iostream>
 Expression::Expression() {}
 
 Expression::Expression(const Atom &a)
@@ -28,7 +28,7 @@ Expression::Expression(const Expression &a)
 
 
 //Expression::Expression(const std::vector<Expression> &es)
-Expression::Expression(const std::list<Expression> &es)
+Expression::Expression(const std::vector<Expression> &es)
 {
 	
 	m_head = Atom("");
@@ -88,15 +88,6 @@ bool Expression::isHeadSymbol() const noexcept
   return m_head.isSymbol();
 }
 
-//bool Expression::isHeadList() const noexcept
-//{
-	//return m_head.isList();
-//}
-
-//bool Expression::isList() const noexcept
-//{
-	//return m_isList;
-//}
 
 void Expression::append(const Atom &a)
 {
@@ -240,6 +231,8 @@ Expression Expression::handle_define(Environment &env)
 
 Expression Expression::handle_lambda(Environment &env)
 {
+    auto print = m_tail;
+   //std::cout << print.front()<<print.back()<<std::endl;
 	// tail must have size 2 or error
 	if (m_tail.size() != 2)
 	{
@@ -259,41 +252,30 @@ Expression Expression::handle_lambda(Environment &env)
 		throw SemanticError("Error during evaluation: attempt to redefine a special-form");
 	}
 	Expression Parameters;
-	//Parameters.emplace_back(m_tail[0].head());
-	//Expression result;
-	//Parameters.emplace_back(m_tail[0].tailConstBegin)
-	//Parameters.push_front = Atom("");
-	//for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it)
-	//{
-	//Parameter = Atom("");
+
 
 	Parameters.m_tail.emplace_back(m_tail.front().head());
     for (auto it = m_tail[0].m_tail.cbegin(); it != m_tail[0].m_tail.cend(); ++it)
     {
         Parameters.m_tail.emplace_back(*it);
     }
-	
+    //std::cout << Parameters  << std::endl;
     Expression second;
-	//second.head() = m_tail[1].head();
-	//for (Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].tailConstEnd(); ++it)
-	//{
-		//second.m_tail.emplace_back(*it);
-	//}
-	//second.m_tail.emplace_back(m_tail[1].m_tail);
+	second =m_tail.back();
+	
+    //std::cout <<second << std::endl;
 
-	second =m_tail[1];
-	second.m_tail.front();
-	//std::Expression result;
-	std::list<Expression>result;
+	std::vector<Expression>result;
 	result.push_back(Parameters);
 	result.push_back(second);
     
     //env.add_exp(Parameters.m_tail[0], second.m_tail.front());
-    env.add_exp(m_tail[0].head(), m_tail[1].m_tail.front());
-    Expression results = second.eval(env);
+    //env.add_exp(m_tail[0].head(), m_tail[1].m_tail.front());
+    //Expression results = second.eval(env);
 	//env.add_exp(m_tail[0].m_tail.front(), m_tail[1].m_tail.back());
-		
-	return Expression(results);
+   
+    //Procedure prod = env.get_proc(m_tail[1].head());
+	return Expression(result);
 
 
 }

@@ -24,10 +24,7 @@ public:
 
   /// ATOM with coomplex value real
   Atom(std::complex<double> value);
-
-  ///
-  Atom(std::list<Atom> myList);
-
+  
   /// Construct an Atom of type Symbol named value
   Atom(const std::string &value);
 
@@ -54,12 +51,7 @@ public:
   bool isComplex() const noexcept;
 
   /// predicate to determine if an Atom is of type Symbol
-  bool isSymbol() const noexcept;
-
-  bool isList() const noexcept;
-  
-  // helper to set type and value of List
-  //void setList();
+  bool isSymbol() const noexcept;  
 
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
@@ -70,7 +62,7 @@ public:
   /// value of Atom as a number, returns empty-string if not a Symbol
   std::string asSymbol() const noexcept;
 
-  std::list<Atom>asList()const noexcept;
+ // std::list<Atom>asList()const noexcept;
 
   /// equality comparison based on type and value
   bool operator==(const Atom &right) const noexcept;
@@ -83,7 +75,7 @@ private:
     NumberKind,
     ComplexKind,
     SymbolKind,
-    ListKind,
+
   };
 
   // track the type
@@ -95,7 +87,7 @@ private:
     double m_numberValue;
     std::complex<double> m_complexValue;
     std::string m_stringValue;
-    std::list<Atom> m_list;
+
   };
 
   // helper to set type and value of Number
@@ -106,10 +98,7 @@ private:
 
   // helper to set type and value of Symbol
   void setSymbol(const std::string &value);
-
-  void setList(const std::list<Atom> & value);
-
-  
+   
 };
 
 /// inequality comparison for Atom

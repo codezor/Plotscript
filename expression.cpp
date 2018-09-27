@@ -13,9 +13,7 @@ Expression::Expression(const Atom &a)
   m_head = a;
  
 }
-Expression::Expression(const std::list<Atom> &a) {
-	m_head = Atom(a);
-}
+
 
 // recursive copy
 Expression::Expression(const Expression &a)
@@ -255,11 +253,11 @@ Expression Expression::handle_lambda(Environment &env)
 	}
 
 	// but tail[0] must not be a special-form or procedure
-	//std::string s = m_tail[0].head().asSymbol();
-	//if ((s == "define") || (s == "begin"))
-	//{
-		//throw SemanticError("Error during evaluation: attempt to redefine a special-form");
-	//}
+	std::string s = m_tail[0].head().asSymbol();
+	if ((s == "define") || (s == "begin"))
+	{
+		throw SemanticError("Error during evaluation: attempt to redefine a special-form");
+	}
 	Expression Parameters;
 	//Parameters.emplace_back(m_tail[0].head());
 	//Expression result;
@@ -270,12 +268,12 @@ Expression Expression::handle_lambda(Environment &env)
 	//Parameter = Atom("");
 
 	Parameters.m_tail.emplace_back(m_tail.front().head());
-	Parameters.m_tail.emplace_back(m_tail.front().m_tail[0]);
-	//}
-	//Parameters.m_tail.emplace_back(m_tail[1]);
-	//Parameters.m_head = Atom("");
-	//Parameters.m_tail.emplace_back( m_tail[0]);
-	Expression second;
+    for (auto it = m_tail[0].m_tail.cbegin(); it != m_tail[0].m_tail.cend(); ++it)
+    {
+        Parameters.m_tail.emplace_back(*it);
+    }
+	
+    Expression second;
 	//second.head() = m_tail[1].head();
 	//for (Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].tailConstEnd(); ++it)
 	//{
@@ -289,11 +287,13 @@ Expression Expression::handle_lambda(Environment &env)
 	std::list<Expression>result;
 	result.push_back(Parameters);
 	result.push_back(second);
-	//Expression results =m_tail[1].eval(env);
-	env.add_exp(m_tail[0].head(), m_tail[1].m_tail.front());
+    
+    //env.add_exp(Parameters.m_tail[0], second.m_tail.front());
+    env.add_exp(m_tail[0].head(), m_tail[1].m_tail.front());
+    Expression results = second.eval(env);
 	//env.add_exp(m_tail[0].m_tail.front(), m_tail[1].m_tail.back());
-		//={ Parameters, second };
-	return Expression(result);
+		
+	return Expression(results);
 
 
 }

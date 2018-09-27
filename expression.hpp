@@ -39,7 +39,7 @@ public:
     
   //Expression(const std::vector<Expression> &es);
   Expression(const std::list<Expression> &es);
-  Expression(const std::list<Atom>& es);
+
 
   /// deep-copy assign an expression  (recursive)
   Expression &operator=(const Expression &a);
@@ -69,13 +69,8 @@ public:
   bool isHeadComplex() const noexcept;  
 
   /// convienience member to determine if head atom is a symbol
-  bool isHeadSymbol() const noexcept;
-  
-  // create a islist operator?
-  //bool isHeadList() const noexcept;
-  
-  //
-  //bool isList() const noexcept;
+  bool isHeadSymbol() const noexcept;  
+
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment &env);
 

@@ -21,10 +21,7 @@ Atom::Atom(std::complex<double> value)
 
   setComplex(value);
 }
-Atom::Atom(std::list<Atom> value) {
-	setList(value);
- //buildList(myList);
-}
+
 
 Atom::Atom(const Token &token) : Atom()
 {
@@ -75,10 +72,7 @@ Atom::Atom(const Atom &x) : Atom()
   {
     setSymbol(x.m_stringValue);
   }
-  else if (x.isList())
-  {
-	  setList(x.m_list);
-  }
+  
 }
 
 Atom &Atom::operator=(const Atom &x)
@@ -102,10 +96,7 @@ Atom &Atom::operator=(const Atom &x)
     {
       setSymbol(x.m_stringValue);
     }
-	else if (x.m_type ==ListKind)
-	{
-		setList(x.m_list);
-	}
+	
   }
   return *this;
 }
@@ -139,11 +130,6 @@ bool Atom::isSymbol() const noexcept
   return m_type == SymbolKind;
 }
 
-bool Atom::isList() const noexcept
-{
-	return m_type == ListKind;
-}
-
 void Atom::setNumber(double value)
 {
 
@@ -173,11 +159,6 @@ void Atom::setSymbol(const std::string &value)
   new (&m_stringValue) std::string(value);
 }
 
-void Atom::setList(const std::list<Atom>& myList)
-{
-	m_type = ListKind;
-    m_list =myList;
-}
 
 double Atom::asNumber() const noexcept
 {
@@ -187,15 +168,8 @@ double Atom::asNumber() const noexcept
 
 std::complex<double> Atom::asComplex() const noexcept
 {
-  if (m_type == ComplexKind)
-  {
-    return m_complexValue;
-  }
-  else
-  {
-    return (std::complex<double>(0.0, 0.0));
-  }
-  //return ((m_type == ComplexKind) ? m_complexValue : std::complex<double>(0.0,0.0));
+  
+  return ((m_type == ComplexKind) ? m_complexValue : std::complex<double>(0.0,0.0));
 }
 
 std::string Atom::asSymbol() const noexcept
@@ -210,15 +184,7 @@ std::string Atom::asSymbol() const noexcept
 
   return result;
 }
-std::list<Atom> Atom::asList() const noexcept {
-	std::list <Atom> result;
-	if (m_type == ListKind)
-	{
-		result = m_list;
-	}
-	return(result);
 
-}
 bool Atom::operator==(const Atom &right) const noexcept
 {
 
@@ -263,29 +229,7 @@ bool Atom::operator==(const Atom &right) const noexcept
     return m_stringValue == right.m_stringValue;
   }
   break;
-  case ListKind:
-  {
-	  if (right.m_type != ListKind)
-		  return false;
-	  if (m_list.size()!=right.m_list.size())
-	  {
-		  return false;
-	  }
 
-	  std::list<Atom> dleft = m_list;
-	  std::list<Atom> dright = right.m_list;
-	  auto it1 = dleft.begin();
-	  auto it2 = dright.begin();
-	  
-	  while ( it1 != dleft.end() && it2 != dright.end())
-	  {
-		  //double diff = fabs(*it1 - *it2);
-		  if (*it1 != *it2)//(std::isnan(diff) || (diff > std::numeric_limits<double>::epsilon()))
-			  return false;
-		  it1++;
-		  it2++;
-	  }
-  }
   default:
     return false;
   }
@@ -315,12 +259,6 @@ std::ostream &operator<<(std::ostream &out, const Atom &a)
   {
     out << a.asSymbol();
   }
-  if (a.isList())
-  {
-	  std::list<Atom> value (a.asList().begin(),a.asList().end());
-	  //for (auto pr = value.begin(); pr != value.end; ++pr) {
-		//  out << "(" << *pr << ")";
-	  //}
-  }
+ 
   return out;
 }

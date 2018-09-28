@@ -7,7 +7,7 @@ Defines the Expression type and assiciated functions.
 #include <string>
 #include <vector>
 
-
+#include <list>
 #include "token.hpp"
 #include "atom.hpp"
 
@@ -35,7 +35,7 @@ public:
 	/// deep-copy construct an expression (recursive)
 	Expression(const Expression &a);
 
-
+	Expression(const std::list<Expression> &es);
 	//Expression(const std::vector<Expression> &es);
 	Expression(const std::vector<Expression> &es);
 

@@ -1,5 +1,5 @@
 #include "expression.hpp"
-
+#include <list>
 #include <sstream>
 #include <utility>
 #include "environment.hpp"
@@ -231,7 +231,7 @@ Expression Expression::handle_define(Environment &env)
 
 Expression Expression::handle_lambda(Environment &env)
 {
-	auto print = m_tail;
+	
 	//std::cout << print.front()<<print.back()<<std::endl;
 	 // tail must have size 2 or error
 	if (m_tail.size() != 2)
@@ -255,34 +255,30 @@ Expression Expression::handle_lambda(Environment &env)
 	}
 	//std::cout << Parameters  << std::endl;
 	Expression second;
-	second = m_tail.back();
+	second = m_tail[1];
 
 	//std::cout <<second << std::endl;
 
-	std::vector<Expression>result;
-	result.push_back(Parameters);
-	result.push_back(second);
+	
 
 	//Expression gim = env.get_exp(second.head);
+	
 
-
-	Environment *shadow = new Environment;
-	//shadow->add_exp((Parameters.m_tail.front().head()), second.m_tail)
-
-	//shadow->add_exp(Parameters.m_tail.front().head().asSymbol(), second.m_tail.front().head().asSymbol());
-
-	Expression booty = second.m_tail.front().eval(*shadow);
-	//Expression booty = apply(second.m_head, second.m_tail, *shadow);
-	std::cout << result << std::endl;
-	//env.add_exp( second.m_head, booty);
-	//apply(second.m_head, result, env);
-
-	//Environment *th= new Environment(Parameters.m_tail, second.m_tail);
-	//m_tail[1].eval((new Environment()));
-	//m_tail = result;
-	//this = result;
-	return result;
-
+	//Environment *shadow = new Environment;
+	Expression result;
+	result.m_head = Atom();
+	result.m_tail.emplace_back(Parameters);
+	result.m_tail.emplace_back(second);
+	
+	//std::cout << Parameters << Parameters.m_tail <<std::endl;
+	
+	auto lambda = [&](Expression Parameters )-> Expression {return result; };
+	//std::cout << lambda (Parameters.m_tail)<<std::endl;
+	//lambda(Parameters);
+	//lambda(Parameters.m_tail).eval(env);
+	//return lambda(Parameters);
+	//lambda(second).eval(env);
+	return lambda(Parameters.m_tail);
 }
 
 // this is a simple recursive version. the iterative version is more

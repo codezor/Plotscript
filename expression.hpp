@@ -11,90 +11,89 @@ Defines the Expression type and assiciated functions.
 #include "token.hpp"
 #include "atom.hpp"
 
-// forward declare Environment
+ // forward declare Environment
 class Environment;
 
 /*! \class Expression
 \brief An expression is a tree of Atoms.
-
 An expression is an atom called the head followed by a (possibly empty)
 list of expressions called the tail.
  */
 class Expression
 {
 public:
-  typedef std::vector<Expression>::const_iterator ConstIteratorType;
+	typedef std::vector<Expression>::const_iterator ConstIteratorType;
 
-  /// Default construct and Expression, whose type in NoneType
-  Expression();
+	/// Default construct and Expression, whose type in NoneType
+	Expression();
 
-  /*! Construct an Expression with given Atom as head an empty tail
-    \param atom the atom to make the head
-  */
-  Expression(const Atom &a);
+	/*! Construct an Expression with given Atom as head an empty tail
+	  \param atom the atom to make the head
+	*/
+	Expression(const Atom &a);
 
-  /// deep-copy construct an expression (recursive)
-  Expression(const Expression &a);
+	/// deep-copy construct an expression (recursive)
+	Expression(const Expression &a);
 
-  //Procedure Lambda(const Expression &a);
-  //Expression(const std::vector<Expression> &es);
-  Expression(const std::vector<Expression> &es);
-  
-  /// deep-copy assign an expression  (recursive)
-  Expression &operator=(const Expression &a);
 
-  /// return a reference to the head Atom
-  Atom &head();
+	//Expression(const std::vector<Expression> &es);
+	Expression(const std::vector<Expression> &es);
 
-  /// return a const-reference to the head Atom
-  const Atom &head() const;
+	/// deep-copy assign an expression  (recursive)
+	Expression &operator=(const Expression &a);
 
-  /// append Atom to tail of the expression
-  void append(const Expression &a);
+	/// return a reference to the head Atom
+	Atom &head();
 
-  /// return a pointer to the last expression in the tail, or nullptr
-  Expression *tail();
+	/// return a const-reference to the head Atom
+	const Atom &head() const;
 
-  /// return a const-iterator to the beginning of tail
-  ConstIteratorType tailConstBegin() const noexcept;
+	/// append Atom to tail of the expression
+	void append(const Atom &a);
 
-  /// return a const-iterator to the tail end
-  ConstIteratorType tailConstEnd() const noexcept;
+	/// return a pointer to the last expression in the tail, or nullptr
+	Expression *tail();
 
-  /// convienience member to determine if head atom is a number
-  bool isHeadNumber() const noexcept;
+	/// return a const-iterator to the beginning of tail
+	ConstIteratorType tailConstBegin() const noexcept;
 
-  /// convienience member to determine if head atom is a number
-  bool isHeadComplex() const noexcept;  
+	/// return a const-iterator to the tail end
+	ConstIteratorType tailConstEnd() const noexcept;
 
-  /// convienience member to determine if head atom is a symbol
-  bool isHeadSymbol() const noexcept;  
+	/// convienience member to determine if head atom is a number
+	bool isHeadNumber() const noexcept;
 
-  /// Evaluate expression using a post-order traversal (recursive)
-  Expression eval(Environment &env);
+	/// convienience member to determine if head atom is a number
+	bool isHeadComplex() const noexcept;
 
-  /// equality comparison for two expressions (recursive)
-  bool operator==(const Expression &exp) const noexcept;
-  //Procedure handle_lambda(Environment &env) const;
-  
+	/// convienience member to determine if head atom is a symbol
+	bool isHeadSymbol() const noexcept;
+
+	/// Evaluate expression using a post-order traversal (recursive)
+	Expression eval(Environment &env);
+
+	/// equality comparison for two expressions (recursive)
+	bool operator==(const Expression &exp) const noexcept;
+	//Procedure handle_lambda(Environment &env) const;
+
 private:
-  // the head of the expression
-  Atom m_head;
+	// the head of the expression
+	Atom m_head;
 
-  // the tail list is expressed as a vector for access efficiency
-  // and cache coherence, at the cost of wasted memory.
-  std::vector<Expression> m_tail;
+	// the tail list is expressed as a vector for access efficiency
+	// and cache coherence, at the cost of wasted memory.
+	std::vector<Expression> m_tail;
 
-  // convenience typedef
-  typedef std::vector<Expression>::iterator IteratorType;
+	// convenience typedef
+	typedef std::vector<Expression>::iterator IteratorType;
 
-  // internal helper methods
-  Expression handle_lookup(const Atom &head, const Environment &env);
-  Expression handle_define(Environment &env);
-  Expression handle_begin(Environment &env);
-  Expression handle_lambda(Environment &env);
-  //list
-  bool m_isList = false;
+	// internal helper methods
+	Expression handle_lookup(const Atom &head, const Environment &env);
+	Expression handle_define(Environment &env);
+	Expression handle_begin(Environment &env);
+	Expression handle_lambda(Environment &env);
+	//list
+	bool m_isList = false;
 };
 
 /// Render expression to output stream

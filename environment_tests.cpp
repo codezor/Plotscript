@@ -636,7 +636,7 @@ TEST_CASE("Test Empty List", "[environment]")
 		REQUIRE(p(args) == Expression(0));
 	}
 }
-TEST_CASE("Test List One arg", "[environment]")
+/*TEST_CASE("Test List One arg", "[environment]")
 {
 	Environment env;
 
@@ -668,7 +668,7 @@ TEST_CASE("Test List One arg", "[environment]")
 		REQUIRE(p(args) == Expression(1));
 	}
 	
-}
+}*/
 
 TEST_CASE("Test reset", "[environment]")
 {

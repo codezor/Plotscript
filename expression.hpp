@@ -39,8 +39,7 @@ public:
     
   //Expression(const std::vector<Expression> &es);
   Expression(const std::vector<Expression> &es);
-
-
+  
   /// deep-copy assign an expression  (recursive)
   Expression &operator=(const Expression &a);
 
@@ -76,7 +75,7 @@ public:
 
   /// equality comparison for two expressions (recursive)
   bool operator==(const Expression &exp) const noexcept;
-
+  //Procedure handle_lambda(Environment &env) const;
   
 private:
   // the head of the expression

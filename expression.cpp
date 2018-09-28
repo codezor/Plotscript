@@ -5,6 +5,7 @@
 #include "environment.hpp"
 #include "semantic_error.hpp"
 #include <iostream>
+//#include <map>
 Expression::Expression() {}
 
 Expression::Expression(const Atom &a)
@@ -13,7 +14,6 @@ Expression::Expression(const Atom &a)
   m_head = a;
  
 }
-
 
 // recursive copy
 Expression::Expression(const Expression &a)
@@ -232,51 +232,56 @@ Expression Expression::handle_define(Environment &env)
 Expression Expression::handle_lambda(Environment &env)
 {
     auto print = m_tail;
-   //std::cout << print.front()<<print.back()<<std::endl;
-	// tail must have size 2 or error
-	if (m_tail.size() != 2)
-	{
-		throw SemanticError("Error during evaluation: invalid number of arguments to define");
-	}
+    //std::cout << print.front()<<print.back()<<std::endl;
+     // tail must have size 2 or error
+    if (m_tail.size() != 2)
+    {
+        throw SemanticError("Error during evaluation: invalid number of arguments to define");
+    }
 
-	// tail[0] must be symbol
-	if (!m_tail[0].isHeadSymbol())
-	{
-		throw SemanticError("Error during evaluation: first argument to define not symbol");
-	}
+    // tail[0] must be symbol
+    if (!m_tail[0].isHeadSymbol())
+    {
+        throw SemanticError("Error during evaluation: first argument to define not symbol");
+    }
 
-	// but tail[0] must not be a special-form or procedure
-	std::string s = m_tail[0].head().asSymbol();
-	if ((s == "define") || (s == "begin"))
-	{
-		throw SemanticError("Error during evaluation: attempt to redefine a special-form");
-	}
-	Expression Parameters;
+    Expression Parameters;
 
-
-	Parameters.m_tail.emplace_back(m_tail.front().head());
+    Parameters.m_tail.emplace_back(m_tail.front().head());
     for (auto it = m_tail[0].m_tail.cbegin(); it != m_tail[0].m_tail.cend(); ++it)
     {
         Parameters.m_tail.emplace_back(*it);
+
     }
     //std::cout << Parameters  << std::endl;
     Expression second;
-	second =m_tail.back();
-	
+    second = m_tail.back();
+
     //std::cout <<second << std::endl;
 
-	std::vector<Expression>result;
-	result.push_back(Parameters);
-	result.push_back(second);
+    std::vector<Expression>result;
+    result.push_back(Parameters);
+    result.push_back(second);
+ 
+	//Expression gim = env.get_exp(second.head);
     
-    //env.add_exp(Parameters.m_tail[0], second.m_tail.front());
-    //env.add_exp(m_tail[0].head(), m_tail[1].m_tail.front());
-    //Expression results = second.eval(env);
-	//env.add_exp(m_tail[0].m_tail.front(), m_tail[1].m_tail.back());
-   
-    //Procedure prod = env.get_proc(m_tail[1].head());
-	return Expression(result);
+	
+	Environment *shadow = new Environment;
+	//shadow->add_exp((Parameters.m_tail.front().head()), second.m_tail)
+	
+	//shadow->add_exp(Parameters.m_tail.front().head().asSymbol(), second.m_tail.front().head().asSymbol());
+	
+	Expression booty =second.m_tail.front().eval(*shadow);
+	//Expression booty = apply(second.m_head, second.m_tail, *shadow);
+	std::cout << result << std::endl;
+	//env.add_exp( second.m_head, booty);
+	//apply(second.m_head, result, env);
 
+	//Environment *th= new Environment(Parameters.m_tail, second.m_tail);
+	//m_tail[1].eval((new Environment()));
+	//m_tail = result;
+	//this = result;
+	return result; 
 
 }
 

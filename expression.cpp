@@ -229,9 +229,7 @@ Expression Expression::handle_define(Environment &env)
 
 Expression Expression::handle_lambda(Environment &env)
 {
-    //auto print = m_tail;
-    //std::cout << print.front()<<print.back()<<std::endl;
-     // tail must have size 2 or error
+ 
     if (m_tail.size() != 2)
     {
         throw SemanticError("Error during evaluation: invalid number of arguments to define");
@@ -251,7 +249,7 @@ Expression Expression::handle_lambda(Environment &env)
         Parameters.m_tail.emplace_back(*it);
 
     }
-    std::cout << Parameters  << std::endl;
+    //std::cout << Parameters  << std::endl;
     Expression second;
     second = m_tail.back();
 	//std::cout << second << std::endl;
@@ -274,6 +272,7 @@ Expression Expression::handle_lambda(Environment &env)
 	//std::cout <<"This" <<*this << std::endl;
 	//shadow.add_exp(m_head, m_tail[1]);
 	////std::cout << "Poo" << poo << std::endl;
+
 	return Expression(result); 
 
 }

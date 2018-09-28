@@ -7,7 +7,7 @@
 #include <list>
 #include <vector>
 //#include<iostream>>
-
+#include <iostream>
 #include "environment.hpp"
 #include "semantic_error.hpp"
 
@@ -654,10 +654,17 @@ void
 Environment::add_exp(const Atom& sym, const Expression& exp)
 {
 
+	std::cout <<"Add expression"<< sym << exp << std::endl;
+
+	//if(sym.tail.tailConstBegin)
+
   if (!sym.isSymbol()) {
     throw SemanticError("Attempt to add non-symbol to environment");
   }
-
+  if (sym.asSymbol() == "lambda")
+  {
+	  envmap.emplace(sym.asSymbol(), EnvResult(ProcedureType, exp));
+  }
   // error if overwriting symbol map
   if (envmap.find(sym.asSymbol()) != envmap.end()) {
     throw SemanticError("Attempt to overwrite symbol in environemnt");

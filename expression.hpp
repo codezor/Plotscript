@@ -36,7 +36,7 @@ public:
   /// deep-copy construct an expression (recursive)
   Expression(const Expression &a);
 
-    
+  //Procedure Lambda(const Expression &a);
   //Expression(const std::vector<Expression> &es);
   Expression(const std::vector<Expression> &es);
   
@@ -50,7 +50,7 @@ public:
   const Atom &head() const;
 
   /// append Atom to tail of the expression
-  void append(const Atom &a);
+  void append(const Expression &a);
 
   /// return a pointer to the last expression in the tail, or nullptr
   Expression *tail();

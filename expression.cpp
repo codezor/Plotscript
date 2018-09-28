@@ -32,10 +32,7 @@ Expression::Expression(const std::vector<Expression> &es)
 {
 	
 	m_head = Atom("");
-	//m_head.setList();
-	//m_isList = true;
 	
-	//m_tail.clear();
 	for (auto e : es) {
 		m_tail.emplace_back(e);
 		
@@ -89,7 +86,7 @@ bool Expression::isHeadSymbol() const noexcept
 }
 
 
-void Expression::append(const Atom &a)
+void Expression::append(const Expression &a)
 {
   m_tail.emplace_back(a);
 }
@@ -140,6 +137,7 @@ Expression apply(const Atom &op, const std::vector<Expression> &args, const Envi
 //#include <iostream>
 Expression Expression::handle_lookup(const Atom &head, const Environment &env)
 {
+	//std::cout<<"In Handle look up" << "ENV" << this<<"This is the atom"<<head<< std::endl;
 	
   if (head.isSymbol())
   { 
@@ -231,7 +229,7 @@ Expression Expression::handle_define(Environment &env)
 
 Expression Expression::handle_lambda(Environment &env)
 {
-    auto print = m_tail;
+    //auto print = m_tail;
     //std::cout << print.front()<<print.back()<<std::endl;
      // tail must have size 2 or error
     if (m_tail.size() != 2)
@@ -253,43 +251,47 @@ Expression Expression::handle_lambda(Environment &env)
         Parameters.m_tail.emplace_back(*it);
 
     }
-    //std::cout << Parameters  << std::endl;
+    std::cout << Parameters  << std::endl;
     Expression second;
     second = m_tail.back();
+	//std::cout << second << std::endl;
+	//eval(Parameters, second);
+	Environment shadow  = env;
+    //std::vector<Expression>result;
+	//result.head
+	//std::cout <<"m_head " <<m_head <<" m_tail 0 "<<m_tail[0]<<" m_tail[1] "<<m_tail[1]<<std::endl;
 
-    //std::cout <<second << std::endl;
-
-    std::vector<Expression>result;
-    result.push_back(Parameters);
-    result.push_back(second);
- 
-	//Expression gim = env.get_exp(second.head);
-    
-	
-	Environment *shadow = new Environment;
-	//shadow->add_exp((Parameters.m_tail.front().head()), second.m_tail)
-	
-	//shadow->add_exp(Parameters.m_tail.front().head().asSymbol(), second.m_tail.front().head().asSymbol());
-	
-	Expression booty =second.m_tail.front().eval(*shadow);
-	//Expression booty = apply(second.m_head, second.m_tail, *shadow);
-	std::cout << result << std::endl;
-	//env.add_exp( second.m_head, booty);
-	//apply(second.m_head, result, env);
-
-	//Environment *th= new Environment(Parameters.m_tail, second.m_tail);
-	//m_tail[1].eval((new Environment()));
-	//m_tail = result;
-	//this = result;
-	return result; 
+	Expression result; 
+	result.m_head = Atom();
+    result.m_tail.push_back(Parameters);
+	result.m_tail.push_back(second);
+    //result.push_back(second);
+	//m_head = Atom();
+	m_tail[0] = Parameters;
+	//Expression poo = m_tail[1].eval(env);
+	*this = result;
+	//std::cout << result << std::endl;
+	//std::cout <<"This" <<*this << std::endl;
+	//shadow.add_exp(m_head, m_tail[1]);
+	////std::cout << "Poo" << poo << std::endl;
+	return Expression(result); 
 
 }
+//Procedure Expression::Lambda(const Expression &a) {
+	
+	//Enviorment new Environment
 
+
+	//return Procedure();
+//}
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
 Expression Expression::eval(Environment &env)
 {
+	//std::cout << "In EVL look up" << "ENV" << *this <<std::endl;
+
+
 
   if (m_tail.empty() && m_head.asSymbol() != "list")
   {

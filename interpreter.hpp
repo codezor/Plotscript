@@ -29,11 +29,11 @@ public:
     \param expression the raw text stream repreenting the candidate expression
     \return true on successful parsing
    */
-  bool parseStream(std::istream &expression) noexcept;
+  bool parseStream(std::istream& expression) noexcept;
 
   /*! Evaluate the Expression by walking the tree, returning the result.
-    \return the Expression resulting from the evaluation in the current environment
-    \throws SemanticError when a semantic error is encountered
+    \return the Expression resulting from the evaluation in the current
+    environment \throws SemanticError when a semantic error is encountered
    */
   Expression evaluate();
 

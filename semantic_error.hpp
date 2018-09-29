@@ -15,7 +15,8 @@ class SemanticError : public std::runtime_error
 {
 public:
   /// Construct an exeption with a given message
-  SemanticError(const std::string &message) : std::runtime_error(message){};
+  SemanticError(const std::string& message)
+    : std::runtime_error(message){};
 };
 
 #endif

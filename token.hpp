@@ -29,7 +29,7 @@ public:
   Token(TokenType t);
 
   /// contruct a token of type String with value
-  Token(const std::string &str);
+  Token(const std::string& str);
 
   /// return the type of the token
   TokenType type() const;
@@ -59,6 +59,7 @@ OPEN or CLOSE or any space-delimited string
 
 Ignores any whitespace and comments (from any ";" to end-of-line).
 */
-TokenSequenceType tokenize(std::istream &seq);
+TokenSequenceType
+tokenize(std::istream& seq);
 
 #endif

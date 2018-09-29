@@ -21,7 +21,7 @@ needed.
 \brief A Procedure is a C++ function pointer taking a vector of
        Expressions as arguments and returning an Expression.
 */
-typedef Expression (*Procedure)(const std::vector<Expression> &args);
+typedef Expression (*Procedure)(const std::vector<Expression>& args);
 
 /*! \class Environment
 \brief A class representing the interpreter environment.
@@ -44,38 +44,38 @@ public:
    * definitions. */
   Environment();
 
-	Environment Shadow( Environment &ENV, const Environment &shadow);
+  Environment Shadow(Environment& ENV, const Environment& shadow);
 
   /*! Determine if a symbol is known to the environment.
     \param sym the symbol to lookup
     \return true if the symbol has been defined in the environment
    */
-  bool is_known(const Atom &sym) const;
+  bool is_known(const Atom& sym) const;
 
   /*! Determine if a symbol has been defined as an expression.
     \param sym the sumbol to lookup
     \return true if the symbol has been defined in the environment as an
     expression
    */
-  bool is_exp(const Atom &sym) const;
+  bool is_exp(const Atom& sym) const;
 
   /*! Get the Expression the argument symbol maps to.
     \param sym the symbol to lookup
     \return the expression the symbol maps to or an Expression of NoneType
   */
-  Expression get_exp(const Atom &sym) const;
+  Expression get_exp(const Atom& sym) const;
 
-  /*! Add a mapping from sym argument to the exp argument within the environment.
-    \param sym the symbol to add
-    \param exp the expression the symbol should map to
+  /*! Add a mapping from sym argument to the exp argument within the
+    environment. \param sym the symbol to add \param exp the expression the
+    symbol should map to
    */
-  void add_exp(const Atom &sym, const Expression &exp);
+  void add_exp(const Atom& sym, const Expression& exp);
 
   /*! Determine if a symbol has been defined as a procedure
     \param sym the symbol to lookup
     \return true if thr symbol maps to a procedure
    */
-  bool is_proc(const Atom &sym) const;
+  bool is_proc(const Atom& sym) const;
 
   /*! Get the Procedure the argument symbol maps to
     \param sym the symbol to lookup
@@ -84,7 +84,7 @@ public:
     Note: return the default procedure if argument is not a symbol
           or does not map to a known procedure.
   */
-  Procedure get_proc(const Atom &sym) const;
+  Procedure get_proc(const Atom& sym) const;
 
   /*! Reset the environment to its default state. */
   void reset();
@@ -105,8 +105,12 @@ private:
 
     // constructors for use in container emplace
     EnvResult(){};
-    EnvResult(EnvResultType t, Expression e) : type(t), exp(e){};
-    EnvResult(EnvResultType t, Procedure p) : type(t), proc(p){};
+    EnvResult(EnvResultType t, Expression e)
+      : type(t)
+      , exp(e){};
+    EnvResult(EnvResultType t, Procedure p)
+      : type(t)
+      , proc(p){};
   };
 
   // the environment map

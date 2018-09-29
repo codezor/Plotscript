@@ -2,7 +2,9 @@
 
 #include <stack>
 
-bool setHead(Expression &exp, const Token &token) {
+bool
+setHead(Expression& exp, const Token& token)
+{
 
   Atom a(token);
 
@@ -11,7 +13,9 @@ bool setHead(Expression &exp, const Token &token) {
   return !a.isNone();
 }
 
-bool append(Expression *exp, const Token &token) {
+bool
+append(Expression* exp, const Token& token)
+{
 
   Atom a(token);
 
@@ -20,7 +24,9 @@ bool append(Expression *exp, const Token &token) {
   return !a.isNone();
 }
 
-Expression parse(const TokenSequenceType &tokens) noexcept {
+Expression
+parse(const TokenSequenceType& tokens) noexcept
+{
 
   Expression ast;
 
@@ -31,11 +37,11 @@ Expression parse(const TokenSequenceType &tokens) noexcept {
   bool athead = false;
 
   // stack tracks the last node created
-  std::stack<Expression *> stack;
+  std::stack<Expression*> stack;
 
   std::size_t num_tokens_seen = 0;
 
-  for (auto &t : tokens) {
+  for (auto& t : tokens) {
 
     if (t.type() == Token::OPEN) {
       athead = true;

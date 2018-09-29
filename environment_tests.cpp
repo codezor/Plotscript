@@ -636,7 +636,7 @@ TEST_CASE("Test Empty List", "[environment]")
 		REQUIRE(p(args) == Expression(0));
 	}
 }
-/*TEST_CASE("Test List One arg", "[environment]")
+TEST_CASE("Test List One arg", "[environment]")
 {
 	Environment env;
 
@@ -649,7 +649,7 @@ TEST_CASE("Test Empty List", "[environment]")
 		Procedure p = env.get_proc(Atom("list"));
 		args.emplace_back(4);
         test.emplace_back(4);
-        REQUIRE(p(args) == test);
+        CHECK(p(args) == test);
 	}
 	INFO("First procedure with one list item")
 	{
@@ -660,15 +660,15 @@ TEST_CASE("Test Empty List", "[environment]")
 	INFO("rest procedure with one list item")
 	{
 		Procedure p = env.get_proc(Atom("rest"));
-		REQUIRE_THROWS_AS(p(args), SemanticError);
+		CHECK_THROWS_AS(p(args), SemanticError);
 	}
 	INFO("length procedure with one list item")
 	{
 		Procedure p = env.get_proc(Atom("length"));
-		REQUIRE(p(args) == Expression(1));
+		CHECK(p(args) == Expression(1));
 	}
 	
-}*/
+}
 
 TEST_CASE("Test reset", "[environment]")
 {

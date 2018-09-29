@@ -24,22 +24,21 @@ public:
 
   /// ATOM with coomplex value real
   Atom(std::complex<double> value);
-  
+
   /// Construct an Atom of type Symbol named value
-  Atom(const std::string &value);
+  Atom(const std::string& value);
 
   /// Construct an Atom directly from a Token
-  Atom(const Token &token);
+  Atom(const Token& token);
 
   /// Copy-construct an Atom
-  Atom(const Atom &x);
+  Atom(const Atom& x);
 
   /// Assign an Atom
-  Atom &operator=(const Atom &x);
+  Atom& operator=(const Atom& x);
 
   /// Atom destructor
   ~Atom();
-
 
   /// predicate to determine if an Atom is of type None
   bool isNone() const noexcept;
@@ -51,7 +50,7 @@ public:
   bool isComplex() const noexcept;
 
   /// predicate to determine if an Atom is of type Symbol
-  bool isSymbol() const noexcept;  
+  bool isSymbol() const noexcept;
 
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
@@ -62,10 +61,10 @@ public:
   /// value of Atom as a number, returns empty-string if not a Symbol
   std::string asSymbol() const noexcept;
 
- // std::list<Atom>asList()const noexcept;
+  // std::list<Atom>asList()const noexcept;
 
   /// equality comparison based on type and value
-  bool operator==(const Atom &right) const noexcept;
+  bool operator==(const Atom& right) const noexcept;
 
 private:
   // internal enum of known types
@@ -83,11 +82,11 @@ private:
 
   // values for the known types. Note the use of a union requires care
   // when setting non POD values (see setSymbol)
-  union {
+  union
+  {
     double m_numberValue;
     std::complex<double> m_complexValue;
     std::string m_stringValue;
-
   };
 
   // helper to set type and value of Number
@@ -97,14 +96,15 @@ private:
   void setComplex(std::complex<double> value);
 
   // helper to set type and value of Symbol
-  void setSymbol(const std::string &value);
-   
+  void setSymbol(const std::string& value);
 };
 
 /// inequality comparison for Atom
-bool operator!=(const Atom &left, const Atom &right) noexcept;
+bool
+operator!=(const Atom& left, const Atom& right) noexcept;
 
 /// output stream rendering
-std::ostream &operator<<(std::ostream &out, const Atom &a);
+std::ostream&
+operator<<(std::ostream& out, const Atom& a);
 
 #endif

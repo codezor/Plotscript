@@ -222,7 +222,7 @@ Expression Expression::handle_define(Environment &env)
 	{
 		throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
 	}
-
+	
 	//and add to env
 	env.add_exp(m_tail[0].head(), result);
 
@@ -231,8 +231,7 @@ Expression Expression::handle_define(Environment &env)
 
 Expression Expression::handle_lambda(Environment &env)
 {
-	
-	//std::cout << print.front()<<print.back()<<std::endl;
+	env.is_known(Atom());
 	 // tail must have size 2 or error
 	if (m_tail.size() != 2)
 	{
@@ -253,32 +252,17 @@ Expression Expression::handle_lambda(Environment &env)
 		Parameters.m_tail.emplace_back(*it);
 
 	}
-	//std::cout << Parameters  << std::endl;
+	
 	Expression second;
 	second = m_tail[1];
 
-	//std::cout <<second << std::endl;
-
 	
-
-	//Expression gim = env.get_exp(second.head);
 	
-
-	//Environment *shadow = new Environment;
 	Expression result;
-	result.m_head = Atom();
+	result.m_head =m_head;
 	result.m_tail.emplace_back(Parameters);
 	result.m_tail.emplace_back(second);
-	
-	//std::cout << Parameters << Parameters.m_tail <<std::endl;
-	
-	auto lambda = [&](Expression Parameters )-> Expression {return result; };
-	//std::cout << lambda (Parameters.m_tail)<<std::endl;
-	//lambda(Parameters);
-	//lambda(Parameters.m_tail).eval(env);
-	//return lambda(Parameters);
-	//lambda(second).eval(env);
-	return lambda(Parameters.m_tail);
+	return (result);
 }
 
 // this is a simple recursive version. the iterative version is more
@@ -309,6 +293,45 @@ Expression Expression::eval(Environment &env)
 	// else attempt to treat as procedure
 	else
 	{
+		Expression originial = env.get_exp(m_head);
+		if (originial.m_head.asSymbol() == "lambda") {
+
+			 // create a local environment for the lambda expression
+			Environment *shadow = new Environment;
+
+			// Get the lambda function parameters and matching expressions.
+			std::vector<Expression> parameters = originial.m_tail.front().m_tail;
+			std::vector<Expression> expressions = m_tail;
+
+			// For each (parameter, expression) pair.
+			const std::size_t NUM_PARAMS = parameters.size();
+			for (std::size_t i = 0; i < NUM_PARAMS; ++i)
+			{
+				Expression parameter = parameters[i];
+				Expression expression = expressions[i];
+
+				// define the parameter in the shadow environment.
+				Expression define(Atom("define"));
+				define.m_tail.push_back(parameter);
+				define.m_tail.push_back(expression);
+				
+				// Define the parameters in the shadow environment.
+				define.eval(*shadow);
+			}
+			
+			// Now actually shadow the parent environment with the local environment we just created.
+			env.Shadow(env, *shadow);
+
+			// yo dawg, i heard you like lambdas ...
+			// so i put some lambdas, in your lambdas !
+			// TODO: why won't this work ????
+			// auto lambda = [&, parameters](Expression Parmeters)-> Expression {return expressions; };
+			// std::cout << lambda(parameters).eval(*new Environment);
+
+			// Lamda statment back into AST evlauation
+			return originial.m_tail[1].eval(env);
+		}
+		
 
 		std::vector<Expression> results;
 		for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it)
@@ -323,14 +346,15 @@ std::ostream &operator<<(std::ostream &out, const Expression &exp)
 {
 
 	out << "(";
-	out << exp.head();// << " ";
-
+	if (exp.head().asSymbol() != "lambda") {
+		out << exp.head();// << " ";
+	}
 	for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e)
 	{
 		//out << *e;
 		 //++e;
 
-		if (e != exp.tailConstBegin() || (exp.isHeadSymbol() && exp.head().asSymbol() != ""))
+		if (e != exp.tailConstBegin() || (exp.isHeadSymbol() && exp.head().asSymbol() != "" && exp.head().asSymbol() != "lambda"))
 		{
 			out << " ";
 		}

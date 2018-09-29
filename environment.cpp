@@ -619,7 +619,17 @@ range(const std::vector<Expression>& args)
 		return Expression(rangeList);
 	}
 };
+/*Expression
+apply(const std::vector<Expression>& args)
+{
+	if (!nargs_equal(args, 2)) {
+		throw SemanticError("Error in call to join: invalid number of arguments.");
+	}
+	
 
+	Atom procedure =args[0].head().asSymbol;
+	if (env.is_proc(procedure))
+};*/
 /*Expression
 lambda(const std::vector<Expression>& args)
 {
@@ -636,6 +646,17 @@ Environment::Environment()
 
 	reset();
 }
+Environment Environment::Shadow( Environment &ENV, const Environment &shadow ) {
+	
+
+		for (std::pair<std::string, Environment::EnvResult> kv : shadow.envmap)
+		{
+			ENV.envmap.erase(kv.first);
+			ENV.envmap.emplace(kv);
+		}
+		
+	return Environment(ENV);
+};
 
 bool
 Environment::is_known(const Atom& sym) const
@@ -686,7 +707,7 @@ Environment::add_exp(const Atom& sym, const Expression& exp)
 	}
 
 	// error if overwriting symbol map
-	if (envmap.find(sym.asSymbol()) != envmap.end()) {
+	if (envmap.find(sym.asSymbol()) != envmap.end() ) {
 		throw SemanticError("Attempt to overwrite symbol in environemnt");
 	}
 
@@ -802,7 +823,8 @@ Environment::reset()
 
 	// Procedure range
 	envmap.emplace("range", EnvResult(ProcedureType, range));
-
+	// Procedure range
+	//envmap.emplace("apply", EnvResult(ProcedureType, apply));
 	// Procedure: list;
 	// envmap.emplace("alist", EnvResult(ProcedureType, alist));
 }

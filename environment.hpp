@@ -44,6 +44,8 @@ public:
    * definitions. */
   Environment();
 
+	Environment Shadow( Environment &ENV, const Environment &shadow);
+
   /*! Determine if a symbol is known to the environment.
     \param sym the symbol to lookup
     \return true if the symbol has been defined in the environment

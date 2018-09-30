@@ -345,11 +345,11 @@ Expression Expression::handle_map(Environment& env) {
 
 
 		// see if the evaluation will cause an error
-		try { results.m_tail.emplace_back(input.eval(env)); }
+		try { input.eval(env); }
 		catch (SemanticError  &e) {
 
 		// TODO: find a better way to do this
-		const std::string ER = ("Error: during apply: ");
+		const std::string ER = ("Error: during map: ");
 		std::cout << ER;
 		throw SemanticError(e);
 		}

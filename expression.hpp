@@ -93,6 +93,7 @@ private:
   Expression handle_begin(Environment& env);
   Expression handle_lambda(Environment& env);
   Expression handle_apply(Environment& env);
+  Expression handle_map(Environment& env);
   // list
   bool m_isList = false;
 };

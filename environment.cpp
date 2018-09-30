@@ -138,43 +138,76 @@ subneg(const std::vector<Expression>& args)
 Expression
 div(const std::vector<Expression>& args)
 {
-  if (!nargs_equal(args, 2)) {
-    throw SemanticError(
-      "Error in call to division: invalid number of arguments.");
+  //if ((!nargs_equal(args, 2)) && (!nargs_equal(args, 1))) {
+    //throw SemanticError(
+      //"Error in call to division: invalid number of arguments.");
+  //}
+	bool is_complex = false;
+	
+  if (nargs_equal(args, 2))
+  {
+	  require_numeric(args[0], "div");
+	  require_numeric(args[1], "div");	  
+	  std::complex<double> numerator;
+	  std::complex<double> divisor;
+
+	  if (args[0].isHeadNumber()) {
+		  numerator = std::complex<double>(args[0].head().asNumber(), 0.0);
+	  }
+	  else if (args[0].isHeadComplex()) {
+		  is_complex = true;
+		  numerator = args[0].head().asComplex();
+	  }
+
+	  if (args[1].isHeadNumber()) {
+		  divisor = std::complex<double>(args[1].head().asNumber(), 0.0);
+	  }
+	  else if (args[1].isHeadComplex()) {
+		  is_complex = true;
+		  divisor = args[1].head().asComplex();
+	  }
+
+	  double realAns =
+		  (numerator.real() * divisor.real() + numerator.imag() * divisor.imag()) /
+		  (std::pow(divisor.real(), 2) + std::pow(divisor.imag(), 2));
+	  double imagAns =
+		  (numerator.imag() * divisor.real() - numerator.real() * divisor.imag()) /
+		  (std::pow(divisor.real(), 2) + std::pow(divisor.imag(), 2));
+
+	  if (is_complex) {
+		  return Expression(std::complex<double>(realAns, imagAns));
+	  }
+	  return Expression(realAns);
   }
+  else if (nargs_equal(args, 1)) {
+	  require_numeric(args[0], "div");
+	  std::complex<double>numerator = std::complex<double>(1.0, 0.0);
+	  std::complex<double> divisor;
+	  if (args[0].isHeadNumber()) {
+		  divisor = std::complex<double>(args[0].head().asNumber(), 0.0);
+	  }
+	  else if (args[0].isHeadComplex()) {
+		  is_complex = true;
+		  divisor = args[0].head().asComplex();
+	  }
+	  double realAns =
+		  (numerator.real() * divisor.real() + numerator.imag() * divisor.imag()) /
+		  (std::pow(divisor.real(), 2) + std::pow(divisor.imag(), 2));
+	  double imagAns =
+		  (numerator.imag() * divisor.real() - numerator.real() * divisor.imag()) /
+		  (std::pow(divisor.real(), 2) + std::pow(divisor.imag(), 2));
 
-  require_numeric(args[0], "div");
-  require_numeric(args[1], "div");
-
-  bool is_complex = false;
-  std::complex<double> numerator;
-  std::complex<double> divisor;
-
-  if (args[0].isHeadNumber()) {
-    numerator = std::complex<double>(args[0].head().asNumber(), 0.0);
-  } else if (args[0].isHeadComplex()) {
-    is_complex = true;
-    numerator = args[0].head().asComplex();
+	  if (is_complex) {
+		  return Expression(std::complex<double>(realAns, imagAns));
+	  }
+	  return Expression(realAns);
+	
   }
-
-  if (args[1].isHeadNumber()) {
-    divisor = std::complex<double>(args[1].head().asNumber(), 0.0);
-  } else if (args[1].isHeadComplex()) {
-    is_complex = true;
-    divisor = args[1].head().asComplex();
+  else
+  {
+	  throw SemanticError("Error in call to division: invalid number of arguments.");
   }
-
-  double realAns =
-    (numerator.real() * divisor.real() + numerator.imag() * divisor.imag()) /
-    (std::pow(divisor.real(), 2) + std::pow(divisor.imag(), 2));
-  double imagAns =
-    (numerator.imag() * divisor.real() - numerator.real() * divisor.imag()) /
-    (std::pow(divisor.real(), 2) + std::pow(divisor.imag(), 2));
-
-  if (is_complex) {
-    return Expression(std::complex<double>(realAns, imagAns));
-  }
-  return Expression(realAns);
+  
 };
 
 // Sqrt Procedure : Square root procedure unary

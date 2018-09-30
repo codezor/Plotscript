@@ -261,16 +261,14 @@ Expression::handle_lambda(Environment& env)
 
 Expression
 Expression::handle_apply(Environment& env) {
-
-	//m_tail
+		
 	env.is_known(Atom());
+	// Check only two areguments
 	if (m_tail.size() != 2) {
 			throw SemanticError(
 				"Error during evaluation: invalid number of arguments to apply");
-	}
-	
-	//std::cout << m_tail << std::endl;
-	
+	}	
+		
 	if (!m_tail[0].head().isSymbol()) {
 		throw SemanticError("Error in apply firt argument is not a proceudure");
 	}
@@ -280,49 +278,100 @@ Expression::handle_apply(Environment& env) {
 	if ((!env.is_proc(procID) && !env.is_exp(procID)) || (!proc.m_tail.empty())) {
 		throw SemanticError("Error in apply firt argument is not a proceudure");
 	}
-	//std::cout << m_tail[1].head() << std::endl;
+	
 	if (m_tail[1].head().asSymbol() != "list")
 	{
 		throw SemanticError("Error: second argument to apply not a list");
 	}
 
-	//Procedure Proc = env.get_proc(procID);
 	Expression results;
 	Expression input;
 	input.m_head =procID;
 	Expression args = m_tail[1];
-	//std::cout <<"args tail"<<args.m_tail << std::endl;
+	
 	for (auto a = args.tailConstBegin(); a != args.tailConstEnd(); ++a)
-	{
-		
-		input.m_tail.emplace_back(*a);
-			
+	{		
+		input.m_tail.emplace_back(*a);		
 	}	
 	results = input;
 
+	// see if the evaluation will cause an error
 	try { results.eval(env); }	
 	catch(SemanticError  &e) {
-		//std:string errror = e.what();
-		//e.what().message 
-		//("Error: during apply: ");
-		//std::exception.messsage
-		const std::string ER = ("Error: during apply: ");
-		//ER.append(e.what());
-		//const char * errormsg = ER.c_str();
-		//char *errormes = strcat(ER, e.what()  );
-		//errormes<<"Error: during apply : %s", e.what();
-		//e.operator=
 		
-		//e.what();
-		//std::runtime_error("Error: during apply: %s", e.what()); 
+		// TODO: find a better way to do this
+		const std::string ER = ("Error: during apply: ");		
 		std::cout << ER;
 		throw SemanticError(e);
 	}
-	//std::cout << "after catch" << std::endl;
+	
 	return Expression(results.eval(env));
-	//Expression applyList = list( args[1]);
-
 };
+
+Expression Expression::handle_map(Environment& env) {
+
+	env.is_known(Atom());
+	// Check only two areguments
+	if (m_tail.size() != 2) {
+		throw SemanticError(
+			"Error during evaluation: invalid number of arguments to apply");
+	}
+
+	if (!m_tail[0].head().isSymbol()) {
+		throw SemanticError("Error in apply firt argument is not a proceudure");
+	}
+	
+	Atom var= m_tail[0].head();
+	Expression proc = m_tail[0];
+	
+
+	if ((!env.is_proc(var) && !env.is_exp(var)) || (!proc.m_tail.empty())) {
+		throw SemanticError("Error in apply firt argument is not a proceudure");
+	}
+
+	if (m_tail[1].head().asSymbol() != "list")
+	{
+		throw SemanticError("Error: second argument to apply not a list");
+	}
+
+	Expression results;
+	Expression input;
+	input.m_head = var;
+	Expression args = m_tail[1].m_tail;
+
+	for (auto a = args.tailConstBegin(); a != args.tailConstEnd(); ++a)
+	{
+		input.m_tail.emplace_back(*a);
+
+
+		// see if the evaluation will cause an error
+		try { results.m_tail.emplace_back(input.eval(env)); }
+		catch (SemanticError  &e) {
+
+		// TODO: find a better way to do this
+		const std::string ER = ("Error: during apply: ");
+		std::cout << ER;
+		throw SemanticError(e);
+		}
+		results.m_tail.emplace_back(input.eval(env));
+		input.m_tail.pop_back();
+	}
+	//results = input;
+
+	// see if the evaluation will cause an error
+	//try { results.eval(env); }
+	///catch (SemanticError  &e) {
+
+		// TODO: find a better way to do this
+		//const std::string ER = ("Error: during apply: ");
+		//std::cout << ER;
+		//throw SemanticError(e);
+	//}
+
+	return Expression(results);
+
+
+}
 
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
@@ -349,6 +398,9 @@ Expression::eval(Environment& env)
   else if (m_head.isSymbol() && m_head.asSymbol() == "apply") {
 	  return handle_apply(env);
   }
+  else if (m_head.isSymbol() && m_head.asSymbol() == "map") {
+	  return handle_map(env);
+  }
   // else attempt to treat as procedure
   else {
     Expression originial = env.get_exp(m_head);
@@ -360,8 +412,12 @@ Expression::eval(Environment& env)
       // Get the lambda function parameters and matching expressions.
       std::vector<Expression> parameters = originial.m_tail.front().m_tail;
       std::vector<Expression> expressions = m_tail;
-
+	 
       // For each (parameter, expression) pair.
+	  if (parameters.size() != expressions.size())
+	  {
+		  throw SemanticError("Error in call to procedure : invalid number of arguments.");
+	  }
       const std::size_t NUM_PARAMS = parameters.size();
       for (std::size_t i = 0; i < NUM_PARAMS; ++i) {
         Expression parameter = parameters[i];

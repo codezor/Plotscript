@@ -269,7 +269,7 @@ Expression::handle_apply(Environment& env) {
 				"Error during evaluation: invalid number of arguments to apply");
 	}
 	
-	std::cout << m_tail << std::endl;
+	//std::cout << m_tail << std::endl;
 	
 	if (!m_tail[0].head().isSymbol()) {
 		throw SemanticError("Error in apply firt argument is not a proceudure");
@@ -280,7 +280,7 @@ Expression::handle_apply(Environment& env) {
 	if ((!env.is_proc(procID) && !env.is_exp(procID)) || (!proc.m_tail.empty())) {
 		throw SemanticError("Error in apply firt argument is not a proceudure");
 	}
-	std::cout << m_tail[1].head() << std::endl;
+	//std::cout << m_tail[1].head() << std::endl;
 	if (m_tail[1].head().asSymbol() != "list")
 	{
 		throw SemanticError("Error: second argument to apply not a list");
@@ -291,7 +291,7 @@ Expression::handle_apply(Environment& env) {
 	Expression input;
 	input.m_head =procID;
 	Expression args = m_tail[1];
-	std::cout <<"args tail"<<args.m_tail << std::endl;
+	//std::cout <<"args tail"<<args.m_tail << std::endl;
 	for (auto a = args.tailConstBegin(); a != args.tailConstEnd(); ++a)
 	{
 		
@@ -318,7 +318,7 @@ Expression::handle_apply(Environment& env) {
 		std::cout << ER;
 		throw SemanticError(e);
 	}
-	std::cout << "after catch" << std::endl;
+	//std::cout << "after catch" << std::endl;
 	return Expression(results.eval(env));
 	//Expression applyList = list( args[1]);
 

@@ -642,14 +642,15 @@ TEST_CASE("Test List One arg", "[environment]")
 
 	std::vector<Expression> args;
     std::vector<Expression> test;
-	test.emplace_back(Atom(""));
-	args.emplace_back(Atom(""));
+	test.emplace_back(Atom("list"));
+	args.emplace_back(Atom("list"));
+	args.emplace_back(4);
+	test.emplace_back(4);
 	INFO("List procedure with one list item")
 	{
-		Procedure p = env.get_proc(Atom("list"));
-		args.emplace_back(4);
-        test.emplace_back(4);
+		Procedure p = env.get_proc(Atom("list"));		
         CHECK(p(args) == test);
+		
 	}
 	INFO("First procedure with one list item")
 	{

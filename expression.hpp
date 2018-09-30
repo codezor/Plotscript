@@ -35,7 +35,7 @@ public:
   /// deep-copy construct an expression (recursive)
   Expression(const Expression& a);
 
-  Expression(const std::list<Expression>& es);
+  //Expression(const std::list<Expression>& es);
   // Expression(const std::vector<Expression> &es);
   Expression(const std::vector<Expression>& es);
 
@@ -92,6 +92,7 @@ private:
   Expression handle_define(Environment& env);
   Expression handle_begin(Environment& env);
   Expression handle_lambda(Environment& env);
+  Expression handle_apply(Environment& env);
   // list
   bool m_isList = false;
 };

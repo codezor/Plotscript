@@ -267,6 +267,19 @@ TEST_CASE("Test a List expression", "[interpreter]") {
 		answer.emplace_back(Atom(2.0));
 		REQUIRE(result == answer);
 	}
+
+	{
+		std::string program = "(range 0 4 1)";
+		INFO(program);
+		Expression result = run(program);
+		std::vector<Expression> answer = std::vector<Expression>();
+		answer.emplace_back(Atom(0.0));
+		answer.emplace_back(Atom(1.0));
+		answer.emplace_back(Atom(2.0));
+		answer.emplace_back(Atom(3.0));
+		answer.emplace_back(Atom(4.0));
+		REQUIRE(result == answer);
+	}
 }
 TEST_CASE("Testing Lambda", "[interpreter]") {
 
@@ -276,7 +289,32 @@ TEST_CASE("Testing Lambda", "[interpreter]") {
 		Expression result = run(input);
 		REQUIRE(result == Expression(15.0));
 	}
-	
+	{
+		std::string input = "(lambda (x))";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
+	{
+		std::string input = "(lambda (2) (+ 1))";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
 }
 
 TEST_CASE("Testing apply", "[interpreter]") 
@@ -300,6 +338,46 @@ TEST_CASE("Testing apply", "[interpreter]")
 		
 		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError );
 	}
+	{
+		std::string input = "(apply / (list 1 2 4))";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
+	{
+		std::string input = "(apply + )";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
+
+	{
+		std::string input = "(apply 3 3 )";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
 }
 TEST_CASE("Testing map", "[interpreter]")
 {
@@ -313,6 +391,62 @@ TEST_CASE("Testing map", "[interpreter]")
 		answer.append(Atom(0.25));
 
 		REQUIRE(result == Expression(answer));
+	}
+
+	{
+		std::string input = "(map + 3)";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
+
+	{
+		std::string input = "(map +)";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
+	{
+		std::string input = "(map  3)";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
+
+
+	{
+		std::string input = "(begin(define addtwo (lambda (x y) (+ x y)))(map addtwo(list 1 2 3)))";
+		
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 }
 TEST_CASE( "Test arithmetic procedures", "[interpreter]" ) {

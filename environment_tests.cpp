@@ -164,6 +164,19 @@ TEST_CASE("Test add arg", "[environment]")
   }
 }
 
+TEST_CASE("Test neg complex", "[environment]")
+{
+	Environment env;
+	std::vector<Expression> args;
+
+	INFO("subneg procedure doble complex")
+
+	{
+		Procedure p = env.get_proc(Atom("-"));		
+		args.emplace_back(std::complex<double>(3.0, 8.0));
+		REQUIRE(p(args) == Expression(std::complex<double>(-3.0, -8.0)));
+	}
+}
 TEST_CASE("Test subneg mixed type", "[environment]")
 {
   Environment env;
@@ -228,13 +241,7 @@ TEST_CASE("Test mul double zero", "[environment]")
 {
   Environment env;
   std::vector<Expression> args;
-
-  //INFO ("mul procedure no arguments")
-  //{
-  //Procedure p = env.get_proc(Atom("*"));
-  //REQUIRE_THROWS_AS(p(args), SemanticError);
-  //}
-
+  
   INFO("mul procedure")
   {
     Procedure p = env.get_proc(Atom("*"));
@@ -314,6 +321,16 @@ TEST_CASE("Test div double Idenity", "[environment]")
     args.emplace_back(1.0);
     REQUIRE(p(args) == Expression(7.0));
   }
+}
+TEST_CASE("Test div one complex", "[environment]")
+{
+	Environment env;
+	std::vector<Expression> args;
+	{
+		Procedure p = env.get_proc(Atom("/"));		
+		args.emplace_back(std::complex<double>(2.0, 2.0));
+		REQUIRE(p(args) == Expression(std::complex<double>(0.25, -0.25)));
+	}
 }
 
 TEST_CASE("Test div complex-complex", "[environment]")
@@ -463,6 +480,18 @@ TEST_CASE("Test ln", "[environment]")
     REQUIRE(p(args) == Expression(std::log(4.0)));
   }
 }
+TEST_CASE("Test ln negitive", "[environment]")
+{
+	Environment env;
+	std::vector<Expression> args;
+	
+	INFO("ln procedure");
+	{
+		Procedure p = env.get_proc(Atom("ln"));
+		args.emplace_back(-4.0);
+		REQUIRE_THROWS_AS(p(args) , SemanticError);
+	}
+}
 TEST_CASE("Test sin", "[environment]")
 {
   Environment env;
@@ -481,7 +510,18 @@ TEST_CASE("Test sin", "[environment]")
     REQUIRE(p(args) == Expression(std::sin(4.0)));
   }
 }
+TEST_CASE("Test sin invalid", "[environment]")
+{
+	Environment env;
+	std::vector<Expression> args;
 
+	INFO("sin complex arguments")
+	{
+		Procedure p = env.get_proc(Atom("sin"));
+		args.emplace_back(std::complex<double>(1.0, 1.0));
+		REQUIRE_THROWS_AS(p(args), SemanticError);
+	}
+}
 TEST_CASE("Test cos", "[environment]")
 {
   Environment env;
@@ -500,6 +540,18 @@ TEST_CASE("Test cos", "[environment]")
     REQUIRE(p(args) == Expression(std::cos(4.0)));
   }
 }
+TEST_CASE("Test cos invalid", "[environment]")
+{
+	Environment env;
+	std::vector<Expression> args;
+
+	INFO("cos procedure complex arguments")
+	{
+		Procedure p = env.get_proc(Atom("cos"));
+		args.emplace_back(std::complex<double>(1.0, 1.0));
+		REQUIRE_THROWS_AS(p(args), SemanticError);
+	}
+}
 TEST_CASE("Test tan", "[environment]")
 {
   Environment env;
@@ -516,6 +568,18 @@ TEST_CASE("Test tan", "[environment]")
     args.emplace_back(4.0);
     REQUIRE(p(args) == Expression(std::tan(4.0)));
   }
+}
+TEST_CASE("Test tan invalid", "[environment]")
+{
+	Environment env;
+	std::vector<Expression> args;
+
+	INFO("tan complex arguments")
+	{
+		Procedure p = env.get_proc(Atom("tan"));
+		args.emplace_back(std::complex<double>(1.0, 1.0));
+		REQUIRE_THROWS_AS(p(args), SemanticError);
+	}
 }
 
 TEST_CASE("Test real", "[environment]")
@@ -726,7 +790,7 @@ TEST_CASE("Test semeantic errors", "[environment]")
 
     REQUIRE_THROWS_AS(exp.eval(env), SemanticError);
   }
-  // Test procedures that take one input for an invalit type
+  
   INFO("Test add procedure semantic error: not a Number");
   {
     Procedure p = env.get_proc(Atom("+"));
@@ -735,44 +799,41 @@ TEST_CASE("Test semeantic errors", "[environment]")
   }
   INFO("Test Mul procedure semantic error: Not a Number");
   {
-    Procedure p = env.get_proc(Atom("*"));
-    //args.emplace_back(Atom("f"));
+    Procedure p = env.get_proc(Atom("*"));    
     REQUIRE_THROWS_AS(p(args), SemanticError);
   }
   INFO("Test Sub procedure semantic error: Not a Number");
   {
     Procedure p = env.get_proc(Atom("-"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
-    //args.emplace_back(Atom("f"));
+   
   }
   INFO("Test sqrt procedure semantic error: Not a Number");
   {
     Procedure p = env.get_proc(Atom("sqrt"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
-    //args.emplace_back(Atom("f"));
   }
   INFO("Test ln procedure semantic error: Not a Number");
   {
     Procedure p = env.get_proc(Atom("ln"));
-    REQUIRE_THROWS_AS(p(args), SemanticError);
-    //args.emplace_back(Atom("f"));
+    REQUIRE_THROWS_AS(p(args), SemanticError);    
   }
   INFO("Test sin procedure semantic error: Not a Number");
   {
     Procedure p = env.get_proc(Atom("sin"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
-    //args.emplace_back(Atom("f"));
+
   }
   INFO("Test cos procedure semantic error: Not a Number");
   {
     Procedure p = env.get_proc(Atom("cos"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
-    //args.emplace_back(Atom("f"));
+
   }
   INFO("Test tan procedure semantic error: Not a Number");
   {
     Procedure p = env.get_proc(Atom("tan"));
     REQUIRE_THROWS_AS(p(args), SemanticError);
-    //args.emplace_back(Atom("f"));
+    
   }
 }

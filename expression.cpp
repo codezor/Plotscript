@@ -215,8 +215,7 @@ Expression::handle_define(Environment& env)
   Expression result = m_tail[1].eval(env);
 
   if (env.is_exp(m_head)) {
-    throw SemanticError("Error during evaluation: attempt to redefine a "
-                        "previously defined symbol");
+    throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
   }
 
   // and add to env

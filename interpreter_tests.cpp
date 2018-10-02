@@ -172,6 +172,13 @@ TEST_CASE( "Test Interpreter result with literal expressions", "[interpreter]" )
     REQUIRE(result == Expression(atan2(0, -1)));
   }
 
+  { // Complex
+	  std::string program = "(I)";
+	  Expression result = run(program);
+	  REQUIRE(result == Expression(std::complex<double>(0.0, 1.0)));
+  }
+
+
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter]" ) {
@@ -238,6 +245,76 @@ TEST_CASE( "Test a medium-sized expression", "[interpreter]" ) {
   }
 }
 
+TEST_CASE("Test a List expression", "[interpreter]") {
+
+	{
+		std::string program = "(append (list 10 1) (2))";
+		INFO(program);
+		Expression result = run(program);
+		std::vector<Expression> answer= std::vector<Expression>();	
+		answer.emplace_back(Atom(10.0));
+		answer.emplace_back(Atom(1.0));	
+		answer.emplace_back(Atom(2.0));		
+		REQUIRE(result == answer);
+	}
+	{
+		std::string program = "(join (list 10 1) (list 2))";
+		INFO(program);
+		Expression result = run(program);
+		std::vector<Expression> answer = std::vector<Expression>();
+		answer.emplace_back(Atom(10.0));
+		answer.emplace_back(Atom(1.0));
+		answer.emplace_back(Atom(2.0));
+		REQUIRE(result == answer);
+	}
+}
+TEST_CASE("Testing Lambda", "[interpreter]") {
+
+	{
+		std::string input = "(begin (define a 1) (define x 100)(define f (lambda (x) (begin (define b 12)(+ a b x))))(f 2))";
+		INFO(input);
+		Expression result = run(input);
+		REQUIRE(result == Expression(15.0));
+	}
+	
+}
+
+TEST_CASE("Testing apply", "[interpreter]") 
+{
+	{
+		std::string input = "(apply + (list 1 2 3 4))";
+		INFO(input);
+		Expression result = run(input);
+		REQUIRE(result == Expression(10.0));
+	}
+	{
+		std::string input = "(apply + 3)";
+
+		Interpreter interp;
+
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		INFO(input);
+		
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError );
+	}
+}
+TEST_CASE("Testing map", "[interpreter]")
+{
+	{
+		std::string input = "(map / (list 1 2 4))";
+		INFO(input);
+		Expression result = run(input);
+		Expression answer;
+		answer.append(Atom(1.0));
+		answer.append(Atom(0.5));
+		answer.append(Atom(0.25));
+
+		REQUIRE(result == Expression(answer));
+	}
+}
 TEST_CASE( "Test arithmetic procedures", "[interpreter]" ) {
 
   {
@@ -322,3 +399,4 @@ TEST_CASE( "Test using number as procedure", "[interpreter]" ) {
 
   REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 }
+

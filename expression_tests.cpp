@@ -32,18 +32,18 @@ TEST_CASE( "Test symbol expression", "[expression]" ) {
 
 TEST_CASE( "Test complex expression", "[expression]" ) {
 
-  Expression exp(std::complex<double>(1,0));
+  Expression exp(std::complex<double>(1.0,1.0));
 
   REQUIRE(!exp.isHeadNumber());
   REQUIRE(!exp.isHeadSymbol());
   REQUIRE(exp.isHeadComplex());
 }
 
-TEST_CASE("Test List expression", "[expression]")
-{
+//TEST_CASE("Test List expression", "[expression]")
+//{
 	//Expression exp(std::list<Expression> (1.0));
 
 	//REQUIRE(!exp.isHeadNumber());
 	//REQUIRE(exp.isHeadSymbol());
 	//REQUIRE(!exp.isHeadComplex());
-}
+//}

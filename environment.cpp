@@ -478,7 +478,8 @@ first(const std::vector<Expression>& args)
     throw SemanticError(
       "Error in call to first: more than one argument in call to first.");
   }
-
+  
+  
   // Get the tail of the first Expression in args.
   Expression list = args.front();
   auto begin = list.tailConstBegin();
@@ -625,15 +626,7 @@ range(const std::vector<Expression>& args)
     return Expression(rangeList);
   }
 };
-//Expression
-//apply(const std::vector<Expression>& args)
-//{
-//};
-/*Expression
-lambda(const std::vector<Expression>& args)
-{
-  return Expression();
-};*/
+
 
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);

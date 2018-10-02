@@ -48,7 +48,8 @@ TEST_CASE("Test default constructor", "[environment]")
   REQUIRE(env.is_proc(Atom("append")));
   REQUIRE(env.is_proc(Atom("join")));
   REQUIRE(env.is_proc(Atom("range")));
-  REQUIRE(env.is_proc(Atom("range")));
+
+
 
   REQUIRE(!env.is_proc(Atom("op")));
 
@@ -615,7 +616,7 @@ TEST_CASE("Test Empty List", "[environment]")
 	INFO("List procedure with empty List")
 	{
 		Procedure p = env.get_proc(Atom("list"));
-		//args.emplace_back("list");
+	
 		CHECK(p(args) == Expression(std::vector<Expression>()));
 	}
 
@@ -642,32 +643,56 @@ TEST_CASE("Test List One arg", "[environment]")
 
 	std::vector<Expression> args;
     std::vector<Expression> test;
-	test.emplace_back(Atom("list"));
-	args.emplace_back(Atom("list"));
-	args.emplace_back(4);
-	test.emplace_back(4);
+		
+	args.emplace_back(4.0);
+	test.emplace_back(4.0);
+
+	
 	INFO("List procedure with one list item")
 	{
 		Procedure p = env.get_proc(Atom("list"));		
         CHECK(p(args) == test);
 		
 	}
+
+	std::vector<Expression> testList;
+	testList.emplace_back(std::vector<Expression>());
+	testList.front().append(Atom(4.0));
 	INFO("First procedure with one list item")
 	{
-		Procedure p = env.get_proc(Atom("first"));
-        //args.emplace_back(4);
-		CHECK(p(args) == Expression(4));
+		Procedure p = env.get_proc(Atom("first"));       
+		CHECK(p(testList) == Expression(4.0));
+		
 	}
+
 	INFO("rest procedure with one list item")
 	{
 		Procedure p = env.get_proc(Atom("rest"));
-		CHECK_THROWS_AS(p(args), SemanticError);
+		CHECK(p(testList) == Expression(std::vector<Expression>()));
 	}
 	INFO("length procedure with one list item")
 	{
 		Procedure p = env.get_proc(Atom("length"));
-		CHECK(p(args) == Expression(1));
+		CHECK(p(testList) == Expression(1.0));
 	}
+
+	
+}
+
+TEST_CASE("Test Longer Lists", "[environment]")
+{
+	Environment env;
+	std::vector<Expression> testList;
+	testList.emplace_back(std::vector<Expression>());
+	testList.front().append(Atom(4.0));
+	testList.front().append(Atom(2.0));
+
+	INFO("First procedure with two list item")
+	{
+		Procedure p = env.get_proc(Atom("first"));
+		CHECK(p(testList) == Expression(4));
+	}
+
 	
 }
 

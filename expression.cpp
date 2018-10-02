@@ -301,8 +301,7 @@ Expression::handle_apply(Environment& env) {
 		
 		// TODO: find a better way to do this
 		const std::string ER = ("Error: during apply: ");		
-		std::cout << ER;
-		throw SemanticError(e);
+		throw SemanticError(ER + e.what());
 	}
 	
 	return Expression(results.eval(env));
@@ -350,8 +349,7 @@ Expression Expression::handle_map(Environment& env) {
 
 		// TODO: find a better way to do this
 		const std::string ER = ("Error: during map: ");
-		std::cout << ER;
-		throw SemanticError(e);
+		throw SemanticError(ER + e.what());
 		}
 		results.m_tail.emplace_back(input.eval(env));
 		input.m_tail.pop_back();

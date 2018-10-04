@@ -316,7 +316,7 @@ Expression Expression::handle_map(Environment& env) {
 	}
 
 	if (!m_tail[0].head().isSymbol()) {
-		throw SemanticError("Error in apply firt argument is not a proceudure");
+		throw SemanticError("Error in map firt argument is not a proceudure");
 	}
 	
 	Atom var= m_tail[0].head();
@@ -329,7 +329,7 @@ Expression Expression::handle_map(Environment& env) {
 
 	if (m_tail[1].head().asSymbol() != "list")
 	{
-		throw SemanticError("Error: second argument to apply not a list");
+		throw SemanticError("Error: second argument to map not a list");
 	}
 
 	Expression results;
@@ -339,35 +339,24 @@ Expression Expression::handle_map(Environment& env) {
 
 	for (auto a = args.tailConstBegin(); a != args.tailConstEnd(); ++a)
 	{
-		input.m_tail.emplace_back(*a);
-
-
+		input.m_tail.push_back(*a);
 		// see if the evaluation will cause an error
-		try { input.eval(env); }
-		catch (SemanticError  &e) {
-
-		// TODO: find a better way to do this
-		const std::string ER = ("Error: during map: ");
+		try {input.eval(env); }
+		catch (const SemanticError  &e) {
+		// TODO: find a better way to do this		
+		//results
+		const std::string ER = ("Error: during map: ");		
+				
+		input.m_tail.pop_back();	
+	
 		throw SemanticError(ER + e.what());
+		
 		}
-		results.m_tail.emplace_back(input.eval(env));
+		results.m_tail.emplace_back(input.eval(env));		
 		input.m_tail.pop_back();
 	}
-	//results = input;
-
-	// see if the evaluation will cause an error
-	//try { results.eval(env); }
-	///catch (SemanticError  &e) {
-
-		// TODO: find a better way to do this
-		//const std::string ER = ("Error: during apply: ");
-		//std::cout << ER;
-		//throw SemanticError(e);
-	//}
-
+	
 	return Expression(results);
-
-
 }
 
 // this is a simple recursive version. the iterative version is more
@@ -405,14 +394,16 @@ Expression::eval(Environment& env)
 
       // create a local environment for the lambda expression
       Environment* shadow = new Environment;
-
+	  
       // Get the lambda function parameters and matching expressions.
       std::vector<Expression> parameters = originial.m_tail.front().m_tail;
       std::vector<Expression> expressions = m_tail;
 	 
+	  //std::cout << m_tail << std::endl;
       // For each (parameter, expression) pair.
 	  if (parameters.size() != expressions.size())
 	  {
+		  delete shadow;
 		  throw SemanticError("Error in call to procedure : invalid number of arguments.");
 	  }
       const std::size_t NUM_PARAMS = parameters.size();
@@ -429,18 +420,21 @@ Expression::eval(Environment& env)
         define.eval(*shadow);
       }
 
+	  
       // Now actually shadow the parent environment with the local environment
       // we just created.
       env.Shadow(env, *shadow);
-
+	  //shadow->delete;
       // yo dawg, i heard you like lambdas ...
       // so i put some lambdas, in your lambdas !
       // TODO: why won't this work ????
       // auto lambda = [&, parameters](Expression Parmeters)-> Expression
       // {return expressions; }; std::cout << lambda(parameters).eval(*new
       // Environment);
-
-      // Lamda statment back into AST evlauation
+	  //shadow->~Environment();
+	   delete shadow;
+	   shadow = nullptr;
+	// Lamda statment back into AST evlauation
       return originial.m_tail[1].eval(env);
     }
 

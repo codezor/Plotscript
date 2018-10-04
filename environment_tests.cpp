@@ -62,7 +62,7 @@ TEST_CASE("Test get expression", "[environment]")
   INFO("Built-in constants should have correct value when interpreter starts");
 
   REQUIRE(env.get_exp(Atom("pi")) == Expression(std::atan2(0, -1)));
-  REQUIRE(env.get_exp(Atom("e")) == Expression(std::exp(1)));
+  REQUIRE(env.get_exp(Atom("e")) == Expression(std::exp(1.0)));
   REQUIRE(env.get_exp(Atom("I")) == Expression(std::complex<double>(0.0, 1.0)));
   REQUIRE(env.get_exp(Atom("hi")) == Expression());
 }
@@ -351,7 +351,7 @@ TEST_CASE("Test div double-complex negitive", "[environment]")
   {
     Procedure p = env.get_proc(Atom("/"));
     args.emplace_back(-2.0);
-    args.emplace_back(std::complex<double>(0.5, 1));
+    args.emplace_back(std::complex<double>(0.5, 1.0));
     REQUIRE(p(args) == Expression(std::complex<double>(-0.8, 1.6)));
   }
 }

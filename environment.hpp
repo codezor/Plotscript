@@ -44,6 +44,8 @@ public:
    * definitions. */
   Environment();
 
+ 
+
   Environment Shadow(Environment& ENV, const Environment& shadow);
 
   /*! Determine if a symbol is known to the environment.
@@ -105,12 +107,8 @@ private:
 
     // constructors for use in container emplace
     EnvResult(){};
-    EnvResult(EnvResultType t, Expression e)
-      : type(t)
-      , exp(e){};
-    EnvResult(EnvResultType t, Procedure p)
-      : type(t)
-      , proc(p){};
+    EnvResult(EnvResultType t, Expression e) : type(t), exp(e){};
+    EnvResult(EnvResultType t, Procedure p) : type(t), proc(p){};
   };
 
   // the environment map

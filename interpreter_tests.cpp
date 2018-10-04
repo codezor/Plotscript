@@ -289,6 +289,7 @@ TEST_CASE("Testing Lambda", "[interpreter]") {
 		Expression result = run(input);
 		REQUIRE(result == Expression(15.0));
 	}
+
 	{
 		std::string input = "(lambda (x))";
 
@@ -299,9 +300,9 @@ TEST_CASE("Testing Lambda", "[interpreter]") {
 		bool ok = interp.parseStream(iss);
 		REQUIRE(ok == true);
 		INFO(input);
-
 		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 	}
+
 	{
 		std::string input = "(lambda (2) (+ 1))";
 
@@ -325,6 +326,7 @@ TEST_CASE("Testing apply", "[interpreter]")
 		Expression result = run(input);
 		REQUIRE(result == Expression(10.0));
 	}
+
 	{
 		std::string input = "(apply + 3)";
 
@@ -338,6 +340,7 @@ TEST_CASE("Testing apply", "[interpreter]")
 		
 		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError );
 	}
+
 	{
 		std::string input = "(apply / (list 1 2 4))";
 
@@ -420,6 +423,7 @@ TEST_CASE("Testing map", "[interpreter]")
 
 		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 	}
+
 	{
 		std::string input = "(map  3)";
 

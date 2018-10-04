@@ -638,6 +638,7 @@ Environment::Environment()
 
   reset();
 }
+
 Environment
 Environment::Shadow(Environment& ENV, const Environment& shadow)
 {

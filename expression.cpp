@@ -397,9 +397,8 @@ Expression::eval(Environment& env)
 	  
       // Get the lambda function parameters and matching expressions.
       std::vector<Expression> parameters = originial.m_tail.front().m_tail;
-      std::vector<Expression> expressions = m_tail;
-	 
-	  //std::cout << m_tail << std::endl;
+      std::vector<Expression> expressions = m_tail;	 
+	  
       // For each (parameter, expression) pair.
 	  if (parameters.size() != expressions.size())
 	  {
@@ -423,19 +422,20 @@ Expression::eval(Environment& env)
 	  
       // Now actually shadow the parent environment with the local environment
       // we just created.
-      env.Shadow(env, *shadow);
-	  //shadow->delete;
+      shadow->Shadow(env, *shadow);	  
       // yo dawg, i heard you like lambdas ...
       // so i put some lambdas, in your lambdas !
       // TODO: why won't this work ????
       // auto lambda = [&, parameters](Expression Parmeters)-> Expression
       // {return expressions; }; std::cout << lambda(parameters).eval(*new
       // Environment);
-	  //shadow->~Environment();
+	  
+	  m_tail.push_back(originial.m_tail[1].eval(*shadow));
+	
 	   delete shadow;
 	   shadow = nullptr;
 	// Lamda statment back into AST evlauation
-      return originial.m_tail[1].eval(env);
+      return m_tail[1].eval(env);
     }
 
     std::vector<Expression> results;

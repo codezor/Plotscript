@@ -46,7 +46,7 @@ public:
 
  
 
-  Environment Shadow(Environment& ENV, const Environment& shadow);
+  Environment Shadow(const Environment& ENV, Environment& shadow);
 
   /*! Determine if a symbol is known to the environment.
     \param sym the symbol to lookup

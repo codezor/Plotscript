@@ -640,15 +640,12 @@ Environment::Environment()
 }
 
 Environment
-Environment::Shadow(Environment& ENV, const Environment& shadow)
+Environment::Shadow(const Environment& ENV,  Environment& shadow)
 {
+	shadow.envmap.insert(ENV.envmap.begin(), ENV.envmap.end());
+  
 
-  for (std::pair<std::string, Environment::EnvResult> kv : shadow.envmap) {
-    ENV.envmap.erase(kv.first);
-    ENV.envmap.emplace(kv);
-  }
-
-  return Environment(ENV);
+  return Environment(shadow);
 };
 
 bool

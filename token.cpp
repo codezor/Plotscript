@@ -8,6 +8,7 @@
 const char OPENCHAR = '(';
 const char CLOSECHAR = ')';
 const char COMMENTCHAR = ';';
+//const char STRINGCHAR = ' " ';
 
 Token::Token(TokenType t)
   : m_type(t)
@@ -66,15 +67,27 @@ tokenize(std::istream& seq)
       }
       if (seq.eof())
         break;
-    } else if (c == OPENCHAR) {
+    } 
+	else if (c == OPENCHAR) 
+	{
       store_ifnot_empty(token, tokens);
       tokens.push_back(Token::TokenType::OPEN);
-    } else if (c == CLOSECHAR) {
+    } 
+	else if (c == CLOSECHAR) 
+	{
       store_ifnot_empty(token, tokens);
       tokens.push_back(Token::TokenType::CLOSE);
-    } else if (isspace(c)) {
+    } 
+	//else if(c == STRINGCHAR)
+	//{
+		//store_ifnot_empty(token, tokens);
+		//token.push_back(c);
+	//}
+	else if (isspace(c)) 
+	{
       store_ifnot_empty(token, tokens);
-    } else {
+    } 
+	else {
       token.push_back(c);
     }
   }

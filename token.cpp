@@ -8,7 +8,7 @@
 const char OPENCHAR = '(';
 const char CLOSECHAR = ')';
 const char COMMENTCHAR = ';';
-//const char STRINGCHAR = ' " ';
+const char QUOTECHAR = '"';
 
 Token::Token(TokenType t)
   : m_type(t)
@@ -60,7 +60,20 @@ tokenize(std::istream& seq)
     if (seq.eof())
       break;
 
-    if (c == COMMENTCHAR) {
+	if (c == QUOTECHAR)
+	{
+		do {
+			token.push_back(c);
+			c = seq.get();
+		} while ((!seq.eof()) && (c != QUOTECHAR));
+		if (seq.eof())
+			break;
+
+		token.push_back(c);
+		store_ifnot_empty(token, tokens);
+		
+	}
+    else if (c == COMMENTCHAR) {
       // chomp until the end of the line
       while ((!seq.eof()) && (c != '\n')) {
         c = seq.get();
@@ -78,11 +91,7 @@ tokenize(std::istream& seq)
       store_ifnot_empty(token, tokens);
       tokens.push_back(Token::TokenType::CLOSE);
     } 
-	//else if(c == STRINGCHAR)
-	//{
-		//store_ifnot_empty(token, tokens);
-		//token.push_back(c);
-	//}
+	
 	else if (isspace(c)) 
 	{
       store_ifnot_empty(token, tokens);

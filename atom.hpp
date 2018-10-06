@@ -52,6 +52,9 @@ public:
   /// predicate to determine if an Atom is of type Symbol
   bool isSymbol() const noexcept;
 
+  /// predicate to determine if an Atom is of type String
+  bool isString() const noexcept;
+
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
 
@@ -61,6 +64,8 @@ public:
   /// value of Atom as a number, returns empty-string if not a Symbol
   std::string asSymbol() const noexcept;
 
+  /// value of Atom as a number, returns empty-string if not a String
+  std::string asString() const noexcept;
   // std::list<Atom>asList()const noexcept;
 
   /// equality comparison based on type and value
@@ -74,6 +79,7 @@ private:
     NumberKind,
     ComplexKind,
     SymbolKind,
+	StringKind
 
   };
 
@@ -97,6 +103,9 @@ private:
 
   // helper to set type and value of Symbol
   void setSymbol(const std::string& value);
+  
+  // helper to set type and value of Symbol
+  void setString(const std::string& value);
 };
 
 /// inequality comparison for Atom

@@ -22,6 +22,7 @@ public:
   {
     OPEN,  //< open tag, aka '('
     CLOSE, //< close tag, aka ')'
+	//LITERAL, // literal string tag '"'
     STRING //< string tag
   };
 

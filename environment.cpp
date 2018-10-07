@@ -627,6 +627,28 @@ range(const std::vector<Expression>& args)
   }
 };
 
+Expression
+setProperty(const std::vector<Expression>& args)
+{
+	if (!nargs_equal(args, 3)) {
+		throw SemanticError("Error in call to set-property: invalid number of arguments.");
+	}
+
+	if (!args[0].isHeadString()) {
+		throw SemanticError("Error: first argument to set-property not a string.");
+	}
+	
+	std::map<std::string, Expression> props;
+	props[args[0].head().asString()]= args[1].head();
+	//args[1].head();
+	return Expression(args[2]);
+
+};
+
+//Expression
+//getProperty(const std::vector<Expression>& args)
+//{};
+
 
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
@@ -812,8 +834,9 @@ Environment::reset()
   // Procedure range
   envmap.emplace("range", EnvResult(ProcedureType, range));
   
-  // Procedure apply
-  //envmap.emplace("apply", EnvResult(ProcedureType, apply));
-  // Procedure: list;
-  // envmap.emplace("alist", EnvResult(ProcedureType, alist));
+  // Procedure set-property
+  envmap.emplace("set-property", EnvResult(ProcedureType, setProperty));
+  
+  // Procedure get-property
+  //envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
 }

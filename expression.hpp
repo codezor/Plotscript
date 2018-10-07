@@ -10,6 +10,7 @@ Defines the Expression type and assiciated functions.
 #include "atom.hpp"
 #include "token.hpp"
 #include <list>
+#include <map>
 
 // forward declare Environment
 class Environment;
@@ -35,8 +36,10 @@ public:
   /// deep-copy construct an expression (recursive)
   Expression(const Expression& a);
 
-  //Expression(const std::list<Expression>& es);
-  // Expression(const std::vector<Expression> &es);
+  /// Property-list constructor 
+  Expression(std::map<std::string, Expression>& es);
+ 
+  /// Construct and expression of a list type;
   Expression(const std::vector<Expression>& es);
 
   /// deep-copy assign an expression  (recursive)
@@ -69,6 +72,9 @@ public:
   /// convienience member to determine if head atom is a symbol
   bool isHeadSymbol() const noexcept;
 
+  /// convienience member to determine if head atom is a string
+  bool isHeadString() const noexcept;
+
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment& env);
 
@@ -79,6 +85,9 @@ public:
 private:
   // the head of the expression
   Atom m_head;
+
+  // the properties of an expression
+  std::map <std::string, Expression> propertyList;
 
   // the tail list is expressed as a vector for access efficiency
   // and cache coherence, at the cost of wasted memory.
@@ -95,7 +104,7 @@ private:
   Expression handle_apply(Environment& env);
   Expression handle_map(Environment& env);
   // list
-  bool m_isList = false;
+  //bool m_isList = false;
 };
 
 /// Render expression to output stream

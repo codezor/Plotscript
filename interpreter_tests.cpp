@@ -178,6 +178,14 @@ TEST_CASE( "Test Interpreter result with literal expressions", "[interpreter]" )
 	  REQUIRE(result == Expression(std::complex<double>(0.0, 1.0)));
   }
 
+  { //	String
+	  std::string program = "(\"foo\")";
+	  Expression result = run(program);
+	  std::string answer = "\"foo\"";
+	  REQUIRE(result == Expression(answer));
+  }
+
+
 
 }
 
@@ -453,6 +461,19 @@ TEST_CASE("Testing map", "[interpreter]")
 		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 }
+
+/*TEST_CASE("Testing adding a Literal string type", "[interpreter]") {
+	
+	{
+	std::string input = "(\"foo\")";
+	INFO(input);
+	Expression result = run(input);
+	Expression answer;
+	answer = Atom("foo").asString();
+
+	REQUIRE(result == Expression( ));
+	}
+}*/
 TEST_CASE( "Test arithmetic procedures", "[interpreter]" ) {
 
   {

@@ -42,9 +42,7 @@ class Environment
 public:
   /*! Construct the default environment with built-in procedures and
    * definitions. */
-  Environment();
-
- 
+  Environment(); 
 
   Environment Shadow(const Environment& ENV, Environment& shadow);
 

@@ -6,12 +6,12 @@
 #include <sstream>
 #include <utility>
 #include <string>
-//#include <map>
+#include <map>
+
 Expression::Expression() {}
 
 Expression::Expression(const Atom& a)
 {
-
   m_head = a;
 }
 
@@ -25,10 +25,19 @@ Expression::Expression(const Expression& a)
   }
 }
 
+//
+Expression::Expression(std::map<std::string, Expression>& es) {
+
+	//m_head = es.front;
+	propertyList = es;
+
+	
+}
+
 // Expression::Expression(const std::vector<Expression> &es)
 Expression::Expression(const std::vector<Expression>& es)
 {
-
+	// maybe set the head to list and then modify list printing to ignore the "list" head?
   m_head = Atom("");
   // m_head.setList();
   // m_isList = true;
@@ -37,10 +46,11 @@ Expression::Expression(const std::vector<Expression>& es)
   for (auto e : es) {
     m_tail.emplace_back(e);
 
-    m_isList = true;
+    //m_isList = true;
   }
   // Atom(m_tail);
 }
+
 
 Expression&
 Expression::operator=(const Expression& a)
@@ -86,6 +96,11 @@ bool
 Expression::isHeadSymbol() const noexcept
 {
   return m_head.isSymbol();
+}
+
+bool Expression::isHeadString() const noexcept
+{
+	return m_head.isString();
 }
 
 void

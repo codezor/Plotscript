@@ -211,6 +211,10 @@ Atom::asString() const noexcept
 	if (m_type == StringKind) {
 		result = m_stringValue;
 	}
+	else if (m_type == SymbolKind && m_stringValue == "NONE")
+	{
+		result = m_stringValue;
+	}
 
 	return result;
 }

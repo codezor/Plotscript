@@ -39,7 +39,7 @@ Expression::Expression(const Expression& a,std::map<std::string, Expression>& es
 }
 Expression
 Expression::getPropertyList(std::string key) {
-	this->m_propertyList;
+	//this->m_propertyList;
 	if (m_propertyList.count(key) > 0)
 	{		
 		Expression property = m_propertyList[key];
@@ -486,7 +486,13 @@ Expression::eval(Environment& env)
 std::ostream&
 operator<<(std::ostream& out, const Expression& exp)
 {
-
+	const Atom atom = exp.head();
+	const std::string actual = atom.asString();
+	const std::string expected = "NONE";
+	if (actual == expected) {
+		out << exp.head();
+		return out;
+	}
   out << "(";
   if (exp.head().asSymbol() != "lambda") {
     out << exp.head(); // << " ";

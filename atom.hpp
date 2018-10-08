@@ -80,7 +80,6 @@ private:
     ComplexKind,
     SymbolKind,
 	StringKind
-
   };
 
   // track the type

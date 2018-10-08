@@ -37,7 +37,7 @@ public:
   Expression(const Expression& a);
 
   /// Property-list constructor 
-  Expression(std::map<std::string, Expression>& es);
+  Expression(const Expression& a,std::map<std::string, Expression>& es);
  
   /// Construct and expression of a list type;
   Expression(const std::vector<Expression>& es);
@@ -63,6 +63,9 @@ public:
   /// return a const-iterator to the tail end
   ConstIteratorType tailConstEnd() const noexcept;
 
+  /// returns a property entery
+ Expression getPropertyList(std::string key);
+
   /// convienience member to determine if head atom is a number
   bool isHeadNumber() const noexcept;
 
@@ -82,12 +85,14 @@ public:
   bool operator==(const Expression& exp) const noexcept;
   // Procedure handle_lambda(Environment &env) const;
 
+	
+
 private:
   // the head of the expression
   Atom m_head;
 
   // the properties of an expression
-  std::map <std::string, Expression> propertyList;
+  std::map<std::string, Expression> m_propertyList;
 
   // the tail list is expressed as a vector for access efficiency
   // and cache coherence, at the cost of wasted memory.

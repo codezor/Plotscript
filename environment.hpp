@@ -86,6 +86,8 @@ public:
   */
   Procedure get_proc(const Atom& sym) const;
 
+  
+
   /*! Reset the environment to its default state. */
   void reset();
 

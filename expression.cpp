@@ -23,34 +23,48 @@ Expression::Expression(const Expression& a)
   for (auto e : a.m_tail) {
     m_tail.push_back(e);
   }
+  m_propertyList.insert(a.m_propertyList.begin(), a.m_propertyList.end());
 }
 
 //
-Expression::Expression(std::map<std::string, Expression>& es) {
+Expression::Expression(const Expression& a,std::map<std::string, Expression>& es) {
+		
+	m_head = a.m_head;
+	for (auto e : a.m_tail) {
+		m_tail.push_back(e);
+	}
 
-	//m_head = es.front;
-	propertyList = es;
-
+	m_propertyList.insert(es.begin(),es.end());
 	
 }
+Expression
+Expression::getPropertyList(std::string key) {
+	this->m_propertyList;
+	if (m_propertyList.count(key) > 0)
+	{		
+		Expression property = m_propertyList[key];
+		return property;
+	}
+	
+	else {
+		std::string result = "NONE";
+		return Expression(result);
+	}
+}
 
-// Expression::Expression(const std::vector<Expression> &es)
+
 Expression::Expression(const std::vector<Expression>& es)
 {
 	// maybe set the head to list and then modify list printing to ignore the "list" head?
   m_head = Atom("");
-  // m_head.setList();
-  // m_isList = true;
+
 
   // m_tail.clear();
   for (auto e : es) {
-    m_tail.emplace_back(e);
-
-    //m_isList = true;
+    m_tail.emplace_back(e);	   
   }
-  // Atom(m_tail);
+ 
 }
-
 
 Expression&
 Expression::operator=(const Expression& a)
@@ -65,6 +79,7 @@ Expression::operator=(const Expression& a)
     }
   }
 
+  m_propertyList.insert(a.m_propertyList.begin(), a.m_propertyList.end());
   return *this;
 }
 
@@ -154,7 +169,8 @@ apply(const Atom& op,
   Procedure proc = env.get_proc(op);
 
   // call proc with args
-  return proc(args);
+  Expression result = proc(args);
+  return result;
 }
 //#include <iostream>
 Expression
@@ -164,6 +180,7 @@ Expression::handle_lookup(const Atom& head, const Environment& env)
   if (head.isSymbol()) {
     if (env.is_exp(head)) {
       // LIST SHOULD NEVER GET HERE
+		
       Expression e = env.get_exp(head);
 
       return e;

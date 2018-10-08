@@ -464,6 +464,7 @@ conj(const std::vector<Expression>& args)
   }
   return Expression(result);
 };
+
 Expression
 list(const std::vector<Expression>& args)
 {
@@ -637,17 +638,35 @@ setProperty(const std::vector<Expression>& args)
 	if (!args[0].isHeadString()) {
 		throw SemanticError("Error: first argument to set-property not a string.");
 	}
-	
 	std::map<std::string, Expression> props;
-	props[args[0].head().asString()]= args[1].head();
-	//args[1].head();
-	return Expression(args[2]);
-
+	const std::string key = args[0].head().asString();
+	const Expression value = args[1].head();
+	
+	props[key]= value;
+	const Expression receiver = args[2];
+	
+	const Expression expression_with_props_set = Expression(receiver, props);
+	return expression_with_props_set;
+	
 };
 
-//Expression
-//getProperty(const std::vector<Expression>& args)
-//{};
+Expression
+getProperty(const std::vector<Expression>& args)
+{
+	if (!nargs_equal(args, 2)) {
+		throw SemanticError("Error in call to get-property: invalid number of arguments.");
+	}
+
+	if (!args[0].isHeadString()) {
+		throw SemanticError("Error: first argument to set-property not a string.");
+	}
+
+	const std::string property_name = args[0].head().asString();
+	Expression expression_that_maybe_has_property = args[1];
+		
+	Expression search_result = expression_that_maybe_has_property.getPropertyList(property_name);
+	return search_result;
+};
 
 
 const double PI = std::atan2(0, -1);
@@ -712,16 +731,16 @@ void
 Environment::add_exp(const Atom& sym, const Expression& exp)
 {
 
-  if (!sym.isSymbol()) {
-    throw SemanticError("Attempt to add non-symbol to environment");
-  }
+	if (!sym.isSymbol()) {
+		throw SemanticError("Attempt to add non-symbol to environment");
+	}
 
-  // error if overwriting symbol map
-  if (envmap.find(sym.asSymbol()) != envmap.end()) {
-    throw SemanticError("Attempt to overwrite symbol in environemnt");
-  }
+	// error if overwriting symbol map
+	if (envmap.find(sym.asSymbol()) != envmap.end()) {
+		throw SemanticError("Attempt to overwrite symbol in environemnt");
+	}
 
-  envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
+	envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
 }
 
 bool
@@ -838,5 +857,5 @@ Environment::reset()
   envmap.emplace("set-property", EnvResult(ProcedureType, setProperty));
   
   // Procedure get-property
-  //envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
+  envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
 }

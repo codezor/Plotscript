@@ -11,6 +11,7 @@ Defines the Expression type and assiciated functions.
 #include "token.hpp"
 #include <list>
 #include <map>
+#include <utility>
 
 // forward declare Environment
 class Environment;
@@ -42,6 +43,7 @@ public:
   /// Construct and expression of a list type;
   Expression(const std::vector<Expression>& es);
 
+ 
   /// deep-copy assign an expression  (recursive)
   Expression& operator=(const Expression& a);
 
@@ -77,6 +79,9 @@ public:
 
   /// convienience member to determine if head atom is a string
   bool isHeadString() const noexcept;
+  
+  /// convience method to determine if head atom is a list
+  bool isHeadList() const noexcept;
 
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment& env);
@@ -85,7 +90,8 @@ public:
   bool operator==(const Expression& exp) const noexcept;
   // Procedure handle_lambda(Environment &env) const;
 
-	
+// void 
+  void tree_view(std::string);
 
 private:
   // the head of the expression
@@ -108,6 +114,7 @@ private:
   Expression handle_lambda(Environment& env);
   Expression handle_apply(Environment& env);
   Expression handle_map(Environment& env);
+  Expression store_lamba(Environment& env, Expression& original);
   // list
   //bool m_isList = false;
 };

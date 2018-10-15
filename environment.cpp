@@ -859,3 +859,17 @@ Environment::reset()
   // Procedure get-property
   envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
 }
+
+void Environment::TreeView(std::string indent) {
+
+	for (auto e: envmap) {
+		std::cout << e.first << std::endl;
+		e.second.Tree_View(indent + "  ");
+	}
+}
+
+void Environment::EnvResult::Tree_View(std::string indent) {
+	std::cout << "  type: " << type;
+	exp.tree_view("  ");
+	std::cout << "  " << proc << std::endl;
+}

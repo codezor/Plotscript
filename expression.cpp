@@ -56,7 +56,7 @@ Expression::getPropertyList(std::string key) {
 Expression::Expression(const std::vector<Expression>& es)
 {
 	// maybe set the head to list and then modify list printing to ignore the "list" head?
-  m_head = Atom("");
+  m_head = Atom("list");
 
 
   // m_tail.clear();
@@ -65,6 +65,7 @@ Expression::Expression(const std::vector<Expression>& es)
   }
  
 }
+
 
 Expression&
 Expression::operator=(const Expression& a)
@@ -116,6 +117,10 @@ Expression::isHeadSymbol() const noexcept
 bool Expression::isHeadString() const noexcept
 {
 	return m_head.isString();
+}
+bool Expression::isHeadList() const noexcept
+{
+	return (m_head.isSymbol() && m_head.asSymbol() == "list");
 }
 
 void
@@ -293,7 +298,56 @@ Expression::handle_lambda(Environment& env)
   result.m_tail.emplace_back(second);
   return (result);
 }
+Expression Expression::store_lamba(Environment& env, Expression& original) {
 
+	// create a local environment for the lambda expression
+	Environment* shadow = new Environment;
+
+	// Get the lambda function parameters and matching expressions.
+	std::vector<Expression> parameters = original.m_tail[0].m_tail;
+	//parameters.emplace_back(originial.m_tail.front().m_head);
+   // parameters.emplace_back( originial.m_tail.front().m_tail);
+	std::vector<Expression> expressions = m_tail;
+
+	// For each (parameter, expression) pair.
+	if (parameters.size() != expressions.size())
+	{
+		delete shadow;
+		throw SemanticError("Error in call to procedure : invalid number of arguments.");
+	}
+	const std::size_t NUM_PARAMS = parameters.size();
+	for (std::size_t i = 0; i < NUM_PARAMS; ++i) {
+		Expression parameter = parameters[i];
+		Expression expression = expressions[i];
+
+		// define the parameter in the shadow environment.
+		Expression define(Atom("define"));
+		define.m_tail.push_back(parameter);
+		define.m_tail.push_back(expression);
+
+		// Define the parameters in the shadow environment.
+		define.eval(*shadow);
+	}
+
+
+	// Now actually shadow the parent environment with the local environment
+	// we just created.
+	shadow->Shadow(env, *shadow);
+	// yo dawg, i heard you like lambdas ...
+	// so i put some lambdas, in your lambdas !
+	// TODO: why won't this work ????
+
+	Expression result;
+
+	result.m_tail.push_back(original.m_tail[1].eval(*shadow));
+
+
+	delete shadow;
+	shadow = nullptr;
+
+	// Lamda statment back into AST evlauation
+	return result.m_tail[0];
+}
 Expression
 Expression::handle_apply(Environment& env) {
 		
@@ -329,7 +383,7 @@ Expression::handle_apply(Environment& env) {
 		input.m_tail.emplace_back(*a);		
 	}	
 	results = input;
-
+	//std::cout << results << std::endl;
 	// see if the evaluation will cause an error
 	try { results.eval(env); }	
 	catch(SemanticError  &e) {
@@ -372,7 +426,7 @@ Expression Expression::handle_map(Environment& env) {
 	Expression input;
 	input.m_head = var;
 	Expression args = m_tail[1].m_tail;
-
+	//std::cout << "var " << var <<"proc "<<proc << m_tail <<std::endl;
 	for (auto a = args.tailConstBegin(); a != args.tailConstEnd(); ++a)
 	{
 		input.m_tail.push_back(*a);
@@ -425,53 +479,11 @@ Expression::eval(Environment& env)
   }
   // else attempt to treat as procedure
   else {
+	  //tree_view(" ");
     Expression originial = env.get_exp(m_head);
     if (originial.m_head.asSymbol() == "lambda") {
 
-      // create a local environment for the lambda expression
-      Environment* shadow = new Environment;
-	  
-      // Get the lambda function parameters and matching expressions.
-      std::vector<Expression> parameters = originial.m_tail.front().m_tail;
-      std::vector<Expression> expressions = m_tail;	 
-	  
-      // For each (parameter, expression) pair.
-	  if (parameters.size() != expressions.size())
-	  {
-		  delete shadow;
-		  throw SemanticError("Error in call to procedure : invalid number of arguments.");
-	  }
-      const std::size_t NUM_PARAMS = parameters.size();
-      for (std::size_t i = 0; i < NUM_PARAMS; ++i) {
-        Expression parameter = parameters[i];
-        Expression expression = expressions[i];
-
-        // define the parameter in the shadow environment.
-        Expression define(Atom("define"));
-        define.m_tail.push_back(parameter);
-        define.m_tail.push_back(expression);
-
-        // Define the parameters in the shadow environment.
-        define.eval(*shadow);
-      }
-
-	  
-      // Now actually shadow the parent environment with the local environment
-      // we just created.
-      shadow->Shadow(env, *shadow);	  
-      // yo dawg, i heard you like lambdas ...
-      // so i put some lambdas, in your lambdas !
-      // TODO: why won't this work ????
-      // auto lambda = [&, parameters](Expression Parmeters)-> Expression
-      // {return expressions; }; std::cout << lambda(parameters).eval(*new
-      // Environment);
-	  
-	  m_tail.push_back(originial.m_tail[1].eval(*shadow));
-	
-	   delete shadow;
-	   shadow = nullptr;
-	// Lamda statment back into AST evlauation
-      return m_tail[1].eval(env);
+	  return (store_lamba( env, originial));      
     }
 
     std::vector<Expression> results;
@@ -494,7 +506,7 @@ operator<<(std::ostream& out, const Expression& exp)
 		return out;
 	}
   out << "(";
-  if (exp.head().asSymbol() != "lambda") {
+  if ((exp.head().asSymbol() != "lambda") && (!exp.isHeadList())) {
     out << exp.head(); // << " ";
   }
   for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
@@ -502,7 +514,7 @@ operator<<(std::ostream& out, const Expression& exp)
     //++e;
 
     if (e != exp.tailConstBegin() ||
-        (exp.isHeadSymbol() && exp.head().asSymbol() != "" &&
+        (exp.isHeadSymbol() && !exp.isHeadList() &&
          exp.head().asSymbol() != "lambda")) {
       out << " ";
     }
@@ -538,4 +550,16 @@ operator!=(const Expression& left, const Expression& right) noexcept
 {
 
   return !(left == right);
+}
+
+
+void Expression::tree_view(std::string indent) {
+	std::cout<< indent + "  " << m_head << std::endl;
+	if (m_tail.size() > 0) {
+		
+		for (auto e : m_tail) {
+			e.tree_view(indent + "  ");
+		}
+	}
+	
 }

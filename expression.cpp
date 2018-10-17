@@ -13,12 +13,12 @@ Expression::Expression() {}
 Expression::Expression(const Atom& a)
 {
   m_head = a;
+
 }
 
-// recursive copy
+// recursive copy includes property list
 Expression::Expression(const Expression& a)
 {
-
   m_head = a.m_head;
   for (auto e : a.m_tail) {
     m_tail.push_back(e);
@@ -26,7 +26,7 @@ Expression::Expression(const Expression& a)
   m_propertyList.insert(a.m_propertyList.begin(), a.m_propertyList.end());
 }
 
-//
+// Constructor with property list
 Expression::Expression(const Expression& a,std::map<std::string, Expression>& es) {
 		
 	m_head = a.m_head;
@@ -305,8 +305,6 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 
 	// Get the lambda function parameters and matching expressions.
 	std::vector<Expression> parameters = original.m_tail[0].m_tail;
-	//parameters.emplace_back(originial.m_tail.front().m_head);
-   // parameters.emplace_back( originial.m_tail.front().m_tail);
 	std::vector<Expression> expressions = m_tail;
 
 	// For each (parameter, expression) pair.
@@ -329,18 +327,18 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 		define.eval(*shadow);
 	}
 
-
 	// Now actually shadow the parent environment with the local environment
 	// we just created.
 	shadow->Shadow(env, *shadow);
 	// yo dawg, i heard you like lambdas ...
 	// so i put some lambdas, in your lambdas !
 	// TODO: why won't this work ????
-
+	 // auto lambda = [&, parameters](Expression Parmeters)-> Expression
+	 // {return expressions; }; std::cout << lambda(parameters).eval(*new
+	 // Environment);
 	Expression result;
 
 	result.m_tail.push_back(original.m_tail[1].eval(*shadow));
-
 
 	delete shadow;
 	shadow = nullptr;
@@ -348,6 +346,7 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 	// Lamda statment back into AST evlauation
 	return result.m_tail[0];
 }
+
 Expression
 Expression::handle_apply(Environment& env) {
 		
@@ -479,7 +478,7 @@ Expression::eval(Environment& env)
   }
   // else attempt to treat as procedure
   else {
-	  //tree_view(" ");
+	//tree_view(" ");
     Expression originial = env.get_exp(m_head);
     if (originial.m_head.asSymbol() == "lambda") {
 
@@ -552,8 +551,8 @@ operator!=(const Expression& left, const Expression& right) noexcept
   return !(left == right);
 }
 
-
-void Expression::tree_view(std::string indent) {
+ // Used for debugging it
+/*void Expression::tree_view(std::string indent) {
 	std::cout<< indent + "  " << m_head << std::endl;
 	if (m_tail.size() > 0) {
 		
@@ -562,4 +561,4 @@ void Expression::tree_view(std::string indent) {
 		}
 	}
 	
-}
+}*/

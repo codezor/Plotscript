@@ -86,7 +86,7 @@ public:
   */
   Procedure get_proc(const Atom& sym) const;
 
-  void TreeView(std::string);
+  //void TreeView(std::string);
   
 
   /*! Reset the environment to its default state. */
@@ -111,7 +111,7 @@ private:
     EnvResult(EnvResultType t, Expression e) : type(t), exp(e){};
     EnvResult(EnvResultType t, Procedure p) : type(t), proc(p){};
 
-	void Tree_View(std::string);
+	//void Tree_View(std::string);
   };
 
   // the environment map

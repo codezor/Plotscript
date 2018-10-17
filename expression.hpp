@@ -90,8 +90,8 @@ public:
   bool operator==(const Expression& exp) const noexcept;
   // Procedure handle_lambda(Environment &env) const;
 
-// void 
-  void tree_view(std::string);
+//  Tree view used for debugging 
+	//void tree_view(std::string);
 
 private:
   // the head of the expression

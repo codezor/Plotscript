@@ -24,7 +24,6 @@ Atom::Atom(std::complex<double> value)
 Atom::Atom(const Token& token)
   : Atom()
 {
-
   // is token a number?
   double temp;
   std::istringstream iss(token.asString());
@@ -156,7 +155,6 @@ Atom::setComplex(std::complex<double> value)
 void
 Atom::setSymbol(const std::string& value)
 {
-
   // we need to ensure the destructor of the symbol string is called
   if (m_type == SymbolKind || m_type == StringKind) {
     m_stringValue.~basic_string();

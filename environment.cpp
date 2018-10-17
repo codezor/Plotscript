@@ -678,6 +678,8 @@ Environment::Environment()
 {
 
   reset();
+  // This should create a built in map to allow re-definition of user defined things.
+  builtIn.insert(envmap.begin(), envmap.end());
 }
 
 Environment
@@ -736,8 +738,12 @@ Environment::add_exp(const Atom& sym, const Expression& exp)
 	}
 
 	// error if overwriting symbol map
-	if (envmap.find(sym.asSymbol()) != envmap.end()) {
-		throw SemanticError("Attempt to overwrite symbol in environemnt");
+	//if (envmap.find(sym.asSymbol()) != envmap.end()) {
+		//throw SemanticError("Attempt to overwrite symbol in environemnt");
+	//}
+
+	if (builtIn.find(sym.asSymbol()) != builtIn.end()) {
+		throw SemanticError("Attempt to overwrite built-in symbol in environemnt");
 	}
 
 	envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));

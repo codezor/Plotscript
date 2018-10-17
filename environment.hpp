@@ -116,6 +116,8 @@ private:
 
   // the environment map
   std::map<std::string, EnvResult> envmap;
+  // the built-in procedure and expresion map
+  std::map<std::string, EnvResult> builtIn;
 };
 
 #endif

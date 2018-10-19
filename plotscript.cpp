@@ -7,6 +7,7 @@
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
 
+
 void
 prompt(){	
   std::cout << "\nplotscript> ";
@@ -32,13 +33,32 @@ info(const std::string& err_str)
 {
   std::cout << "Info: " << err_str << std::endl;
 }
+void startUp(Interpreter& interp) {
+
+	std::ifstream ifs(STARTUP_FILE);
+	if (!interp.parseStream(ifs)) {
+		error("Invalid Program. Could not parse.");
+		//return EXIT_FAILURE;
+	}
+	else {
+		try {
+			Expression exp = interp.evaluate();
+			//std::cout << exp << std::endl;
+		}
+		catch (const SemanticError& ex) {
+			std::cerr << ex.what() << std::endl;
+			// return EXIT_FAILURE;
+		}
+	}
+}
 
 int
 eval_from_stream(std::istream& stream)
 {
 
   Interpreter interp;
-  
+  startUp(interp);
+
   if (!interp.parseStream(stream)) {
     error("Invalid Program. Could not parse.");
     return EXIT_FAILURE;
@@ -84,21 +104,7 @@ repl()
   Interpreter interp;
   //eval_from_file(STARTUP_FILE);
   
-  std::ifstream ifs(STARTUP_FILE);
-  if (!interp.parseStream(ifs)) {
-	  error("Invalid Program. Could not parse.");
-	  //return EXIT_FAILURE;
-  }
-  else {
-	  try {
-		  Expression exp = interp.evaluate();
-		  //std::cout << exp << std::endl;
-	  }
-	  catch (const SemanticError& ex) {
-		  std::cerr << ex.what() << std::endl;
-		 // return EXIT_FAILURE;
-	  }
-  }
+  startUp(interp);
   
   while (!std::cin.eof()) {
 	

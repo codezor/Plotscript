@@ -5,7 +5,8 @@
 #include <complex>
 #include <list>
 #include <vector>
-#include<iostream>
+#include <iostream>
+#include <unordered_map>
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -629,7 +630,7 @@ range(const std::vector<Expression>& args)
 };
 
 Expression
-setProperty(const std::vector<Expression>& args)
+setProperty(const std::vector<Expression>& args) 
 {
 	if (!nargs_equal(args, 3)) {
 		throw SemanticError("Error in call to set-property: invalid number of arguments.");
@@ -645,7 +646,12 @@ setProperty(const std::vector<Expression>& args)
 	props[key]= value;
 	const Expression receiver = args[2];
 	
-	const Expression expression_with_props_set = Expression(receiver, props);
+	if (receiver.m_propertyList.size() != 0)
+	{
+		props.insert(receiver.m_propertyList.begin(), receiver.m_propertyList.end());
+	}
+	const Expression expression_with_props_set = Expression(receiver, props);;
+	
 	return expression_with_props_set;
 	
 };
@@ -660,7 +666,7 @@ getProperty(const std::vector<Expression>& args)
 	if (!args[0].isHeadString()) {
 		throw SemanticError("Error: first argument to set-property not a string.");
 	}
-
+	//args[0].as
 	const std::string property_name = args[0].head().asString();
 	Expression expression_that_maybe_has_property = args[1];
 		
@@ -675,9 +681,8 @@ const double EXP = std::exp(1);
 const std::complex<double> I = std::complex<double>(0.0, 1.0);
 
 Environment::Environment()
-{
-
-  reset();
+{	
+	reset();
   // This should create a built in map to allow re-definition of user defined things.
   builtIn.insert(envmap.begin(), envmap.end());
 }
@@ -741,11 +746,17 @@ Environment::add_exp(const Atom& sym, const Expression& exp)
 	//if (envmap.find(sym.asSymbol()) != envmap.end()) {
 		//throw SemanticError("Attempt to overwrite symbol in environemnt");
 	//}
-
+	// error if overwritting built-in symbol
 	if (builtIn.find(sym.asSymbol()) != builtIn.end()) {
+		//if()
 		throw SemanticError("Attempt to overwrite built-in symbol in environemnt");
 	}
-
+	
+	else if (envmap.count(sym.asSymbol()) > 0) {
+		
+		
+		envmap.erase(sym.asSymbol());
+	}
 	envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
 }
 

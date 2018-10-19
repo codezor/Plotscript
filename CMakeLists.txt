@@ -27,14 +27,21 @@ set(unittest_src
   unit_tests.cpp
   )
 
+set(STARTUP_FILE ${CMAKE_SOURCE_DIR}/startup.pls)
+configure_file(${CMAKE_SOURCE_DIR}/startup_config.hpp.in ${CMAKE_BINARY_DIR}/startup_config.hpp)
+configure_file(${CMAKE_SOURCE_DIR}/startup.pls ${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_BINARY_DIR})
+
 # EDIT
 # add source for any TUI modules here
 set(tui_src
+	startup_config.hpp
   )
 
 # EDIT
 # add source for any GUI modules here
 set(gui_src
+	
   )
 
 # EDIT
@@ -44,6 +51,10 @@ set(gui_test_src
 )
 
 
+
+#configure_file(${CMAKE_SOURCE_DIR}/startup.pls ${CMAKE_BINARY_DIR}/startup.pls COPYONLY)
+#configure_file(${CMAKE_SOURCE_DIR}/startup.pls ${CMAKE_BINARY_DIR}/Debug/startup.pls COPYONLY)
+#configure_file(${CMAKE_SOURCE_DIR}/startup.pls ${CMAKE_BINARY_DIR}/Release/startup.pls COPYONLY)
 # ------------------------------------------------
 # You should not need to edit any files below here
 # ------------------------------------------------
@@ -51,6 +62,7 @@ set(gui_test_src
 # main entry point for TUI interface
 set(tui_main
   plotscript.cpp
+  
 )
 
 # main entry point for GUI interface
@@ -84,7 +96,7 @@ endif()
 add_library(interpreter ${interpreter_src})
 
 # create the plotscript executable
-add_executable(plotscript ${tui_main} ${tui_src})
+add_executable(plotscript ${tui_main} ${tui_src} )
 target_link_libraries(plotscript interpreter)
 
 # create the unit_tests executable

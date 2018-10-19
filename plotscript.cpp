@@ -3,12 +3,12 @@
 #include <sstream>
 #include <string>
 
+#include"startup_config.hpp"
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
 
 void
-prompt()
-{
+prompt(){	
   std::cout << "\nplotscript> ";
 }
 
@@ -38,7 +38,7 @@ eval_from_stream(std::istream& stream)
 {
 
   Interpreter interp;
-
+  
   if (!interp.parseStream(stream)) {
     error("Invalid Program. Could not parse.");
     return EXIT_FAILURE;
@@ -65,14 +65,13 @@ eval_from_file(std::string filename)
     error("Could not open file for reading.");
     return EXIT_FAILURE;
   }
-
   return eval_from_stream(ifs);
 }
 
 int
 eval_from_command(std::string argexp)
 {
-
+	//eval_from_file(STARTUP_FILE);
   std::istringstream expression(argexp);
 
   return eval_from_stream(expression);
@@ -83,9 +82,26 @@ void
 repl()
 {
   Interpreter interp;
-
+  //eval_from_file(STARTUP_FILE);
+  
+  std::ifstream ifs(STARTUP_FILE);
+  if (!interp.parseStream(ifs)) {
+	  error("Invalid Program. Could not parse.");
+	  //return EXIT_FAILURE;
+  }
+  else {
+	  try {
+		  Expression exp = interp.evaluate();
+		  //std::cout << exp << std::endl;
+	  }
+	  catch (const SemanticError& ex) {
+		  std::cerr << ex.what() << std::endl;
+		 // return EXIT_FAILURE;
+	  }
+  }
+  
   while (!std::cin.eof()) {
-
+	
     prompt();
     std::string line = readline();
 
@@ -110,17 +126,32 @@ repl()
 int
 main(int argc, char* argv[])
 {
+	
   if (argc == 2) {
+	 
+	  //eval_from_file(STARTUP_FILE);
     return eval_from_file(argv[1]);
-  } else if (argc == 3) {
-    if (std::string(argv[1]) == "-e") {
-      return eval_from_command(argv[2]);
-    } else {
-      error("Incorrect number of command line arguments.");
-    }
-  } else {
-    repl();
-  }
+  
+  } 
+ 
+  else if (argc == 3) {
+	  	  
 
+    if (std::string(argv[1]) == "-e") {
+		
+      return eval_from_command(argv[2]);
+    } 
+	else {
+      error("Incorrect number of command line arguments.");
+    }  
+	 
+  } 
+ 
+  else {	
+  
+    repl();
+	
+  }
+ 
   return EXIT_SUCCESS;
 }

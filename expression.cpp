@@ -13,7 +13,7 @@ Expression::Expression() {}
 Expression::Expression(const Atom& a)
 {
   m_head = a;
-
+  
 }
 
 // recursive copy includes property list
@@ -29,21 +29,28 @@ Expression::Expression(const Expression& a)
 // Constructor with property list
 Expression::Expression(const Expression& a,std::map<std::string, Expression>& es) {
 		
+	//m_propertyList.
 	m_head = a.m_head;
 	for (auto e : a.m_tail) {
 		m_tail.push_back(e);
 	}
-
-	m_propertyList.insert(es.begin(),es.end());
+	
+	//es.
+	//m_propertyList.emplace(es.begin(), es.end());
+	//auto ma: es;
+	m_propertyList.insert(es.begin(), es.end());
+	//return(m_propertyList);
 	
 }
 Expression
 Expression::getPropertyList(std::string key) {
 	//this->m_propertyList;
+	//tree_view(" ");
 	if (m_propertyList.count(key) > 0)
 	{		
-		Expression property = m_propertyList[key];
-		return property;
+		//Expression property = m_propertyList[key];
+		//return property;
+		return m_propertyList[key];
 	}
 	
 	else {
@@ -122,7 +129,9 @@ bool Expression::isHeadList() const noexcept
 {
 	return (m_head.isSymbol() && m_head.asSymbol() == "list");
 }
-
+bool Expression::isPropertyListEmpty() const noexcept {
+	return (m_propertyList.size() == 0);
+}
 void
 Expression::append(const Atom& a)
 {
@@ -258,8 +267,7 @@ Expression::handle_define(Environment& env)
   if (env.is_exp(m_head)) {
     throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
   }
-
-  // and add to env
+ 
   env.add_exp(m_tail[0].head(), result);
 
   return result;
@@ -552,7 +560,7 @@ operator!=(const Expression& left, const Expression& right) noexcept
 }
 
  // Used for debugging it
-/*void Expression::tree_view(std::string indent) {
+void Expression::tree_view(std::string indent) {
 	std::cout<< indent + "  " << m_head << std::endl;
 	if (m_tail.size() > 0) {
 		
@@ -561,4 +569,4 @@ operator!=(const Expression& left, const Expression& right) noexcept
 		}
 	}
 	
-}*/
+}

@@ -12,6 +12,7 @@ Defines the Expression type and assiciated functions.
 #include <list>
 #include <map>
 #include <utility>
+//#include <unordered_map>
 
 // forward declare Environment
 class Environment;
@@ -83,6 +84,8 @@ public:
   /// convience method to determine if head atom is a list
   bool isHeadList() const noexcept;
 
+  bool isPropertyListEmpty() const noexcept;
+
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment& env);
 
@@ -92,14 +95,15 @@ public:
 
 
 //  Tree view used for debugging 
-	//void tree_view(std::string);
-
+	void tree_view(std::string);
+	// the properties of an expression
+	std::map<std::string, Expression> m_propertyList;
 private:
   // the head of the expression
   Atom m_head;
-
+ // std::map<std::string, Expression> m_propertyList;
   // the properties of an expression
-  std::map<std::string, Expression> m_propertyList;
+  
 
   // the tail list is expressed as a vector for access efficiency
   // and cache coherence, at the cost of wasted memory.

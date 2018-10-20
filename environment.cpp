@@ -641,7 +641,7 @@ setProperty(const std::vector<Expression>& args)
 	}
 	std::map<std::string, Expression> props;
 	const std::string key = args[0].head().asString();
-	const Expression value = args[1].head();
+	const Expression value = args[1];
 	
 	props[key]= value;
 	const Expression receiver = args[2];

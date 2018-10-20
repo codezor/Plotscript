@@ -48,9 +48,9 @@ Expression::getPropertyList(std::string key) {
 	//tree_view(" ");
 	if (m_propertyList.count(key) > 0)
 	{		
-		//Expression property = m_propertyList[key];
+		Expression property = m_propertyList[key];
 		//return property;
-		return m_propertyList[key];
+		return property;
 	}
 	
 	else {

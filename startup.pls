@@ -1,16 +1,8 @@
 (begin
-(define make-point(lambda (x y) (list x y)))
-(define make-point (set-property "object-name" "point" make-point))
-(define make-point (set-property  "size" 0 make-point))
+(define make-point(lambda (x y) (set-property "size" 0 (set-property "object-name" "point" (list x y)))))
 
-;define p1 (lambda (p1x p1y) (make-point p1x p1y)))
-;define p2 (lambda (p2x p2y) (make-point p2x p2y)))
-(define make-line (lambda (p1 p2) (list(define p1 (lambda (p1x p1y) (make-point p1x p1y)))(define p2 (lambda (p2x p2y) (make-point p2x p2y))))))
-(define make-line (set-property "object-name" "line" make-line ))
-(define make-line(set-property "thickness" 1  make-line))
-
-(define make-text (lambda ( str) (list str ) ))
-(define make-text(set-property "object-name" "text" make-text))
-(define origin (list 0 0))
-(define make-text(set-property "position"origin make-text))
+(define p1 (make-point 1 2))
+(define p2 (make-point 3 4))
+(define make-line (lambda (p1 p2) (set-property "thickness" 1 (set-property "object-name" "line" (list p1 p2)))))
+(define make-text (lambda (str) ( set-property "position" (make-point 0 0) (set-property "object-name" "text" (list str )))))
 )

@@ -650,7 +650,9 @@ setProperty(const std::vector<Expression>& args)
 	{
 		props.insert(receiver.m_propertyList.begin(), receiver.m_propertyList.end());
 	}
-	const Expression expression_with_props_set = Expression(receiver, props);;
+	const Expression expression_with_props_set = Expression(receiver, props);
+
+	// 
 	
 	return expression_with_props_set;
 	

@@ -44,7 +44,7 @@ public:
   /*! Construct the default environment with built-in procedures and
    * definitions. */
   Environment(); 
-
+ 
   Environment Shadow(const Environment& ENV, Environment& shadow);
 
   /*! Determine if a symbol is known to the environment.
@@ -87,8 +87,9 @@ public:
   */
   Procedure get_proc(const Atom& sym) const;
 
-  //void TreeView(std::string);
-  
+ // void TreeView(std::string);
+ 
+ 
 
   /*! Reset the environment to its default state. */
   void reset();
@@ -119,6 +120,7 @@ private:
   std::map<std::string, EnvResult> envmap;
   // the built-in procedure and expresion map
   std::map<std::string, EnvResult> builtIn;
+  std::map<std::string, EnvResult> blankMap;
 };
 
 #endif

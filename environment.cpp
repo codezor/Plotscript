@@ -689,11 +689,14 @@ Environment::Environment()
   builtIn.insert(envmap.begin(), envmap.end());
 }
 
+
+
 Environment
 Environment::Shadow(const Environment& ENV,  Environment& shadow)
 {
+	//this->envmap
 	shadow.envmap.insert(ENV.envmap.begin(), ENV.envmap.end());
-  
+	//shadow.envmap.insert(this->envmap.begin(), this->envmap.end());
 
   return Environment(shadow);
 };
@@ -788,6 +791,16 @@ Environment::get_proc(const Atom& sym) const
   return default_proc;
 }
 
+/*Expression
+tree_view(const std::vector<Expression>& args) {
+	if (args.size() > 1) {
+		throw "procedure tee takes only one argument";
+	}
+
+	args.front().tree_view("");
+	return args.front();
+}*/
+
 /*
 Reset the environment to the default state. First remove all entries and
 then re-add the default ones.
@@ -877,9 +890,12 @@ Environment::reset()
   
   // Procedure get-property
   envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
+
+ // envmap.emplace("tee", EnvResult(ProcedureType, tree_view));
 }
-/*
-void Environment::TreeView(std::string indent) {
+
+
+/*void Environment::TreeView(std::string indent) {
 
 	for (auto e: envmap) {
 		std::cout << e.first << std::endl;
@@ -892,3 +908,5 @@ void Environment::EnvResult::Tree_View(std::string indent) {
 	exp.tree_view("  ");
 	std::cout << "  " << proc << std::endl;
 }*/
+
+

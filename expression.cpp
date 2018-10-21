@@ -165,20 +165,22 @@ Expression::tailConstEnd() const noexcept
 Expression
 apply(const Atom& op,
       const std::vector<Expression>& args,
-      const Environment& env)
+		const Environment& env)
 {
 
   // head must be a symbol
   if (!op.isSymbol()) {
     throw SemanticError("Error during evaluation: procedure name not symbol");
   }
-
+  
   // must map to a proc
   if (!env.is_proc(op)) {
-    throw SemanticError(
-      "Error during evaluation: symbol does not name a procedure");
+	  if (!env.is_exp(op)) {
+		  throw SemanticError(
+			  "Error during evaluation: symbol " + op.asString() + " does not name a procedure");
+	  }
   }
-
+  
   // map from symbol to proc
   Procedure proc = env.get_proc(op);
 
@@ -200,7 +202,7 @@ Expression::handle_lookup(const Atom& head, const Environment& env)
       return e;
 
     } else {
-      throw SemanticError("Error during evaluation: unknown symbol");
+      throw SemanticError("Error during evaluation: unknown symbol " + head.asString());
     }
   } else if (head.isNumber()) {
     return Expression(head);
@@ -236,7 +238,7 @@ Expression::handle_begin(Environment& env)
 Expression
 Expression::handle_define(Environment& env)
 {
-
+	
   // tail must have size 2 or error
   if (m_tail.size() != 2) {
     throw SemanticError(
@@ -304,13 +306,18 @@ Expression::handle_lambda(Environment& env)
   result.m_head = m_head;
   result.m_tail.emplace_back(Parameters);
   result.m_tail.emplace_back(second);
+
+
   return (result);
 }
 Expression Expression::store_lamba(Environment& env, Expression& original) {
 
 	// create a local environment for the lambda expression
-	Environment* shadow = new Environment;
-
+	 //std::map<std::string, EnvResult> envmap;
+ 	Environment keptenv = env;
+	Environment shadow= env;
+	
+		
 	// Get the lambda function parameters and matching expressions.
 	std::vector<Expression> parameters = original.m_tail[0].m_tail;
 	std::vector<Expression> expressions = m_tail;
@@ -318,7 +325,7 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 	// For each (parameter, expression) pair.
 	if (parameters.size() != expressions.size())
 	{
-		delete shadow;
+		//delete shadow;
 		throw SemanticError("Error in call to procedure : invalid number of arguments.");
 	}
 	const std::size_t NUM_PARAMS = parameters.size();
@@ -332,12 +339,12 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 		define.m_tail.push_back(expression);
 
 		// Define the parameters in the shadow environment.
-		define.eval(*shadow);
+		define.eval(shadow);
 	}
 
 	// Now actually shadow the parent environment with the local environment
 	// we just created.
-	shadow->Shadow(env, *shadow);
+	shadow.Shadow(keptenv, shadow);
 	// yo dawg, i heard you like lambdas ...
 	// so i put some lambdas, in your lambdas !
 	// TODO: why won't this work ????
@@ -346,12 +353,13 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 	 // Environment);
 	Expression result;
 
-	result.m_tail.push_back(original.m_tail[1].eval(*shadow));
+	result.m_tail.push_back(original.m_tail[1].eval(shadow));
 
-	delete shadow;
-	shadow = nullptr;
-
+	//delete shadow;
+	//shadow = nullptr;
+	
 	// Lamda statment back into AST evlauation
+	env = keptenv;
 	return result.m_tail[0];
 }
 
@@ -489,8 +497,8 @@ Expression::eval(Environment& env)
 	//tree_view(" ");
     Expression originial = env.get_exp(m_head);
     if (originial.m_head.asSymbol() == "lambda") {
-
-	  return (store_lamba( env, originial));      
+		
+	  return(store_lamba( env, originial));      
     }
 
     std::vector<Expression> results;
@@ -560,7 +568,7 @@ operator!=(const Expression& left, const Expression& right) noexcept
 }
 
  // Used for debugging it
-void Expression::tree_view(std::string indent) {
+/*void Expression::tree_view(std::string indent) const {
 	std::cout<< indent + "  " << m_head << std::endl;
 	if (m_tail.size() > 0) {
 		
@@ -569,4 +577,4 @@ void Expression::tree_view(std::string indent) {
 		}
 	}
 	
-}
+}*/

@@ -642,17 +642,17 @@ setProperty(const std::vector<Expression>& args)
 	std::map<std::string, Expression> props;
 	const std::string key = args[0].head().asString();
 	const Expression value = args[1];
-	
+	// set the property 
 	props[key]= value;
 	const Expression receiver = args[2];
-	
+	// search for existing property list
 	if (receiver.m_propertyList.size() != 0)
 	{
 		props.insert(receiver.m_propertyList.begin(), receiver.m_propertyList.end());
 	}
 	const Expression expression_with_props_set = Expression(receiver, props);
 
-	// 
+	// return set and/or modified property list
 	
 	return expression_with_props_set;
 	

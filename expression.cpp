@@ -313,7 +313,7 @@ Expression::handle_lambda(Environment& env)
 Expression Expression::store_lamba(Environment& env, Expression& original) {
 
 	// create a local environment for the lambda expression
-	 //std::map<std::string, EnvResult> envmap;
+	// Store temperary to preserve the enviornment
  	Environment keptenv = env;
 	Environment shadow= env;
 	

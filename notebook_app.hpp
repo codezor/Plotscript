@@ -1,0 +1,37 @@
+/*! \ file notebook_app.hpp
+ */
+#ifndef NOTEBOOK_APP_HPP
+#define NOTEBOOK_APP_HPP
+
+#include <QWidget>
+#include <QLayout>
+#include <QDebug>
+
+
+#include"input_widget.hpp"
+#include"output_widget.hpp"
+class NotebookApp : public QWidget
+{
+	Q_OBJECT
+
+public:
+	NotebookApp(QWidget* parent = nullptr);
+	
+
+
+private slots:
+	// what are this 
+	void plotScriptEvaluated(std::string output);
+	// Keypress in the input widget has occurred
+	void plotScriptInputReady(std::string  input);
+
+signals: 
+	void ExpressionReady(std::string Expression);
+
+private:
+	InputWidget* inputwidget;
+	OutputWidget* outputwidget;
+	//setchild
+};
+
+#endif

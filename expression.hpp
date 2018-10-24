@@ -38,12 +38,11 @@ public:
   /// deep-copy construct an expression (recursive)
   Expression(const Expression& a);
 
-  /// Property-list constructor 
+  /// Construct an expression with Property-list  
   Expression(const Expression& a,std::map<std::string, Expression>& es);
  
-  /// Construct and expression of a list type;
+  /// Construct an expression of a list type;
   Expression(const std::vector<Expression>& es);
-
  
   /// deep-copy assign an expression  (recursive)
   Expression& operator=(const Expression& a);
@@ -67,7 +66,10 @@ public:
   ConstIteratorType tailConstEnd() const noexcept;
 
   /// returns a property entery
- Expression getPropertyList(std::string key);
+  Expression getPropertyList(std::string key);
+
+  // TODO: Set Property method for updating property list to allow for property list set/resets
+  /// Expression setPropertyList(Expression expression_to_add, std::map<std::string, Expression> property);
 
   /// convienience member to determine if head atom is a number
   bool isHeadNumber() const noexcept;
@@ -84,6 +86,10 @@ public:
   /// convience method to determine if head atom is a list
   bool isHeadList() const noexcept;
 
+  // TODO: Is lambda method
+  // bool isHeadLAmbda() const noexcept;  
+
+  /// Convience method to determine if properties are empty
   bool isPropertyListEmpty() const noexcept;
 
   /// Evaluate expression using a post-order traversal (recursive)
@@ -91,13 +97,12 @@ public:
 
   /// equality comparison for two expressions (recursive)
   bool operator==(const Expression& exp) const noexcept;
-  // Procedure handle_lambda(Environment &env) const;
-
-
+  
 //  Tree view used for debugging 
-	//void tree_view(std::string) const;
-	// the properties of an expression
-	std::map<std::string, Expression> m_propertyList;
+ //void tree_view(std::string) const;
+
+// the properties of an expression 
+	std::map<std::string, Expression> m_propertyList; // TODO: Make this private
 private:
   // the head of the expression
   Atom m_head;

@@ -7,8 +7,8 @@
 #include <QGraphicsView>
 #include <QGraphicsLayout>
 #include <QLayout>
-
-
+#include <QString>
+#include <QGraphicsTextItem>
 #include <string>
 
 class GraphicsView;
@@ -25,15 +25,17 @@ public: OutputWidget(QWidget* parent = nullptr);
 	
 private:
 	// Graphics
+	//QString Expression;
 	QGraphicsScene *scene;
 	QGraphicsView *view;
+	QGraphicsTextItem *addText;
 	
 private slots:
-	void DisplayItem(std::string Expression);
+	void DisplayItem(QString Expression);
 
 
 signals:
-	void ExpressionEvluated(std::string Expression);
+	void ExpressionEvluated(QString Expression);
 
 	
 };

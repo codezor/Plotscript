@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QDebug>
 #include <QKeyEvent>
-
+#include <QString>
 #include <string>
 
 class InputWidget : public QPlainTextEdit
@@ -15,15 +15,19 @@ class InputWidget : public QPlainTextEdit
 
 public: 
 	InputWidget(QWidget* parent = nullptr);
-	//std::string getUserInput();
+
+private:
+	QString m_inputText;
 	
 private slots:
-	void getInputText(std::string inputText);
+	//void getInputText(QString inputText);
 
 signals: 
-	void inputReady(std::string inputText);
+	// When the shift+enter keys are pushed the text is put into the stream
+	void inputReady(QString inputText);
 	
 protected:
+	// this should probably be the signal
 	void keyPressEvent(QKeyEvent *event);
 };
 

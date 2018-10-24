@@ -21,12 +21,12 @@ public:
 
 private slots:
 	// what are this 
-	void plotScriptEvaluated(std::string output);
+	void plotScriptEvaluated(QString output);
 	// Keypress in the input widget has occurred
-	void plotScriptInputReady(std::string  input);
+	void plotScriptInputReady(QString  input);
 
 signals: 
-	void ExpressionReady(std::string Expression);
+	void ExpressionReady(QString Expression);
 
 private:
 	InputWidget* inputwidget;

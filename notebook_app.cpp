@@ -15,6 +15,11 @@ NotebookApp::NotebookApp(QWidget* parent)
 	inputwidget->setParent(parent);
 	outputwidget->setParent(parent);
 	
+	// connect (object1, signal_1, Object2, slot1)
+	// connect (object1, signal_1, object2, slot2)
+	// Connect the Input to the output for the output text to update when 
+	// the user clicks shift+enter
+	QObject::connect(inputwidget,SIGNAL(inputReady(QString)),outputwidget, SLOT(DisplayItem(QString)));
 
 	auto layout = new QGridLayout();
 	layout->addWidget(inputwidget, 0, 0);
@@ -33,10 +38,11 @@ void repl()
 
 
 // what are this 
-void NotebookApp::plotScriptEvaluated(std::string output) {
+void NotebookApp::plotScriptEvaluated(QString output) {
 
 }
 // Keypress in the input widget has occurred
-void NotebookApp::plotScriptInputReady(std::string  input) {
+void NotebookApp::plotScriptInputReady(QString input) {
 
+	
 }

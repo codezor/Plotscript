@@ -44,8 +44,11 @@ public:
   /*! Construct the default environment with built-in procedures and
    * definitions. */
   Environment(); 
- 
+ // Shadow enviornemt constructor
   Environment Shadow(const Environment& ENV, Environment& shadow);
+
+  // TODO : Enviornment copy constructor for Enviornment
+  // TODO : get Enviornment metod
 
   /*! Determine if a symbol is known to the environment.
     \param sym the symbol to lookup
@@ -120,6 +123,7 @@ private:
   std::map<std::string, EnvResult> envmap;
   // the built-in procedure and expresion map
   std::map<std::string, EnvResult> builtIn;
+  // Blank Map Built -in may remove this property
   std::map<std::string, EnvResult> blankMap;
 };
 

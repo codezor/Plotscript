@@ -43,7 +43,32 @@ void NotebookApp::error(const std::string& err_str) {
 	emit ExpressionReady(TextforOut);
 }
 
+void eval_from_stream(std::istream& stream) {
+	std::stringstream outstream;
+	std::string out;
+	QString TextforOut;
+	Interpreter interp;
+	
 
+	if (!interp.parseStream(stream)) {
+		out = "Error:Invalid Program. Could not parse.";
+		// Send a Parse error to output
+		TextforOut = QString::fromStdString(out);
+	}
+	else {
+		try {
+			Expression exp = interp.evaluate();
+			outstream<< "Error: " << exp;
+			out = outstream.str();
+			TextforOut = QString::fromStdString(out);
+		}
+		catch (const SemanticError& ex) {
+			outstream<< "Error: " << ex.what();
+			out = outstream.str();
+			TextforOut = QString::fromStdString(out);
+		}
+	}
+}
 
 //  REPL is a reapeated read-eval-print loop 
 void NotebookApp::repl(std::string line)
@@ -56,19 +81,19 @@ void NotebookApp::repl(std::string line)
 	//std::string line;
 	std::istringstream expression(line);
 	if (!interp.parseStream(expression)) {
-		out = "Invalid Expression. Could not parse.";
+		out = "Error: Invalid Expression. Could not parse.";
 		// Send a Parse error to output
 		TextforOut = QString::fromStdString(out);
 	}
 	else {
 		try {
 			Expression exp = interp.evaluate();
-			outstream << exp;
+			outstream << "Error: " << exp;
 			out = outstream.str();
 			TextforOut = QString::fromStdString(out);
 		}
 		catch (const SemanticError& ex) {
-			outstream << ex.what();
+			outstream << "Error: " << ex.what();
 			out = outstream.str();
 			TextforOut = QString::fromStdString(out);
 		}
@@ -85,9 +110,7 @@ void NotebookApp::repl(std::string line)
 //}
 // Keypress in the input widget has occurred
 void NotebookApp::plotScriptInputReady(QString input) {
-
-	QString out = "Text went to note book";
+		
 	std::string line = input.toStdString();
 	repl(line);
-
 }

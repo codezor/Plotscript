@@ -12,13 +12,17 @@ OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
 	
 	auto layout = new QVBoxLayout;
 	layout->addWidget(view);
+	//view->centerOn(scene);
+	//view->centerOn(&scene);
 	setLayout(layout);
 	
 }
 void OutputWidget::DisplayItem(QString Expression) {
 	//scene->removeItem();
-
+	scene->clear();
+	
 	//addText =new QGraphicsTextItem(Expression);
-	scene->addText(Expression);
+	scene->addText(Expression)->setPos(0,0);
+	
 	//scene->addItem(Expression);
 }

@@ -49,7 +49,8 @@ public:
 
   // TODO : Enviornment copy constructor for Enviornment
   // TODO : get Enviornment metod
-
+  // TODO : ExpressionIsBuiltIN? - Function that returns a book about weather an expression 
+  // is built in or not.
   /*! Determine if a symbol is known to the environment.
     \param sym the symbol to lookup
     \return true if the symbol has been defined in the environment

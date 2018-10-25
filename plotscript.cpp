@@ -33,6 +33,7 @@ info(const std::string& err_str)
 {
   std::cout << "Info: " << err_str << std::endl;
 }
+
 void startUp(Interpreter& interp) {
 
 	std::ifstream ifs(STARTUP_FILE);

@@ -31,11 +31,15 @@ private:
 	QGraphicsTextItem *addText;
 	
 private slots:
+	// Display Item
 	void DisplayItem(QString Expression);
-
+	// Display Text 
+	// Display Line
+	// Display ellipse
+	// Display none or nothing
 
 signals:
-	void ExpressionEvluated(QString Expression);
+	void ExpressionEvaluated(QString Expression);
 
 	
 };

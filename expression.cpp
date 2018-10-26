@@ -33,14 +33,9 @@ Expression::Expression(const Expression& a,std::map<std::string, Expression>& es
 	m_head = a.m_head;
 	for (auto e : a.m_tail) {
 		m_tail.push_back(e);
-	}
-	
-	//es.
-	//m_propertyList.emplace(es.begin(), es.end());
-	//auto ma: es;
+	}	
 	m_propertyList.insert(es.begin(), es.end());
-	//return(m_propertyList);
-	
+		
 }
 Expression
 Expression::getPropertyList(std::string key) {
@@ -49,7 +44,6 @@ Expression::getPropertyList(std::string key) {
 	if (m_propertyList.count(key) > 0)
 	{		
 		Expression property = m_propertyList[key];
-		//return property;
 		return property;
 	}
 	
@@ -59,6 +53,20 @@ Expression::getPropertyList(std::string key) {
 	}
 }
 
+Expression Expression::setPropertyList(const Expression expression_to_add, std::map<std::string, Expression> property) const noexcept
+{	
+	// Expand property list or overwrite properties
+	if (!expression_to_add.isPropertyListEmpty()) {
+		// preserve existing property list
+		std::map<std::string, Expression> temp_pl = expression_to_add.m_propertyList;
+		//expression_to_add.m_propertyList = property;
+		property.insert(temp_pl.begin(), temp_pl.end());
+		//expression_to_add.m_propertyList.insert(temp_pl.begin(), temp_pl.end());
+	}	
+	// Set initial property list
+	
+	return Expression(expression_to_add, property);
+}
 
 Expression::Expression(const std::vector<Expression>& es)
 {
@@ -125,10 +133,17 @@ bool Expression::isHeadString() const noexcept
 {
 	return m_head.isString();
 }
+
 bool Expression::isHeadList() const noexcept
 {
 	return (m_head.isSymbol() && m_head.asSymbol() == "list");
 }
+
+bool Expression::isHeadLambda() const noexcept 
+{
+	return (m_head.isSymbol() && m_head.asSymbol() == "lambda");
+}
+
 bool Expression::isPropertyListEmpty() const noexcept {
 	return (m_propertyList.size() == 0);
 }
@@ -310,6 +325,7 @@ Expression::handle_lambda(Environment& env)
 
   return (result);
 }
+
 Expression Expression::store_lamba(Environment& env, Expression& original) {
 
 	// create a local environment for the lambda expression
@@ -496,7 +512,7 @@ Expression::eval(Environment& env)
   else {
 	//tree_view(" ");
     Expression originial = env.get_exp(m_head);
-    if (originial.m_head.asSymbol() == "lambda") {
+    if (originial.isHeadLambda()) {
 		
 	  return(store_lamba( env, originial));      
     }
@@ -521,7 +537,7 @@ operator<<(std::ostream& out, const Expression& exp)
 		return out;
 	}
   out << "(";
-  if ((exp.head().asSymbol() != "lambda") && (!exp.isHeadList())) {
+  if ((!exp.isHeadLambda()) && (!exp.isHeadList())) {
     out << exp.head(); // << " ";
   }
   for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
@@ -530,7 +546,7 @@ operator<<(std::ostream& out, const Expression& exp)
 
     if (e != exp.tailConstBegin() ||
         (exp.isHeadSymbol() && !exp.isHeadList() &&
-         exp.head().asSymbol() != "lambda")) {
+         !exp.isHeadLambda())) {
       out << " ";
     }
     out << *e;

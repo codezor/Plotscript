@@ -12,7 +12,7 @@ void InputWidget::keyPressEvent(QKeyEvent *event) //: keyPressEvent(QKeyEvent *e
 {		
 	if ((event->modifiers() == Qt::ShiftModifier)&& (event->key() == Qt::Key_Enter|| event->key() == Qt::Key_Return)) {
 		
-		qDebug() << "shift + enter";
+		//qDebug() << "shift + enter";
 		m_inputText = QPlainTextEdit::toPlainText();
 		emit inputReady(m_inputText);
 		// Debugging stament 

@@ -14,6 +14,7 @@ OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
 	layout->addWidget(view);
 	//view->centerOn(scene);
 	//view->centerOn(&scene);
+	view->centerOn(0, 0);
 	setLayout(layout);
 	
 }

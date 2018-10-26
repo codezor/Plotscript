@@ -646,12 +646,13 @@ setProperty(const std::vector<Expression>& args)
 	props[key]= value;
 	const Expression receiver = args[2];
 	// search for existing property list
-	if (receiver.m_propertyList.size() != 0)
-	{
-		props.insert(receiver.m_propertyList.begin(), receiver.m_propertyList.end());
-	}
-	const Expression expression_with_props_set = Expression(receiver, props);
-
+	//if (receiver.m_propertyList.size() != 0)
+	//{
+		//props.insert(receiver.m_propertyList.begin(), receiver.m_propertyList.end());
+	//}
+	//const Expression expression_with_props_set = Expression(receiver, props);
+	Expression expression_with_props_set = receiver.setPropertyList(receiver, props);//Expression(receiver, props);;
+	//expression_with_props_set.setPropertyList(receiver, props);
 	// return set and/or modified property list
 	
 	return expression_with_props_set;
@@ -689,8 +690,6 @@ Environment::Environment()
   builtIn.insert(envmap.begin(), envmap.end());
 }
 
-
-
 Environment
 Environment::Shadow(const Environment& ENV,  Environment& shadow)
 {
@@ -710,6 +709,17 @@ Environment::is_known(const Atom& sym) const
   return envmap.find(sym.asSymbol()) != envmap.end();
 }
 
+bool
+Environment::isBuiltIn(const Atom& sym) const
+{
+	if (!sym.isSymbol())
+		return false;
+
+	auto result = builtIn.find(sym.asSymbol());
+
+	return (result != builtIn.end()) &&
+		((result->first == "list") || (result->second.type == ExpressionType));
+}
 bool
 Environment::is_exp(const Atom& sym) const
 {

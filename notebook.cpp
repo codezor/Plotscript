@@ -12,5 +12,10 @@ main(int argc, char* argv[])
   widget.setWindowTitle(QApplication::translate("toplevel", "Plotscript"));
   widget.show();
 
+
+  // Main loop maybe
+
+
+
   return app.exec();
 }

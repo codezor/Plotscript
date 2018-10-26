@@ -69,7 +69,8 @@ public:
   Expression getPropertyList(std::string key);
 
   // TODO: Set Property method for updating property list to allow for property list set/resets
-  /// Expression setPropertyList(Expression expression_to_add, std::map<std::string, Expression> property);
+  /// returns a property entery
+  Expression setPropertyList(const Expression expression_to_add, std::map<std::string, Expression> property) const noexcept;
 
   /// convienience member to determine if head atom is a number
   bool isHeadNumber() const noexcept;
@@ -85,9 +86,9 @@ public:
   
   /// convience method to determine if head atom is a list
   bool isHeadList() const noexcept;
-
-  // TODO: Is lambda method
-  // bool isHeadLAmbda() const noexcept;  
+    
+  /// convience method to determine if head atom is a list
+  bool isHeadLambda() const noexcept;  
 
   /// Convience method to determine if properties are empty
   bool isPropertyListEmpty() const noexcept;
@@ -102,11 +103,11 @@ public:
  //void tree_view(std::string) const;
 
 // the properties of an expression 
-	std::map<std::string, Expression> m_propertyList; // TODO: Make this private
+	//std::map<std::string, Expression> m_propertyList; // TODO: Make this private
 private:
   // the head of the expression
   Atom m_head;
- // std::map<std::string, Expression> m_propertyList;
+  std::map<std::string, Expression> m_propertyList;
   // the properties of an expression
   
 

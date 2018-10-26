@@ -1,6 +1,4 @@
-//#include"startup_config.hpp"
-#include "interpreter.hpp"
-#include "semantic_error.hpp"
+
 
 #include "notebook_app.hpp"
 
@@ -15,7 +13,10 @@ NotebookApp::NotebookApp(QWidget* parent)
 	input->setParent(parent);
 	output->setParent(parent);
 	
-	
+	//Start Up file should be called before input is avaliable	
+
+	startUp(interp);
+
 	// the user clicks shift+enter
 	QObject::connect(input,SIGNAL(inputReady(QString)),this, SLOT(plotScriptInputReady(QString)));
 
@@ -43,7 +44,32 @@ void NotebookApp::error(const std::string& err_str) {
 	emit ExpressionReady(TextforOut);
 }
 
-void eval_from_stream(std::istream& stream) {
+void NotebookApp::startUp(Interpreter& interp) {
+	std::stringstream outstream;
+	std::string out;
+	QString TextforOut;
+	
+	std::ifstream ifs(STARTUP_FILE);
+
+	if (!interp.parseStream(ifs)) {
+		error("Invalid Program. Could not parse.");		
+		
+	}
+	else {
+		try {
+			Expression exp = interp.evaluate();
+			outstream << exp;
+			out = outstream.str();
+			TextforOut = QString::fromStdString(out);
+		}
+		catch (const SemanticError& ex) {
+			std::cerr << ex.what() << std::endl;
+			// return EXIT_FAILURE;
+		}
+	}
+}
+
+void NotebookApp::eval_from_stream(std::istream& stream) {
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;
@@ -51,33 +77,55 @@ void eval_from_stream(std::istream& stream) {
 	
 
 	if (!interp.parseStream(stream)) {
-		out = "Error:Invalid Program. Could not parse.";
+		error("Invalid Program. Could not parse.");
 		// Send a Parse error to output
-		TextforOut = QString::fromStdString(out);
+		
 	}
 	else {
 		try {
 			Expression exp = interp.evaluate();
-			outstream<< "Error: " << exp;
+			outstream<< exp;
 			out = outstream.str();
 			TextforOut = QString::fromStdString(out);
 		}
 		catch (const SemanticError& ex) {
-			outstream<< "Error: " << ex.what();
-			out = outstream.str();
-			TextforOut = QString::fromStdString(out);
+			//outstream<< "Error: " << ex.what();
+			//out = outstream.str();
+			//TextforOut = QString::fromStdString(out);
+			std::cerr << ex.what() << std::endl;
 		}
 	}
 }
 
+void NotebookApp::eval_from_file(std::string filename) {
+	std::ifstream ifs(filename);
+	
+	std::stringstream outstream;
+	std::string out;
+	QString TextforOut;
+
+	if (!ifs) {
+		//out = "Error:Invalid Program. Could not parse.";
+		// Send a Parse error to output
+		//TextforOut = QString::fromStdString(out);
+		error("Could not open file for reading.");
+	}
+	eval_from_stream(ifs);
+}
+
+void NotebookApp::eval_from_command(std::string argexp) {
+	
+	std::istringstream expression(argexp);
+	eval_from_stream(expression);
+}
 //  REPL is a reapeated read-eval-print loop 
-void NotebookApp::repl(std::string line)
+void NotebookApp::repl(std::string line) //TODO: rename since this technically isn't a loop now
 {
 
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;
-	Interpreter interp;
+	
 	//std::string line;
 	std::istringstream expression(line);
 	if (!interp.parseStream(expression)) {
@@ -88,7 +136,7 @@ void NotebookApp::repl(std::string line)
 	else {
 		try {
 			Expression exp = interp.evaluate();
-			outstream << "Error: " << exp;
+			outstream << exp;
 			out = outstream.str();
 			TextforOut = QString::fromStdString(out);
 		}

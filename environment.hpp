@@ -48,9 +48,14 @@ public:
   Environment Shadow(const Environment& ENV, Environment& shadow);
 
   // TODO : Enviornment copy constructor for Enviornment
-  // TODO : get Enviornment metod
-  // TODO : ExpressionIsBuiltIN? - Function that returns a book about weather an expression 
-  // is built in or not.
+  // TODO : get Enviornment method - maybe
+  
+  /*! Determine if an Expression is built into the environment.
+	\param sym the symbol to lookup
+	\return true if the symbol has been defined as a built in environment expression.
+   */
+  bool isBuiltIn(const Atom& sym)const;
+
   /*! Determine if a symbol is known to the environment.
     \param sym the symbol to lookup
     \return true if the symbol has been defined in the environment

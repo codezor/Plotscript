@@ -6,10 +6,11 @@
 NotebookApp::NotebookApp(QWidget* parent)
 	: QWidget(parent)
 {
-
+	
 	input = new InputWidget;
 	output = new OutputWidget;
-
+	input->setObjectName("input");
+	output->setObjectName("output");
 	input->setParent(parent);
 	output->setParent(parent);
 	
@@ -82,7 +83,9 @@ void NotebookApp::startUp(Interpreter& interp) {
 			TextforOut = QString::fromStdString(out);
 		}
 		catch (const SemanticError& ex) {
-			std::cerr << ex.what() << std::endl;
+			outstream << ex.what() << std::endl;
+			out = outstream.str();
+			TextforOut = QString::fromStdString(out);
 			// return EXIT_FAILURE;
 		}
 	}
@@ -130,7 +133,11 @@ void NotebookApp::eval_from_file(std::string filename) {
 		//out = "Error:Invalid Program. Could not parse.";
 		// Send a Parse error to output
 		//TextforOut = QString::fromStdString(out);
-		error("Could not open file for reading.");
+		//error("Could not open file for reading.");
+		out = "Error: Invalid Expression. Could not parse.";
+		// Send a Parse error to output
+		TextforOut = QString::fromStdString(out);
+		emit ExpressionReady(TextforOut);
 	}
 	eval_from_stream(ifs);
 }
@@ -163,7 +170,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			TextforOut = QString::fromStdString(out);
 		}
 		catch (const SemanticError& ex) {
-			outstream << "Error: " << ex.what();
+			outstream  << ex.what();
 			out = outstream.str();
 			TextforOut = QString::fromStdString(out);
 		}

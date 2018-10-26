@@ -28,7 +28,7 @@ private:
 	//QString Expression;
 	QGraphicsScene *scene;
 	QGraphicsView *view;
-	QGraphicsTextItem *addText;
+	QGraphicsTextItem *tex;
 	
 private slots:
 	// Display Item

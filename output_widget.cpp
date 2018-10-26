@@ -7,6 +7,8 @@ OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
 	scene = new QGraphicsScene;
 
 	view = new QGraphicsView(scene, parent );
+	
+
 	//scene->addText("This is a box");
 	//scene->addEllipse(10,10,100,100, Qtblackpen)
 	
@@ -22,7 +24,7 @@ void OutputWidget::DisplayItem(QString Expression) {
 	//scene->removeItem();
 	scene->clear();
 	
-	//addText =new QGraphicsTextItem(Expression);
+	//QGraphicsTextItem tex(Expression);
 	scene->addText(Expression)->setPos(0,0);
 	
 	//scene->addItem(Expression);

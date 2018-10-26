@@ -40,9 +40,26 @@ void NotebookApp::error(const std::string& err_str) {
 	out = outstream.str();
 	TextforOut = QString::fromStdString(out);
 
+	///Now Emmit the error signal 
+	emit ExpressionReady(TextforOut);
+	//std::cerr << "Error: " << err_str << std::endl;
+}
+
+void NotebookApp::info(const std::string& err_str)
+{
+	
+	std::stringstream outstream;
+	std::string out;
+	QString TextforOut;
+
+	outstream << "Info: " << err_str;
+	out = outstream.str();
+	TextforOut = QString::fromStdString(out);
+
 	// Now Emmit the error signal 
 	emit ExpressionReady(TextforOut);
 }
+
 
 void NotebookApp::startUp(Interpreter& interp) {
 	std::stringstream outstream;
@@ -52,7 +69,9 @@ void NotebookApp::startUp(Interpreter& interp) {
 	std::ifstream ifs(STARTUP_FILE);
 
 	if (!interp.parseStream(ifs)) {
-		error("Invalid Program. Could not parse.");		
+		out = "Error: Invalid Expression. Could not parse.";
+		// Send a Parse error to output
+		TextforOut = QString::fromStdString(out);
 		
 	}
 	else {
@@ -67,6 +86,7 @@ void NotebookApp::startUp(Interpreter& interp) {
 			// return EXIT_FAILURE;
 		}
 	}
+	emit ExpressionReady(TextforOut);
 }
 
 void NotebookApp::eval_from_stream(std::istream& stream) {
@@ -77,8 +97,9 @@ void NotebookApp::eval_from_stream(std::istream& stream) {
 	
 
 	if (!interp.parseStream(stream)) {
-		error("Invalid Program. Could not parse.");
+		out = "Error: Invalid Expression. Could not parse.";
 		// Send a Parse error to output
+		TextforOut = QString::fromStdString(out);
 		
 	}
 	else {
@@ -89,12 +110,13 @@ void NotebookApp::eval_from_stream(std::istream& stream) {
 			TextforOut = QString::fromStdString(out);
 		}
 		catch (const SemanticError& ex) {
-			//outstream<< "Error: " << ex.what();
-			//out = outstream.str();
-			//TextforOut = QString::fromStdString(out);
-			std::cerr << ex.what() << std::endl;
+			outstream<< "Error: " << ex.what();
+			out = outstream.str();
+			TextforOut = QString::fromStdString(out);
+			//std::cerr << ex.what() << std::endl;
 		}
 	}
+	emit ExpressionReady(TextforOut);
 }
 
 void NotebookApp::eval_from_file(std::string filename) {
@@ -129,7 +151,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 	//std::string line;
 	std::istringstream expression(line);
 	if (!interp.parseStream(expression)) {
-		out = "Error: Invalid Expression. Could not parse.";
+		out ="Error: Invalid Expression. Could not parse.";
 		// Send a Parse error to output
 		TextforOut = QString::fromStdString(out);
 	}

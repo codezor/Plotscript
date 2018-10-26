@@ -42,6 +42,8 @@ private:
 	//setchild
 	void repl(std::string line);
 	void error(const std::string& err_str);
+	void info(const std::string& err_str);
+
 	void startUp(Interpreter& interp);
 	void eval_from_stream(std::istream& stream);
 	void eval_from_file(std::string filename);

@@ -9,7 +9,7 @@ main(int argc, char* argv[])
 
   // QWidget widget;
   NotebookApp widget;
-  widget.setWindowTitle(QApplication::translate("toplevel", "Plotscript"));
+ // widget.setWindowTitle(QApplication::translate("toplevel", "Plotscript"));
   widget.show();
 
 

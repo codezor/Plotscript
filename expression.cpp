@@ -331,8 +331,7 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 	// create a local environment for the lambda expression
 	// Store temperary to preserve the enviornment
  	Environment keptenv = env;
-	Environment shadow= env;
-	
+	Environment shadow= env;	
 		
 	// Get the lambda function parameters and matching expressions.
 	std::vector<Expression> parameters = original.m_tail[0].m_tail;
@@ -341,7 +340,6 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 	// For each (parameter, expression) pair.
 	if (parameters.size() != expressions.size())
 	{
-		//delete shadow;
 		throw SemanticError("Error in call to procedure : invalid number of arguments.");
 	}
 	const std::size_t NUM_PARAMS = parameters.size();
@@ -370,10 +368,7 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 	Expression result;
 
 	result.m_tail.push_back(original.m_tail[1].eval(shadow));
-
-	//delete shadow;
-	//shadow = nullptr;
-	
+		
 	// Lamda statment back into AST evlauation
 	env = keptenv;
 	return result.m_tail[0];
@@ -414,11 +409,10 @@ Expression::handle_apply(Environment& env) {
 		input.m_tail.emplace_back(*a);		
 	}	
 	results = input;
-	//std::cout << results << std::endl;
+	
 	// see if the evaluation will cause an error
 	try { results.eval(env); }	
-	catch(SemanticError  &e) {
-		
+	catch(SemanticError  &e) {		
 		// TODO: find a better way to do this
 		const std::string ER = ("Error: during apply: ");		
 		throw SemanticError(ER + e.what());

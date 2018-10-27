@@ -33,6 +33,9 @@ NotebookApp::NotebookApp(QWidget* parent)
 	QObject::connect(this, SIGNAL(TextReady(QString, double , double)), output, SLOT(DisplayText(QString, double, double)));
 
 
+	// Clear the display
+	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
+
 	auto layout = new QGridLayout();
 	layout->addWidget(input, 0, 0);
 	layout->addWidget(output, 1, 0);
@@ -159,13 +162,15 @@ void NotebookApp::eval_from_command(std::string argexp) {
 //  REPL is a reapeated read-eval-print loop 
 void NotebookApp::repl(std::string line) //TODO: rename since this technically isn't a loop now
 {
-
+	
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;
 	
 	//std::string line;
 	std::istringstream expression(line);
+	//if(line.)
+	
 	if (!interp.parseStream(expression)) {
 		out ="Error: Invalid Expression. Could not parse.";
 		// Send a Parse error to output
@@ -176,9 +181,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 		try {
 			Expression exp = interp.evaluate();
 			whatGoesWhere(exp);
-			//outstream << exp;
-			//out = outstream.str();
-			//TextforOut = QString::fromStdString(out);
+			
 		}
 		catch (const SemanticError& ex) {
 			outstream  << ex.what();
@@ -186,8 +189,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			TextforOut = QString::fromStdString(out);
 			emit ExpressionReady(TextforOut);
 		}
-		// send thhs the exp to the output now
-		// or catch and error
+		
 	}
 	//emit ExpressionReady(TextforOut);
 }
@@ -202,12 +204,14 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 void NotebookApp::plotScriptInputReady(QString input) {
 		
 	std::string line = input.toStdString();
+	emit(ClearScene());
+
 	repl(line);
+
 }
 
 void NotebookApp::whatGoesWhere(Expression exp) {
 	
-	//interp.evaluate(argexp).isHeadList();
 	// Regular Expression print to text 
 	std::string propertyKey = "\"object-name\"";
 	Expression objectName; 
@@ -259,15 +263,23 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 			}
 		}
 	}
+	else if (exp.isHeadList()) {
+		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
+			whatGoesWhere(*e);
+		}
+	}
+
 	else
 	{
 		std::stringstream outstream;
 		std::string out;
 		QString TextforOut;
-		outstream << exp;
-		out = outstream.str();
-		TextforOut = QString::fromStdString(out);
-		emit ExpressionReady(TextforOut);
+		if (!exp.isHeadLambda() || !exp.isHeadSymbol()) {
+			outstream << exp;
+			out = outstream.str();
+			TextforOut = QString::fromStdString(out);
+			emit ExpressionReady(TextforOut);
+		}
 	}
 	// 
 	//exp.

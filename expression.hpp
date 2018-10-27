@@ -101,7 +101,7 @@ public:
   
 //  Tree view used for debugging 
  //void tree_view(std::string) const;
-
+  
 // the properties of an expression 
 	//std::map<std::string, Expression> m_propertyList; // TODO: Make this private
 private:

@@ -42,6 +42,7 @@ private slots:
 	void DisplayText(QString write, double x, double y);
 	void DisplayLine(double x1, double y1, double x2, double y2, double thickness);
 	void DisplayPoint(double x, double y, double size);
+	void DisplayClear();
 	// Display none or nothing
 
 signals:

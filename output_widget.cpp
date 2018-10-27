@@ -31,7 +31,7 @@ void OutputWidget::DisplayPoint(double x, double y, double size) {
 	// Clear scene 
 	//scene->clear();	
 	
-	scene->addEllipse(x-x/2, y-y/2, size, size, pen, QBrush(Qt::SolidPattern));	
+	scene->addEllipse((x-size/2.0), (y-size/2.0), size, size, pen, QBrush(Qt::SolidPattern));	
 }
 
 void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, double thickness) {

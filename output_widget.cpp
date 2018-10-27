@@ -21,11 +21,35 @@ OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
 	
 }
 void OutputWidget::DisplayItem(QString Expression) {
-	//scene->removeItem();
+	
 	scene->clear();
 	
-	//QGraphicsTextItem tex(Expression);
 	scene->addText(Expression)->setPos(0,0);
 	
-	//scene->addItem(Expression);
+}
+void OutputWidget::DisplayPoint(double x, double y, double size) {
+		
+	QPen pen;
+	pen.setColor(Qt::black);
+	
+	// Clear scene 
+	scene->clear();	
+	
+	scene->addEllipse(x, y, size, size, pen, QBrush(Qt::SolidPattern));	
+}
+
+void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, double thickness) {
+	QPen pen;
+	pen.setColor(Qt::black);
+	pen.setWidth(thickness);
+	// Clear scene 
+	scene->clear();
+	scene->addLine(x1, y1, x2, y2);
+}
+
+void OutputWidget::DisplayText(QString write, double x, double y) {
+
+	scene->clear();
+	write.remove("\"");
+	scene->addText(write)->setPos(x, y);
 }

@@ -1,5 +1,4 @@
 
-
 #include "notebook_app.hpp"
 
 // should run the application similair to plocript
@@ -18,11 +17,21 @@ NotebookApp::NotebookApp(QWidget* parent)
 
 	startUp(interp);
 
-	// the user clicks shift+enter
+	// The user clicks shift+enter
 	QObject::connect(input,SIGNAL(inputReady(QString)),this, SLOT(plotScriptInputReady(QString)));
 
-	// When the plot script is evvaluate it will send back
+	// When the plot script is evaluate it will send back
 	QObject::connect(this, SIGNAL(ExpressionReady(QString)), output, SLOT(DisplayItem(QString)));
+
+	// Connecting elipse signal to Elipse output
+	QObject::connect(this, SIGNAL(EllipseReady(double, double, double)), output, SLOT(DisplayPoint(double, double, double)));
+
+	// Conect the line
+	QObject::connect(this, SIGNAL(LineReady(double, double, double, double , double )), output, SLOT(DisplayLine(double, double, double, double, double)));
+
+	// Draw the text
+	QObject::connect(this, SIGNAL(TextReady(QString, double , double)), output, SLOT(DisplayText(QString, double, double)));
+
 
 	auto layout = new QGridLayout();
 	layout->addWidget(input, 0, 0);
@@ -161,23 +170,26 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 		out ="Error: Invalid Expression. Could not parse.";
 		// Send a Parse error to output
 		TextforOut = QString::fromStdString(out);
+		emit ExpressionReady(TextforOut);
 	}
 	else {
 		try {
 			Expression exp = interp.evaluate();
-			outstream << exp;
-			out = outstream.str();
-			TextforOut = QString::fromStdString(out);
+			whatGoesWhere(exp);
+			//outstream << exp;
+			//out = outstream.str();
+			//TextforOut = QString::fromStdString(out);
 		}
 		catch (const SemanticError& ex) {
 			outstream  << ex.what();
 			out = outstream.str();
 			TextforOut = QString::fromStdString(out);
+			emit ExpressionReady(TextforOut);
 		}
 		// send thhs the exp to the output now
 		// or catch and error
 	}
-	emit ExpressionReady(TextforOut);
+	//emit ExpressionReady(TextforOut);
 }
 
 
@@ -185,9 +197,78 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 //void NotebookApp::plotScriptEvaluated(QString output) {
 
 //}
-// Keypress in the input widget has occurred
+// This method will need to be used as the main loop inside plot script
+
 void NotebookApp::plotScriptInputReady(QString input) {
 		
 	std::string line = input.toStdString();
 	repl(line);
+}
+
+void NotebookApp::whatGoesWhere(Expression exp) {
+	
+	//interp.evaluate(argexp).isHeadList();
+	// Regular Expression print to text 
+	std::string propertyKey = "\"object-name\"";
+	Expression objectName; 
+	if (!exp.isPropertyListEmpty()) {
+		objectName = exp.getPropertyList(propertyKey);
+		if (objectName.isHeadString() )
+		{
+			// Draw point
+			if (objectName.head().asString() == "\"point\""){
+				Expression pointSize;
+				//Expression 
+				pointSize = exp.getPropertyList("\"size\"");
+
+				auto xcor = exp.tailConstBegin();
+				auto ycor = exp.tailConstEnd();
+				std::vector<Expression> cordinates(xcor, ycor);
+				Expression x = cordinates.front();
+				Expression y = cordinates.back();
+				emit(EllipseReady(x.head().asNumber(), y.head().asNumber(), pointSize.head().asNumber()));
+			}
+			// Draw line
+			if (objectName.head().asString() == "\"line\"") {
+				Expression lineThickness;
+				lineThickness = exp.getPropertyList("\"thickness\"");
+				
+				auto point1 = exp.tailConstBegin();
+				auto point2 = exp.tailConstEnd();
+				std::vector<Expression> line(point1, point2);
+				
+				auto p1x = line[0].tailConstBegin();
+				auto p1y = line[0].tailConstEnd();
+				auto p2x = line[1].tailConstBegin();
+				auto p2y = line[1].tailConstEnd();
+				
+				std::vector<Expression> p1(p1x, p1y);
+				std::vector<Expression> p2(p2x, p2y);
+				emit(LineReady(p1[0].head().asNumber(), p1[1].head().asNumber(), p2[0].head().asNumber(), p2[1].head().asNumber(), lineThickness.head().asNumber()));
+
+			}
+			if (objectName.head().asString() == "\"text\"") {
+				Expression textPosition;
+				textPosition = exp.getPropertyList("\"position\"");
+				auto xcor = textPosition.tailConstBegin();
+				auto ycor = textPosition.tailConstEnd();
+				std::vector<Expression> cordinates(xcor, ycor);
+				QString words = QString::fromStdString(exp.head().asString());
+
+				emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber()));
+			}
+		}
+	}
+	else
+	{
+		std::stringstream outstream;
+		std::string out;
+		QString TextforOut;
+		outstream << exp;
+		out = outstream.str();
+		TextforOut = QString::fromStdString(out);
+		emit ExpressionReady(TextforOut);
+	}
+	// 
+	//exp.
 }

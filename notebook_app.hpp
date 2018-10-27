@@ -27,13 +27,16 @@ public:
 
 
 private slots:
-	// what are this 
+	
 	//void plotScriptEvaluated(QString output);
 	// Keypress in the input widget has occurred
 	void plotScriptInputReady(QString  input);
 
 signals: 
 	void ExpressionReady(QString Expression);
+	void EllipseReady(double x, double  y, double size);
+	void LineReady(double x1, double y1, double x2, double y2, double thickness);
+	void TextReady(QString write, double x, double y);
 
 private:
 	InputWidget* input;
@@ -48,6 +51,8 @@ private:
 	void eval_from_stream(std::istream& stream);
 	void eval_from_file(std::string filename);
 	void eval_from_command(std::string argexp);
+	//QString 
+	void whatGoesWhere(Expression exp);
 };
 
 #endif

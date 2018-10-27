@@ -9,6 +9,9 @@
 #include <QLayout>
 #include <QString>
 #include <QGraphicsTextItem>
+#include <QPen>
+#include <QBrush>
+#include <QPainter>
 #include <string>
 
 class GraphicsView;
@@ -29,13 +32,16 @@ private:
 	QGraphicsScene *scene;
 	QGraphicsView *view;
 	QGraphicsTextItem *tex;
+
+	QGraphicsEllipseItem *ellipse;
+
 	
 private slots:
 	// Display Item
 	void DisplayItem(QString Expression);
-	// Display Text 
-	// Display Line
-	// Display ellipse
+	void DisplayText(QString write, double x, double y);
+	void DisplayLine(double x1, double y1, double x2, double y2, double thickness);
+	void DisplayPoint(double x, double y, double size);
 	// Display none or nothing
 
 signals:

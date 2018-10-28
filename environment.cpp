@@ -298,10 +298,7 @@ ln(const std::vector<Expression>& args)
       throw SemanticError("Error in call to natural log: invalid argument.");
     }
     result = std::log(args[0].head().asNumber());
-  } else {
-    throw SemanticError(
-      "Error in call to natural log: invalid argument must be positive.");
-  }
+  } 
   return Expression(result);
 };
 
@@ -693,9 +690,8 @@ Environment::Environment()
 Environment
 Environment::Shadow(const Environment& ENV,  Environment& shadow)
 {
-	//this->envmap
-	shadow.envmap.insert(ENV.envmap.begin(), ENV.envmap.end());
-	//shadow.envmap.insert(this->envmap.begin(), this->envmap.end());
+
+	shadow.envmap.insert(ENV.envmap.begin(), ENV.envmap.end());	
 
   return Environment(shadow);
 };
@@ -756,13 +752,9 @@ Environment::add_exp(const Atom& sym, const Expression& exp)
 	if (!sym.isSymbol()) {
 		throw SemanticError("Attempt to add non-symbol to environment");
 	}
-
-	// error if overwriting symbol map
-	//if (envmap.find(sym.asSymbol()) != envmap.end()) {
-		//throw SemanticError("Attempt to overwrite symbol in environemnt");
-	//}
-	// error if overwritting built-in symbol
-	if (builtIn.find(sym.asSymbol()) != builtIn.end()) {
+	
+	if(isBuiltIn(sym.asSymbol()))
+	{
 		//if()
 		throw SemanticError("Attempt to overwrite built-in symbol in environemnt");
 	}

@@ -461,19 +461,86 @@ TEST_CASE("Testing map", "[interpreter]")
 		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 }
+TEST_CASE("Testing set-property and get property", "[interpreter]") {
 
-/*TEST_CASE("Testing adding a Literal string type", "[interpreter]") {
-	
+
 	{
-	std::string input = "(\"foo\")";
-	INFO(input);
-	Expression result = run(input);
-	Expression answer;
-	answer = Atom("foo").asString();
-
-	REQUIRE(result == Expression( ));
+		std::string input = "(define b (set-property \"note\" \"a number\" 3))";
+		INFO(input);
+		Expression result = run(input);
+		REQUIRE(result == Expression(3));
 	}
-}*/
+	{
+		std::string input = "(define make-point (set-property \"size\" 0 (set-property \"object-name\" \"point\" 3)))";
+		INFO(input);
+		Expression result = run(input);
+		REQUIRE(result == Expression(3));
+	}
+	{
+		std::string input = "(set-property \"note\" \"a number\" )";
+		INFO(input);
+		Interpreter interp;
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+
+	}
+	{
+		std::string input = "(set-property (2) \"a number\" 3)";
+		INFO(input);
+		Interpreter interp;
+		std::istringstream iss(input);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+
+	}
+}
+TEST_CASE("Testing get-property", "[interpreter]" )
+{
+	{
+		std::string getinput = " (get-property \"note\" (define b (set-property \"note\" \"a number\" 3)))";
+		INFO(getinput);
+		Expression getresult = run(getinput);
+		std::string property = "\"a number\"";
+		REQUIRE(getresult == Expression(property));
+
+	}
+	{
+		std::string getinput = " (get-property \"foo\" (define b (set-property \"note\" \"a number\" 3)))";
+		INFO(getinput);
+		Expression getresult = run(getinput);
+		std::string property = "NONE";
+		REQUIRE(getresult == Expression(property));
+
+	}
+	{
+		std::string getinput = " (get-property \"foo\" )";
+		INFO(getinput);	
+		Interpreter interp;
+		std::istringstream iss(getinput);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+
+	}
+	{
+		std::string getinput = " (get-property (3) (define b (set-property \"note\" \"a number\" 3)))";
+		INFO(getinput);
+		Interpreter interp;
+		std::istringstream iss(getinput);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+
+	}
+}
+
 TEST_CASE( "Test arithmetic procedures", "[interpreter]" ) {
 
   {

@@ -194,13 +194,6 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 	//emit ExpressionReady(TextforOut);
 }
 
-
-// what are this 
-//void NotebookApp::plotScriptEvaluated(QString output) {
-
-//}
-// This method will need to be used as the main loop inside plot script
-
 void NotebookApp::plotScriptInputReady(QString input) {
 		
 	std::string line = input.toStdString();
@@ -281,6 +274,4 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 			emit ExpressionReady(TextforOut);
 		}
 	}
-	// 
-	//exp.
 }

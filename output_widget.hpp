@@ -18,7 +18,6 @@ class GraphicsView;
 class GraphicsScene;
 
 
-
 class OutputWidget : public QWidget
 {
 	Q_OBJECT
@@ -46,9 +45,7 @@ private slots:
 	// Display none or nothing
 
 signals:
-	void ExpressionEvaluated(QString Expression);
-
-	
+	void ExpressionEvaluated(QString Expression);	
 };
 
 #endif

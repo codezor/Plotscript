@@ -23,12 +23,8 @@ class NotebookApp : public QWidget
 
 public:
 	NotebookApp(QWidget* parent = nullptr);
-	
 
-
-private slots:
-	
-	//void plotScriptEvaluated(QString output);
+private slots:		
 	// Keypress in the input widget has occurred
 	void plotScriptInputReady(QString  input);
 
@@ -43,7 +39,7 @@ private:
 	InputWidget* input;
 	OutputWidget* output;
 	Interpreter interp;
-	//setchild
+
 	void repl(std::string line);
 	void error(const std::string& err_str);
 	void info(const std::string& err_str);

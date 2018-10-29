@@ -30,9 +30,9 @@ private:
 	//QString Expression;
 	QGraphicsScene *scene;
 	QGraphicsView *view;
-	QGraphicsTextItem *tex;
+	//QGraphicsTextItem *tex;
 
-	QGraphicsEllipseItem *ellipse;
+	//QGraphicsEllipseItem *ellipse;
 
 	
 private slots:

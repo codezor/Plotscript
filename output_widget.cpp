@@ -4,11 +4,12 @@
 #include <QGraphicsTextItem>
 
 OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
+	
 	// Create a new scene 	
 	scene = new QGraphicsScene;
-
 	view = new QGraphicsView(scene, parent );
-	
+	scene->setParent(view);
+	// Locate 
 	auto layout = new QVBoxLayout;
 	layout->addWidget(view);
 	view->centerOn(0, 0);
@@ -19,15 +20,15 @@ OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
 void OutputWidget::DisplayItem(QString Expression) {
 	
 	//scene->clear();
-	
-	scene->addText(Expression)->setPos(0,0);	
+		
+	scene->addText(Expression)->setPos(0,0);
 }
 
 void OutputWidget::DisplayPoint(double x, double y, double size) {
-		
-	QPen pen;
-	pen.setColor(Qt::black);	
 	
+	QPen pen;
+	pen.setColor(Qt::black);		
+	//scene->addItem(&ellipse);
 	scene->addEllipse((x-size/2.0), (y-size/2.0), size, size, pen, QBrush(Qt::SolidPattern));	
 }
 

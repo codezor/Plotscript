@@ -32,7 +32,6 @@ NotebookApp::NotebookApp(QWidget* parent)
 	// Draw the text
 	QObject::connect(this, SIGNAL(TextReady(QString, double , double)), output, SLOT(DisplayText(QString, double, double)));
 
-
 	// Clear the display
 	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
 
@@ -142,15 +141,13 @@ void NotebookApp::eval_from_file(std::string filename) {
 	QString TextforOut;
 
 	if (!ifs) {
-		//out = "Error:Invalid Program. Could not parse.";
-		// Send a Parse error to output
-		//TextforOut = QString::fromStdString(out);
-		//error("Could not open file for reading.");
+
 		out = "Error: Invalid Expression. Could not parse.";
 		// Send a Parse error to output
 		TextforOut = QString::fromStdString(out);
 		emit ExpressionReady(TextforOut);
 	}
+
 	eval_from_stream(ifs);
 }
 
@@ -159,17 +156,14 @@ void NotebookApp::eval_from_command(std::string argexp) {
 	std::istringstream expression(argexp);
 	eval_from_stream(expression);
 }
+
 //  REPL is a reapeated read-eval-print loop 
 void NotebookApp::repl(std::string line) //TODO: rename since this technically isn't a loop now
-{
-	
+{	
 	std::stringstream outstream;
 	std::string out;
-	QString TextforOut;
-	
-	//std::string line;
-	std::istringstream expression(line);
-	//if(line.)
+	QString TextforOut;	
+	std::istringstream expression(line);	
 	
 	if (!interp.parseStream(expression)) {
 		out ="Error: Invalid Expression. Could not parse.";
@@ -177,6 +171,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 		TextforOut = QString::fromStdString(out);
 		emit ExpressionReady(TextforOut);
 	}
+
 	else {
 		try {
 			Expression exp = interp.evaluate();
@@ -188,71 +183,41 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			out = outstream.str();
 			TextforOut = QString::fromStdString(out);
 			emit ExpressionReady(TextforOut);
-		}
-		
-	}
-	//emit ExpressionReady(TextforOut);
+		}		
+	}	
 }
 
 void NotebookApp::plotScriptInputReady(QString input) {
-		
+	
+	// Turn input to string	
 	std::string line = input.toStdString();
+	
+	// Clear output screan
 	emit(ClearScene());
-
+	
+	// evaluate input
 	repl(line);
-
 }
 
-void NotebookApp::whatGoesWhere(Expression exp) {
-	
-	// Regular Expression print to text 
-	std::string propertyKey = "\"object-name\"";
-	Expression objectName; 
+void NotebookApp::whatGoesWhere(Expression exp) {	
+		
 	if (!exp.isPropertyListEmpty()) {
+		std::string propertyKey = "\"object-name\"";
+		Expression objectName;
 		objectName = exp.getPropertyList(propertyKey);
 		if (objectName.isHeadString() )
 		{
 			// Draw point
 			if (objectName.head().asString() == "\"point\""){
-				Expression pointSize;
-				//Expression 
-				pointSize = exp.getPropertyList("\"size\"");
-
-				auto xcor = exp.tailConstBegin();
-				auto ycor = exp.tailConstEnd();
-				std::vector<Expression> cordinates(xcor, ycor);
-				Expression x = cordinates.front();
-				Expression y = cordinates.back();
-				emit(EllipseReady(x.head().asNumber(), y.head().asNumber(), pointSize.head().asNumber()));
+				makePoint(exp);
 			}
 			// Draw line
 			if (objectName.head().asString() == "\"line\"") {
-				Expression lineThickness;
-				lineThickness = exp.getPropertyList("\"thickness\"");
-				
-				auto point1 = exp.tailConstBegin();
-				auto point2 = exp.tailConstEnd();
-				std::vector<Expression> line(point1, point2);
-				
-				auto p1x = line[0].tailConstBegin();
-				auto p1y = line[0].tailConstEnd();
-				auto p2x = line[1].tailConstBegin();
-				auto p2y = line[1].tailConstEnd();
-				
-				std::vector<Expression> p1(p1x, p1y);
-				std::vector<Expression> p2(p2x, p2y);
-				emit(LineReady(p1[0].head().asNumber(), p1[1].head().asNumber(), p2[0].head().asNumber(), p2[1].head().asNumber(), lineThickness.head().asNumber()));
-
+				makeLine(exp);
 			}
+			//DrawText
 			if (objectName.head().asString() == "\"text\"") {
-				Expression textPosition;
-				textPosition = exp.getPropertyList("\"position\"");
-				auto xcor = textPosition.tailConstBegin();
-				auto ycor = textPosition.tailConstEnd();
-				std::vector<Expression> cordinates(xcor, ycor);
-				QString words = QString::fromStdString(exp.head().asString());
-
-				emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber()));
+				makeText(exp);
 			}
 		}
 	}
@@ -261,17 +226,71 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 			whatGoesWhere(*e);
 		}
 	}
-
 	else
 	{
-		std::stringstream outstream;
-		std::string out;
-		QString TextforOut;
-		if (!exp.isHeadLambda() || !exp.isHeadSymbol()) {
-			outstream << exp;
-			out = outstream.str();
-			TextforOut = QString::fromStdString(out);
-			emit ExpressionReady(TextforOut);
-		}
+		makeExpression(exp);				
 	}
+}
+
+void NotebookApp::makeExpression(Expression exp) {
+	
+	std::stringstream outstream;
+	std::string out;
+	QString TextforOut;
+	if (!exp.isHeadLambda() || !exp.isHeadSymbol()) {
+		outstream << exp;
+		out = outstream.str();
+		TextforOut = QString::fromStdString(out);
+		emit ExpressionReady(TextforOut);
+	}
+}
+
+void NotebookApp::makeLine(Expression exp){
+
+	Expression lineThickness;
+	lineThickness = exp.getPropertyList("\"thickness\"");
+
+	auto point1 = exp.tailConstBegin();
+	auto point2 = exp.tailConstEnd();
+	std::vector<Expression> line(point1, point2);
+
+	auto p1x = line[0].tailConstBegin();
+	auto p1y = line[0].tailConstEnd();
+	auto p2x = line[1].tailConstBegin();
+	auto p2y = line[1].tailConstEnd();
+
+	std::vector<Expression> p1(p1x, p1y);
+	std::vector<Expression> p2(p2x, p2y);
+
+	emit(LineReady(p1[0].head().asNumber(), p1[1].head().asNumber(), p2[0].head().asNumber(), 
+		p2[1].head().asNumber(), lineThickness.head().asNumber()));
+
+}
+
+void NotebookApp::makePoint(Expression exp){
+	
+	Expression pointSize;
+	//Expression 
+	pointSize = exp.getPropertyList("\"size\"");
+
+	auto xcor = exp.tailConstBegin();
+	auto ycor = exp.tailConstEnd();
+	std::vector<Expression> cordinates(xcor, ycor);
+
+	Expression x = cordinates.front();
+	Expression y = cordinates.back();
+
+	emit(EllipseReady(x.head().asNumber(), y.head().asNumber(), pointSize.head().asNumber()));
+}
+
+void NotebookApp::makeText(Expression exp){
+	
+	Expression textPosition;
+	textPosition = exp.getPropertyList("\"position\"");
+	auto xcor = textPosition.tailConstBegin();
+	auto ycor = textPosition.tailConstEnd();
+	std::vector<Expression> cordinates(xcor, ycor);
+	QString words = QString::fromStdString(exp.head().asString());
+
+	emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber()));
 }

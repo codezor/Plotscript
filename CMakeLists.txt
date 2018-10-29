@@ -26,7 +26,15 @@ set(unittest_src
   token_tests.cpp
   unit_tests.cpp
   )
-
+ 
+# EDIT
+# add any files you create related to the interpreter here
+# excluding unit tests
+#set(notebookgui_src
+#	notebook_app.hpp notebook_app.cpp
+#   input_widget.hpp input_widget.cpp
+#  output_widget.hpp output_widget.cpp
+#)
 set(STARTUP_FILE ${CMAKE_SOURCE_DIR}/startup.pls)
 configure_file(${CMAKE_SOURCE_DIR}/startup_config.hpp.in ${CMAKE_BINARY_DIR}/startup_config.hpp)
 configure_file(${CMAKE_SOURCE_DIR}/startup.pls ${CMAKE_BINARY_DIR})
@@ -42,9 +50,9 @@ set(tui_src
 # add source for any GUI modules here
 set(gui_src
 	startup_config.hpp
-    notebook_app.hpp notebook_app.cpp
+   notebook_app.hpp notebook_app.cpp
     input_widget.hpp input_widget.cpp
-    output_widget.hpp output_widget.cpp
+   output_widget.hpp output_widget.cpp
   )
 
 # EDIT

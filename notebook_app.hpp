@@ -2,10 +2,10 @@
  */
 #ifndef NOTEBOOK_APP_HPP
 #define NOTEBOOK_APP_HPP
-
+// See which of these I don't need
 #include <QWidget>
-#include <QLayout>
-#include <QDebug>
+#include <QLayout> // 
+#include <QDebug> // Debug
 #include <sstream>
 #include <string>
 #include <fstream>
@@ -48,8 +48,15 @@ private:
 	void eval_from_stream(std::istream& stream);
 	void eval_from_file(std::string filename);
 	void eval_from_command(std::string argexp);
-	//QString 
+	
+	// Determine what the expression type is and sends it to the approprate output 
 	void whatGoesWhere(Expression exp);
+	
+	void makeExpression(Expression exp);
+	void makeLine(Expression exp);
+	void makePoint(Expression exp);
+	void makeText(Expression exp);
+
 };
 
 #endif

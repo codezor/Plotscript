@@ -29,7 +29,6 @@ Expression::Expression(const Expression& a)
 // Constructor with property list
 Expression::Expression(const Expression& a,std::map<std::string, Expression>& es) {
 		
-	//m_propertyList.
 	m_head = a.m_head;
 	for (auto e : a.m_tail) {
 		m_tail.push_back(e);
@@ -59,11 +58,10 @@ Expression Expression::setPropertyList(const Expression expression_to_add, std::
 	if (!expression_to_add.isPropertyListEmpty()) {
 		// preserve existing property list
 		std::map<std::string, Expression> temp_pl = expression_to_add.m_propertyList;
-		//expression_to_add.m_propertyList = property;
+		
 		property.insert(temp_pl.begin(), temp_pl.end());
-		//expression_to_add.m_propertyList.insert(temp_pl.begin(), temp_pl.end());
-	}	
-	// Set initial property list
+		
+	}		
 	
 	return Expression(expression_to_add, property);
 }
@@ -72,15 +70,12 @@ Expression::Expression(const std::vector<Expression>& es)
 {
 	// maybe set the head to list and then modify list printing to ignore the "list" head?
   m_head = Atom("list");
-
-
-  // m_tail.clear();
+ 
   for (auto e : es) {
     m_tail.emplace_back(e);	   
   }
  
 }
-
 
 Expression&
 Expression::operator=(const Expression& a)

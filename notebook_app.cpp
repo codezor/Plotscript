@@ -175,8 +175,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 	else {
 		try {
 			Expression exp = interp.evaluate();
-			whatGoesWhere(exp);
-			
+			whatGoesWhere(exp);			
 		}
 		catch (const SemanticError& ex) {
 			outstream  << ex.what();

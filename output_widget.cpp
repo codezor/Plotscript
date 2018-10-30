@@ -37,13 +37,13 @@ void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, doubl
 	pen.setColor(Qt::black);
 	pen.setWidth(thickness);
 	
-	scene->addLine(x1, y1, x2, y2);
+	scene->addLine(x1, y1, x2, y2,pen);
 }
 
 void OutputWidget::DisplayText(QString write, double x, double y) {
 	
 	write.remove("\"");
-	scene->addText(write)->setPos(x, y);
+	scene->addText(write)->setPos(x, y);// ->setParent(scene);
 }
 
 void OutputWidget::DisplayClear() {

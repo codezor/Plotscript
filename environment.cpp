@@ -687,7 +687,7 @@ Environment::Shadow(const Environment& ENV,  Environment& shadow)
 
 	shadow.envmap.insert(ENV.envmap.begin(), ENV.envmap.end());	
 
-  return Environment(shadow);
+	return Environment(shadow);
 };
 
 bool
@@ -710,6 +710,7 @@ Environment::isBuiltIn(const Atom& sym) const
 	return (result != builtIn.end()) &&
 		((result->first == "list") || (result->second.type == ExpressionType));
 }
+
 bool
 Environment::is_exp(const Atom& sym) const
 {

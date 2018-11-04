@@ -248,7 +248,9 @@ void NotebookApp::makeLine(Expression exp){
 
 	Expression lineThickness;
 	lineThickness = exp.getPropertyList("\"thickness\"");
-
+	if (lineThickness.head().asNumber()<0) {
+		// emit the signal for the error message
+	}
 	auto point1 = exp.tailConstBegin();
 	auto point2 = exp.tailConstEnd();
 	std::vector<Expression> line(point1, point2);
@@ -271,7 +273,9 @@ void NotebookApp::makePoint(Expression exp){
 	Expression pointSize;
 	//Expression 
 	pointSize = exp.getPropertyList("\"size\"");
-
+	if (pointSize.head().asNumber() < 0) {
+		// emit the signal for the error message
+	}
 	auto xcor = exp.tailConstBegin();
 	auto ycor = exp.tailConstEnd();
 	std::vector<Expression> cordinates(xcor, ycor);

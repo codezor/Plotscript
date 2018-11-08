@@ -32,7 +32,7 @@ signals:
 	void ExpressionReady(QString Expression);
 	void EllipseReady(double x, double  y, double size);
 	void LineReady(double x1, double y1, double x2, double y2, double thickness);
-	void TextReady(QString write, double x, double y);
+	void TextReady(QString write, double x, double y, double rotation, double scale);
 	void ClearScene();
 
 private:

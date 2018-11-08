@@ -38,7 +38,7 @@ private:
 private slots:
 	// Display Item
 	void DisplayItem(QString Expression);
-	void DisplayText(QString write, double x, double y);
+	void DisplayText(QString write, double x, double y, double rotation, double scale);
 	void DisplayLine(double x1, double y1, double x2, double y2, double thickness);
 	void DisplayPoint(double x, double y, double size);
 	void DisplayClear();

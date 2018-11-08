@@ -30,7 +30,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 	QObject::connect(this, SIGNAL(LineReady(double, double, double, double , double )), output, SLOT(DisplayLine(double, double, double, double, double)));
 
 	// Draw the text
-	QObject::connect(this, SIGNAL(TextReady(QString, double , double)), output, SLOT(DisplayText(QString, double, double)));
+	QObject::connect(this, SIGNAL(TextReady(QString, double , double, double, double)), output, SLOT(DisplayText(QString, double, double, double, double)));
 
 	// Clear the display
 	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
@@ -289,11 +289,20 @@ void NotebookApp::makePoint(Expression exp){
 void NotebookApp::makeText(Expression exp){
 	
 	Expression textPosition;
-	textPosition = exp.getPropertyList("\"position\"");
+	textPosition = exp.getPropertyList("\"position\"");	
+
+	Expression textScale;
+	textScale = exp.getPropertyList("\"text-scale\"");	
+	
+	Expression textRotation;
+	textRotation = exp.getPropertyList("\"text-rotation\"");	
+	
 	auto xcor = textPosition.tailConstBegin();
 	auto ycor = textPosition.tailConstEnd();
 	std::vector<Expression> cordinates(xcor, ycor);
 	QString words = QString::fromStdString(exp.head().asString());
 
-	emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber()));
+	textPosition = exp.getPropertyList("\"position\"");
+	textPosition = exp.getPropertyList("\"position\"");
+	emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber(), textRotation.head().asNumber(), textScale.head().asNumber()));
 }

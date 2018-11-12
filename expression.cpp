@@ -165,7 +165,25 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		Discrete.m_tail.push_back(Line);
 	}
 	// make lines
+	Expression xaxis;
+	xaxis.head() = Atom("list");
+	Expression yaxis;
+	yaxis.head() = Atom("list");
+	xaxis.m_tail[0].head() = Atom("list");
+	xaxis.m_tail[0].m_tail.push_back(Expression(0.0));
+	xaxis.m_tail[0].m_tail.push_back(Expression(ymin));
 
+	xaxis.m_tail[1].head() = Atom("list");
+	xaxis.m_tail[1].m_tail.push_back(Expression(0.0));
+	xaxis.m_tail[1].m_tail.push_back(Expression(ymax));
+
+	yaxis.m_tail[0].head() = Atom("list");
+	yaxis.m_tail[0].m_tail.push_back(Expression(xmax));
+	yaxis.m_tail[0].m_tail.push_back(Expression(0.0));
+
+	yaxis.m_tail[1].head() = Atom("list");
+	yaxis.m_tail[1].m_tail.push_back(Expression(xmax));
+	yaxis.m_tail[1].m_tail.push_back(Expression(0.0));
 	//for(auto e = Points.tailConstBegin(); e != Points.tailConstEnd(); ++e)
 	//{
 		//Discrete.m_tail.push_back(*e);
@@ -227,6 +245,8 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	Discrete.m_tail.push_back(BottomLine);
 	Discrete.m_tail.push_back(RightLine);
 	Discrete.m_tail.push_back(LeftLine);
+	Discrete.m_tail.push_back(xaxis);
+	Discrete.m_tail.push_back(yaxis);
 
 	// push back scaled axis
 	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)xmin) + "\"" )));

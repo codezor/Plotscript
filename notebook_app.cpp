@@ -34,7 +34,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 	QObject::connect(this, SIGNAL(TextReady(QString, double , double, double, double)), output, SLOT(DisplayText(QString, double, double, double, double)));
 
 	// Draw the Discrete plot
-	QObject::connect(this, SIGNAL(discretePlotReady()), output, SLOT(DisplayDiscretePlot()));
+	//QObject::connect(this, SIGNAL(discretePlotReady()), output, SLOT(DisplayDiscretePlot()));
 
 
 	// Clear the display
@@ -224,10 +224,10 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 				makeText(exp);
 			}
 			// Draw Plot discrete-plot
-			if (objectName.head().asString() == "\"discrete-plot\"") {
+			//if (objectName.head().asString() == "\"discrete-plot\"") {
 				//
-				makeDiscretePlot();
-			}
+				//makeDiscretePlot();
+			//}
 		}
 	}
 	else if (exp.isHeadList()) {
@@ -319,7 +319,7 @@ void NotebookApp::makeText(Expression exp){
 	emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber(), textRotation.head().asNumber(), textScale.head().asNumber()));
 }
 
-void NotebookApp::makeDiscretePlot() {
+/*void NotebookApp::makeDiscretePlot() {
 
 
 	//qDebug << exp;
@@ -328,4 +328,4 @@ void NotebookApp::makeDiscretePlot() {
 	emit(discretePlotReady());
 
 
-}
+}*/

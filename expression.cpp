@@ -210,7 +210,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	Expression maxXminY;
 	maxXminY.m_head= Atom("list");
 	maxXminY.m_tail.push_back(Expression(Atom(xmax)));
-	maxXminY.m_tail.push_back(Expression(Atom(ymin)));
+	maxXminY.m_tail.push_back(Expression(Atom(ymin*10)));
 
 
 	

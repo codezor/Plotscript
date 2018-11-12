@@ -36,7 +36,7 @@ private:
 	// maybe a text formatting function
 	void CrossHair();
 	
-	void resizeEvent(QResizeEvent *event);
+	//void resizeEvent(QResizeEvent *event);
 	
 private slots:
 	// Display Item
@@ -44,7 +44,7 @@ private slots:
 	void DisplayText(QString write, double x, double y, double rotation, double scale);
 	void DisplayLine(double x1, double y1, double x2, double y2, double thickness);
 	void DisplayPoint(double x, double y, double size);
-	void DisplayDiscretePlot();
+	//void DisplayDiscretePlot();
 	void DisplayClear();
 	// Display none or nothing
 

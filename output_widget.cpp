@@ -32,16 +32,14 @@ OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
 }
 
 void OutputWidget::DisplayItem(QString Expression) {
-	CrossHair();
-	QPointF po (0.0,0.0);
-	
-	QFont f("Courier");
-	f.setPointSize(1);
+		
+	//QFont f("Courier");
+	//f.setPointSize(1);
 	QGraphicsTextItem* Text = scene->addText(Expression);// ->setPos(0, 0);
 	Text->setParent(scene);
-	Text->setPos(po);
-	//Text->setTransformOriginPoint(Text->textWidth);
-	qDebug ()<< "Bounding Rect: "<<Text->boundingRect() << "Position: "<< Text->pos();
+	Text->setPos(0,0);
+	
+	//qDebug ()<< "Bounding Rect: "<<Text->boundingRect() << "Position: "<< Text->pos();
 }
 
 void OutputWidget::DisplayPoint(double x, double y, double size) {
@@ -53,7 +51,7 @@ void OutputWidget::DisplayPoint(double x, double y, double size) {
 }
 
 void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, double thickness) {
-	CrossHair();
+
 	QPen pen;
 	pen.setColor(Qt::black);
 	pen.setWidth(thickness);	
@@ -66,7 +64,7 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	QPointF org(x, y);
 	
 	write.remove("\"");
-	auto font = QFont("Monospace");
+	QFont font = QFont("Monospace");
 	font.setStyleHint(QFont::TypeWriter);
 	font.setPointSize(1);	
 	
@@ -75,14 +73,10 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	Text->setParent(scene);	
 
 	
-	Text->setScale(scale);
-	Text->setTextWidth(Text->boundingRect().width());
-	Text->adjustSize();
-	//Text->setX( - Text->boundingRect().width() / 2);
-	//Text->setY( - Text->boundingRect().height() / 2);
+	Text->setScale(scale);	
+		
 	Text->moveBy(-Text->boundingRect().width() / 2, -Text->boundingRect().height() / 2);
 	Text->setTransformOriginPoint(Text->boundingRect().width() / 2, Text->boundingRect().height() / 2);
-	//view->centerOn()
 	
 	Text->setRotation(rotation * 180 / ( std::atan2(0, -1) ));
 	Text->moveBy(x, y);
@@ -90,7 +84,7 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 }
 
 // Discrete Plot generation 
-void OutputWidget::DisplayDiscretePlot()
+/*void OutputWidget::DisplayDiscretePlot()
 {	   
 	double N = 20;
 	double A = 3;
@@ -174,16 +168,16 @@ void OutputWidget::DisplayDiscretePlot()
 	Yaxis.setLine(xmiddle, ymin, xmiddle, ymax);	
 	//Plot->addLine(Yaxis, dataPen);
 }
-
+*/
 void OutputWidget::DisplayClear() {
 	scene->clear();
 }
 
-void OutputWidget::resizeEvent(QResizeEvent *event) {
+//void OutputWidget::resizeEvent(QResizeEvent *event) {
 
-	this->resizeEvent(event);
+	//this->resizeEvent(event);
 	//this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-}
+//}
 void OutputWidget::CrossHair()
 {
 	QPen P;

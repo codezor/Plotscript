@@ -10,6 +10,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 	output = new OutputWidget;
 	input->setObjectName("input");
 	output->setObjectName("output");
+	
 	input->setParent(parent);
 	output->setParent(parent);
 	
@@ -31,6 +32,10 @@ NotebookApp::NotebookApp(QWidget* parent)
 
 	// Draw the text
 	QObject::connect(this, SIGNAL(TextReady(QString, double , double, double, double)), output, SLOT(DisplayText(QString, double, double, double, double)));
+
+	// Draw the Discrete plot
+	QObject::connect(this, SIGNAL(discretePlotReady()), output, SLOT(DisplayDiscretePlot()));
+
 
 	// Clear the display
 	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
@@ -218,6 +223,11 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 			if (objectName.head().asString() == "\"text\"") {
 				makeText(exp);
 			}
+			// Draw Plot discrete-plot
+			if (objectName.head().asString() == "\"discrete-plot\"") {
+				//
+				makeDiscretePlot();
+			}
 		}
 	}
 	else if (exp.isHeadList()) {
@@ -225,6 +235,8 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 			whatGoesWhere(*e);
 		}
 	}
+
+	// Regular plot script things 
 	else
 	{
 		makeExpression(exp);				
@@ -303,6 +315,17 @@ void NotebookApp::makeText(Expression exp){
 	QString words = QString::fromStdString(exp.head().asString());
 
 	textPosition = exp.getPropertyList("\"position\"");
-	textPosition = exp.getPropertyList("\"position\"");
+	//textPosition = exp.getPropertyList("\"position\"");
 	emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber(), textRotation.head().asNumber(), textScale.head().asNumber()));
+}
+
+void NotebookApp::makeDiscretePlot() {
+
+
+	//qDebug << exp;
+	//exp.head().asString
+
+	emit(discretePlotReady());
+
+
 }

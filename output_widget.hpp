@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsLayout>
+
 #include <QLayout>
 #include <QString>
 #include <QGraphicsTextItem>
@@ -13,6 +14,7 @@
 #include <QBrush>
 #include <QPainter>
 #include <string>
+#include <QDebug> // Debug
 
 class GraphicsView;
 class GraphicsScene;
@@ -27,13 +29,14 @@ public: OutputWidget(QWidget* parent = nullptr);
 	
 private:
 	// Graphics
-	//QString Expression;
 	QGraphicsScene *scene;
 	QGraphicsView *view;
-	//QGraphicsTextItem *tex;
+	
 
-	//QGraphicsEllipseItem *ellipse;
-
+	// maybe a text formatting function
+	void CrossHair();
+	
+	void resizeEvent(QResizeEvent *event);
 	
 private slots:
 	// Display Item
@@ -41,6 +44,7 @@ private slots:
 	void DisplayText(QString write, double x, double y, double rotation, double scale);
 	void DisplayLine(double x1, double y1, double x2, double y2, double thickness);
 	void DisplayPoint(double x, double y, double size);
+	void DisplayDiscretePlot();
 	void DisplayClear();
 	// Display none or nothing
 

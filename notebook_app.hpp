@@ -33,6 +33,8 @@ signals:
 	void EllipseReady(double x, double  y, double size);
 	void LineReady(double x1, double y1, double x2, double y2, double thickness);
 	void TextReady(QString write, double x, double y, double rotation, double scale);
+	
+	void discretePlotReady();
 	void ClearScene();
 
 private:
@@ -56,6 +58,7 @@ private:
 	void makeLine(Expression exp);
 	void makePoint(Expression exp);
 	void makeText(Expression exp);
+	void makeDiscretePlot();
 
 };
 

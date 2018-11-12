@@ -610,19 +610,20 @@ range(const std::vector<Expression>& args)
   double upperBound = args[1].head().asNumber();
   double increment = args[2].head().asNumber();
 
-  std::vector<Expression> rangeList;
+ std::vector<Expression> rangeList;
 
   if (!(lowerBound < upperBound) || !(increment > 0)) {
     throw SemanticError(
       "Error in call to range: Arguments not what they should be");
   } else {
-
+	 // rangeList.head() = "list";
     double i = lowerBound;
     while (i <= upperBound) {
       rangeList.emplace_back(Expression(i));
       i = i + increment;
     }
-    return Expression(rangeList);
+	Expression RL = list(rangeList);
+		return RL;//Expression(RL);
   }
 };
 
@@ -666,6 +667,30 @@ getProperty(const std::vector<Expression>& args)
 		
 	Expression search_result = expression_that_maybe_has_property.getPropertyList(property_name);
 	return search_result;
+};
+
+Expression discreteplot(const std::vector<Expression>& args)
+{
+	if(!nargs_equal(args, 2))
+	{
+		throw SemanticError("Error in call to get-property: invalid number of arguments.");
+	}
+	//double xmax;
+	//double xmin;
+	//double ymin;
+	//double t
+	// Data allows us to make the boarders 
+	Expression Data;
+	
+	Expression Options;
+	
+	Data = args[0];
+	Options = args[1];
+
+	Expression PlotD;
+	return PlotD.setDiscretePlot(Data, Options);
+	//return PlotD;
+
 };
 
 
@@ -888,6 +913,7 @@ Environment::reset()
   // Procedure get-property
   envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
 
+  envmap.emplace("discrete-plot", EnvResult(ProcedureType, discreteplot));
  // envmap.emplace("tee", EnvResult(ProcedureType, tree_view));
 }
 

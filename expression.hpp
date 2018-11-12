@@ -67,10 +67,11 @@ public:
 
   /// returns a property entery
   Expression getPropertyList(std::string key);
-
-  // TODO: Set Property method for updating property list to allow for property list set/resets
+   
   /// returns a property entery
   Expression setPropertyList(const Expression expression_to_add, std::map<std::string, Expression> property) const noexcept;
+
+  Expression setDiscretePlot(Expression DATA, Expression options);
 
   /// convienience member to determine if head atom is a number
   bool isHeadNumber() const noexcept;

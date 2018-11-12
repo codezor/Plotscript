@@ -66,6 +66,200 @@ Expression Expression::setPropertyList(const Expression expression_to_add, std::
 	return Expression(expression_to_add, property);
 }
 
+Expression
+Expression::setDiscretePlot(Expression DATA, Expression options)
+{
+	// has to be a list 
+	//if(!data.isHeadList())
+	//{
+	//}
+
+	// has to be a list 
+	//if(!Options.isHeadList())
+	//{
+//	}
+	Expression Discrete;
+	Discrete.m_head = Atom("list");
+	Expression Points;
+	Points.m_head = Atom("list");
+	double xmin;
+	double ymin;
+	double xmax;
+	double ymax;
+	//double xavg;
+	//double yavg;
+	
+	xmin = DATA.m_tail[0].m_tail[0].head().asNumber();
+	ymin = DATA.m_tail[0].m_tail[1].head().asNumber();
+	xmax = DATA.m_tail[0].m_tail[0].head().asNumber();
+	ymax = DATA.m_tail[0].m_tail[1].head().asNumber();
+
+	for(auto e = DATA.tailConstBegin(); e != DATA.tailConstEnd(); ++e)
+	{
+		// find x Max
+		if(e->m_tail[0].head().asNumber() > xmax)
+		{
+			xmax = e->m_tail[0].head().asNumber();
+		}
+		// find xmin
+		if(e->m_tail[0].head().asNumber() < xmin)
+		{
+			xmin = e->m_tail[0].head().asNumber();
+		}
+		// find ymax
+		if(e->m_tail[1].head().asNumber() > ymax)
+		{
+			ymax = e->m_tail[1].head().asNumber();
+		}
+		//find ymin
+		if(e->m_tail[1].head().asNumber() < ymin)
+		{
+			ymin = e->m_tail[1].head().asNumber();
+		}
+		//e->m_head = const Atom("list");
+		// point list
+		// make points
+		
+		Points.m_tail.push_back(e->m_tail);
+		//Discrete.m_tail.push_back(*e);
+	}
+
+	//xavg = ( xmin + xmax ) / 2;
+
+	//yavg = ( ymin + ymax ) / 2;
+	
+	
+	// make lollipop	
+	for(auto e = Points.tailConstBegin(); e != Points.tailConstEnd(); ++e)
+	{
+		Expression Line;
+		Line.m_head = Atom("list");
+		Line.m_propertyList["object-name"] = Expression(Atom("line"));
+		Expression temp;
+		temp.m_head = Atom("list");
+		// line drawn from ymax to point
+		if(ymax < 0)
+		{
+			temp.m_tail.push_back(e->m_tail[0]);
+			temp.m_tail.push_back(Expression(ymax));
+			Line.m_tail.push_back(*e);
+			Line.m_tail.push_back(temp);
+		}
+		// Drawn up from y min
+		else if(ymin > 0)
+		{
+			temp.m_tail.push_back(e->m_tail[0]);
+			temp.m_tail.push_back(Expression(ymin));
+			Line.m_tail.push_back(*e);
+			Line.m_tail.push_back(temp);
+		}
+		// drawn from axis
+		else
+		{
+			temp.m_tail.push_back(e->m_tail[0]);
+			temp.m_tail.push_back(Expression(0.0));
+			Line.m_tail.push_back(*e);
+			Line.m_tail.push_back(temp);
+		}
+		Discrete.m_tail.push_back(*e);
+		Discrete.m_tail.push_back(Line);
+	}
+	// make lines
+
+	//for(auto e = Points.tailConstBegin(); e != Points.tailConstEnd(); ++e)
+	//{
+		//Discrete.m_tail.push_back(*e);
+		//Discrete.
+	//}
+	
+
+	// build lines for the bounding box
+	Expression minXY;
+	minXY.m_head = Atom("list");
+	minXY.m_tail.push_back (Expression(Atom(xmin)));
+	minXY.m_tail.push_back(Expression(Atom(ymin)));
+	
+	Expression maxXY;
+	maxXY.m_head = Atom("list");
+	maxXY.m_tail.push_back(Expression(Atom(xmax)));
+	maxXY.m_tail.push_back(Expression(Atom(ymax)));
+	
+	Expression minXmaxY;
+	minXmaxY.m_head = Atom("list");
+	minXmaxY.m_tail.push_back(Expression(Atom(xmin)));
+	minXmaxY.m_tail.push_back(Expression(Atom(ymax)));
+	
+	Expression maxXminY;
+	maxXminY.m_head= Atom("list");
+	maxXminY.m_tail.push_back(Expression(Atom(xmax)));
+	maxXminY.m_tail.push_back(Expression(Atom(ymin)));
+
+
+	
+	Expression TopLine;
+	TopLine.m_head = Atom("list");
+	TopLine.m_tail.push_back(minXY);
+	TopLine.m_tail.push_back(maxXminY);
+	
+	Expression BottomLine;
+	BottomLine.m_head = Atom("list");
+	BottomLine.m_tail.push_back(minXmaxY);
+	BottomLine.m_tail.push_back(maxXY);
+	
+	Expression RightLine;
+	RightLine.m_head = Atom("list");
+	RightLine.m_tail.push_back(minXY);
+	RightLine.m_tail.push_back(minXmaxY);
+
+	Expression LeftLine;
+	LeftLine.m_head = Atom("list");
+	LeftLine.m_tail.push_back(maxXY);
+	LeftLine.m_tail.push_back(maxXminY);
+
+
+	// build lines for axies 
+
+	// Buil the property list and values to return 
+
+
+	// Insert Lines
+	Discrete.m_tail.push_back(TopLine);
+	Discrete.m_tail.push_back(BottomLine);
+	Discrete.m_tail.push_back(RightLine);
+	Discrete.m_tail.push_back(LeftLine);
+
+	// push back scaled axis
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)xmin) + "\"" )));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)ymin) + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)xmax) + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymax) + "\"")));
+	Discrete.m_propertyList["object-name"] = Expression(Atom("discrete-plot"));
+	std::map<std::string, Expression> props;
+	//Expression Labels;
+	//Labels.m_head = Atom("list");
+	for(auto pr = options.tailConstBegin(); pr != options.tailConstEnd(); ++pr)
+	{
+		// Make a property list
+		props[pr->m_tail[0].head().asString()] = pr->m_tail[1].head();
+		if(pr->m_tail[1].isHeadString())
+		{
+			Discrete.m_tail.push_back(Expression(Atom(pr->m_tail[1].head().asString())));
+		}
+	}
+
+	
+
+	Discrete.setPropertyList(Discrete, props);
+	// insert points 
+	//Discrete.m_tail.push_back(Points);
+
+	// Lables 
+	//Discrete.m_tail.push_back(Labels);
+	
+
+	return Discrete;
+};
+
 Expression::Expression(const std::vector<Expression>& es)
 {
 	// maybe set the head to list and then modify list printing to ignore the "list" head?
@@ -389,9 +583,12 @@ Expression::handle_apply(Environment& env) {
 		throw SemanticError("Error in apply firt argument is not a proceudure");
 	}
 	
-	if (m_tail[1].head().asSymbol() != "list")
+	if (!m_tail[1].isHeadList())
 	{
-		throw SemanticError("Error: second argument to apply not a list");
+		if(m_tail[1].head().asSymbol() != "range")
+		{
+			throw SemanticError("Error: second argument to apply not a list");
+		}
 	}
 
 	Expression results;
@@ -437,11 +634,15 @@ Expression Expression::handle_map(Environment& env) {
 		throw SemanticError("Error in apply firt argument is not a proceudure");
 	}
 
-	if (m_tail[1].head().asSymbol() != "list")
-	{
-		throw SemanticError("Error: second argument to map not a list");
-	}
 
+	if (!m_tail[1].isHeadList() )
+	{
+		if( m_tail[1].head().asSymbol() != "range")
+		{
+			throw SemanticError("Error: second argument to map not a list");
+		}
+	}
+	
 	Expression results;
 	Expression input;
 	input.m_head = var;

@@ -166,24 +166,35 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	}
 	// make lines
 	Expression xaxis;
-	xaxis.head() = Atom("list");
+	xaxis.m_head = Atom("list");
+	Expression xaxisP1;
+	Expression xaxisP2;
+	xaxisP1.m_head = Atom("list");
+	xaxisP1.m_head = Atom("list");
+	
 	Expression yaxis;
-	yaxis.head() = Atom("list");
-	xaxis.m_tail[0].head() = Atom("list");
-	xaxis.m_tail[0].m_tail.push_back(Expression(0.0));
-	xaxis.m_tail[0].m_tail.push_back(Expression(ymin*-10));
+	yaxis.m_head= Atom("list");
+	Expression yaxisP1;
+	Expression yaxisP2;
+	yaxisP1.m_head = Atom("list");
+	yaxisP1.m_head = Atom("list");
+	
+	xaxisP1.m_tail.push_back(Expression(0.0));
+	xaxisP1.m_tail.push_back(Expression(ymin*-10));
+	
+	xaxisP2.m_tail.push_back(Expression(0.0));
+	xaxisP2.m_tail.push_back(Expression(ymax*10));
+	xaxis.m_tail.push_back(xaxisP1);
+	xaxis.m_tail.push_back(xaxisP1);
+	
+	yaxisP1.m_tail.push_back(Expression(xmin*-10));
+	yaxisP1.m_tail.push_back(Expression(0.0));
 
-	xaxis.m_tail[1].head() = Atom("list");
-	xaxis.m_tail[1].m_tail.push_back(Expression(0.0));
-	xaxis.m_tail[1].m_tail.push_back(Expression(ymax*10));
+	yaxisP2.m_tail.push_back(Expression(xmax*10));
+	yaxisP2.m_tail.push_back(Expression(0.0));
 
-	yaxis.m_tail[0].head() = Atom("list");
-	yaxis.m_tail[0].m_tail.push_back(Expression(xmin*-10));
-	yaxis.m_tail[0].m_tail.push_back(Expression(0.0));
-
-	yaxis.m_tail[1].head() = Atom("list");
-	yaxis.m_tail[1].m_tail.push_back(Expression(xmax*10));
-	yaxis.m_tail[1].m_tail.push_back(Expression(0.0));
+	yaxis.m_tail.push_back(yaxisP1);
+	yaxis.m_tail.push_back(yaxisP1);
 	//for(auto e = Points.tailConstBegin(); e != Points.tailConstEnd(); ++e)
 	//{
 		//Discrete.m_tail.push_back(*e);

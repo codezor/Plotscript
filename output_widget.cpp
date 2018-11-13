@@ -60,7 +60,7 @@ void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, doubl
 
 void OutputWidget::DisplayText(QString write, double x, double y, double rotation, double scale) {
 
-	CrossHair();
+	
 	QPointF org(x, y);
 	
 	write.remove("\"");
@@ -79,7 +79,9 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	Text->setTransformOriginPoint(Text->boundingRect().width() / 2, Text->boundingRect().height() / 2);
 	
 	Text->setRotation(rotation * 180 / ( std::atan2(0, -1) ));
-	Text->moveBy(x, y);
+	Text->moveBy(x, -y);
+	CrossHair();
+	qDebug() << "scene: Position: " << scene->sceneRect();
 	qDebug() << "Text: Bounding Rect: " << Text->boundingRect() << "Position: " << Text->pos();
 }
 
@@ -172,12 +174,11 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 void OutputWidget::DisplayClear() {
 	scene->clear();
 }
-
-//void OutputWidget::resizeEvent(QResizeEvent *event) {
+void OutputWidget::resizeEvent(QResizeEvent *event) {
 
 	//this->resizeEvent(event);
-	//this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-//}
+	this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+}
 void OutputWidget::CrossHair()
 {
 	QPen P;

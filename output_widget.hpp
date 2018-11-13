@@ -36,7 +36,7 @@ private:
 	// maybe a text formatting function
 	void CrossHair();
 	
-	//void resizeEvent(QResizeEvent *event);
+	void resizeEvent(QResizeEvent *event);
 	
 private slots:
 	// Display Item

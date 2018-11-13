@@ -141,7 +141,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		if(ymax < 0)
 		{
 			temp.m_tail.push_back(e->m_tail[0]);
-			temp.m_tail.push_back(Expression(ymax));
+			temp.m_tail.push_back(Expression(ymax*10));
 			Line.m_tail.push_back(*e);
 			Line.m_tail.push_back(temp);
 		}
@@ -149,7 +149,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		else if(ymin > 0)
 		{
 			temp.m_tail.push_back(e->m_tail[0]);
-			temp.m_tail.push_back(Expression(ymin));
+			temp.m_tail.push_back(Expression(ymin*-10));
 			Line.m_tail.push_back(*e);
 			Line.m_tail.push_back(temp);
 		}
@@ -171,18 +171,18 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	yaxis.head() = Atom("list");
 	xaxis.m_tail[0].head() = Atom("list");
 	xaxis.m_tail[0].m_tail.push_back(Expression(0.0));
-	xaxis.m_tail[0].m_tail.push_back(Expression(ymin));
+	xaxis.m_tail[0].m_tail.push_back(Expression(ymin*-10));
 
 	xaxis.m_tail[1].head() = Atom("list");
 	xaxis.m_tail[1].m_tail.push_back(Expression(0.0));
-	xaxis.m_tail[1].m_tail.push_back(Expression(ymax));
+	xaxis.m_tail[1].m_tail.push_back(Expression(ymax*10));
 
 	yaxis.m_tail[0].head() = Atom("list");
-	yaxis.m_tail[0].m_tail.push_back(Expression(xmax));
+	yaxis.m_tail[0].m_tail.push_back(Expression(xmin*-10));
 	yaxis.m_tail[0].m_tail.push_back(Expression(0.0));
 
 	yaxis.m_tail[1].head() = Atom("list");
-	yaxis.m_tail[1].m_tail.push_back(Expression(xmax));
+	yaxis.m_tail[1].m_tail.push_back(Expression(xmax*10));
 	yaxis.m_tail[1].m_tail.push_back(Expression(0.0));
 	//for(auto e = Points.tailConstBegin(); e != Points.tailConstEnd(); ++e)
 	//{
@@ -194,23 +194,23 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	// build lines for the bounding box
 	Expression minXY;
 	minXY.m_head = Atom("list");
-	minXY.m_tail.push_back (Expression(Atom(xmin)));
-	minXY.m_tail.push_back(Expression(Atom(ymin)));
+	minXY.m_tail.push_back (Expression(Atom(xmin*-10)));
+	minXY.m_tail.push_back(Expression(Atom(ymin*-10)));
 	
 	Expression maxXY;
 	maxXY.m_head = Atom("list");
-	maxXY.m_tail.push_back(Expression(Atom(xmax)));
-	maxXY.m_tail.push_back(Expression(Atom(ymax)));
+	maxXY.m_tail.push_back(Expression(Atom(xmax*10)));
+	maxXY.m_tail.push_back(Expression(Atom(ymax*10)));
 	
 	Expression minXmaxY;
 	minXmaxY.m_head = Atom("list");
-	minXmaxY.m_tail.push_back(Expression(Atom(xmin)));
-	minXmaxY.m_tail.push_back(Expression(Atom(ymax)));
+	minXmaxY.m_tail.push_back(Expression(Atom(xmin*-10)));
+	minXmaxY.m_tail.push_back(Expression(Atom(ymax*10)));
 	
 	Expression maxXminY;
 	maxXminY.m_head= Atom("list");
-	maxXminY.m_tail.push_back(Expression(Atom(xmax)));
-	maxXminY.m_tail.push_back(Expression(Atom(ymin*10)));
+	maxXminY.m_tail.push_back(Expression(Atom(xmax *10)));
+	maxXminY.m_tail.push_back(Expression(Atom(ymin*-10)));
 
 
 	

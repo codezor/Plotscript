@@ -94,47 +94,76 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	xmax = DATA.m_tail[0].m_tail[0].head().asNumber();
 	ymax = DATA.m_tail[0].m_tail[1].head().asNumber();
 
+
+	//
+	std::map<std::string, Expression> propsPoints;
+	propsPoints["\"object-name\""] = Expression(Atom("\"point\""));
+	propsPoints["\"size\""] = Expression(Atom(0.));
+	// (set-property "size" 0 (set-property "object-name" 
 	for(auto e = DATA.tailConstBegin(); e != DATA.tailConstEnd(); ++e)
 	{
+		Expression temppoint;
+		temppoint.m_head = Atom("list");
+		temppoint = temppoint.setPropertyList(temppoint, propsPoints);
 		// find x Max
 		if(e->m_tail[0].head().asNumber() > xmax)
 		{
 			xmax = e->m_tail[0].head().asNumber();
+
 		}
 		// find xmin
 		if(e->m_tail[0].head().asNumber() < xmin)
 		{
 			xmin = e->m_tail[0].head().asNumber();
 		}
-		// find ymax
+			// find ymax
 		if(e->m_tail[1].head().asNumber() > ymax)
 		{
 			ymax = e->m_tail[1].head().asNumber();
+
 		}
-		//find ymin
+			//find ymin
 		if(e->m_tail[1].head().asNumber() < ymin)
 		{
-			ymin = e->m_tail[1].head().asNumber();
+				ymin = e->m_tail[1].head().asNumber();
 		}
-		//e->m_head = const Atom("list");
-		// point list
-		// make points
+			//e->m_head = const Atom("list");
+			// point list
+			// make points
+		if(e->m_tail[0].head().asNumber() < 0){
+			temppoint.m_tail.push_back(Expression (Atom(e->m_tail[0].head().asNumber() * 10)));
+		}
+		if(e->m_tail[0].head().asNumber() > 0)
+		{
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[0].head().asNumber() * 10)));
+		}
+		if(e->m_tail[1].head().asNumber() < 0)
+		{
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() * -10)));
+		}
+		if(e->m_tail[1].head().asNumber() > 0)
+		{
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() * -10)));
+
+
+		}
+			Points.m_tail.push_back(temppoint);
+
 		
-		Points.m_tail.push_back(e->m_tail);
-		//Discrete.m_tail.push_back(*e);
 	}
+		//scale
 
-	//xavg = ( xmin + xmax ) / 2;
-
-	//yavg = ( ymin + ymax ) / 2;
 	
-	
+	std::map<std::string, Expression> props;
+	props["\"object-name\""] = Expression(Atom("\"line\""));
+	props["\"thickness\""] = Expression(Atom(0));
 	// make lollipop	
 	for(auto e = Points.tailConstBegin(); e != Points.tailConstEnd(); ++e)
 	{
 		Expression Line;
 		Line.m_head = Atom("list");
-		Line.m_propertyList["object-name"] = Expression(Atom("line"));
+		Line = Line.setPropertyList(Line, props);
+		
 		Expression temp;
 		temp.m_head = Atom("list");
 		// line drawn from ymax to point
@@ -165,8 +194,10 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		Discrete.m_tail.push_back(Line);
 	}
 	// make lines
+	
 	Expression xaxis;
 	xaxis.m_head = Atom("list");
+	xaxis = xaxis.setPropertyList(xaxis, props);
 	Expression xaxisP1;
 	Expression xaxisP2;
 	xaxisP1.m_head = Atom("list");
@@ -174,20 +205,21 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	
 	Expression yaxis;
 	yaxis.m_head= Atom("list");
+	yaxis = yaxis.setPropertyList(xaxis, props);
 	Expression yaxisP1;
 	Expression yaxisP2;
 	yaxisP1.m_head = Atom("list");
 	yaxisP1.m_head = Atom("list");
 	
 	xaxisP1.m_tail.push_back(Expression(0.0));
-	xaxisP1.m_tail.push_back(Expression(ymin*-10));
+	xaxisP1.m_tail.push_back(Expression(ymin*10));
 	
 	xaxisP2.m_tail.push_back(Expression(0.0));
 	xaxisP2.m_tail.push_back(Expression(ymax*10));
 	xaxis.m_tail.push_back(xaxisP1);
 	xaxis.m_tail.push_back(xaxisP1);
 	
-	yaxisP1.m_tail.push_back(Expression(xmin*-10));
+	yaxisP1.m_tail.push_back(Expression(xmin*10));
 	yaxisP1.m_tail.push_back(Expression(0.0));
 
 	yaxisP2.m_tail.push_back(Expression(xmax*10));
@@ -203,47 +235,56 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	
 
 	// build lines for the bounding box
+
+	
 	Expression minXY;
 	minXY.m_head = Atom("list");
-	minXY.m_tail.push_back (Expression(Atom(xmin*-10)));
-	minXY.m_tail.push_back(Expression(Atom(ymin*-10)));
+	minXY.m_tail.push_back (Expression(Atom(xmin*10)));
+	minXY.m_tail.push_back(Expression(Atom(ymin*10)));
+	minXY = minXY.setPropertyList(minXY, props);
 	
 	Expression maxXY;
 	maxXY.m_head = Atom("list");
 	maxXY.m_tail.push_back(Expression(Atom(xmax*10)));
 	maxXY.m_tail.push_back(Expression(Atom(ymax*10)));
-	
+	maxXY = maxXY.setPropertyList(maxXY, props);
+
 	Expression minXmaxY;
 	minXmaxY.m_head = Atom("list");
-	minXmaxY.m_tail.push_back(Expression(Atom(xmin*-10)));
+	minXmaxY.m_tail.push_back(Expression(Atom(xmin*10)));
 	minXmaxY.m_tail.push_back(Expression(Atom(ymax*10)));
-	
+	minXmaxY = minXmaxY.setPropertyList(minXmaxY, props);
+
 	Expression maxXminY;
 	maxXminY.m_head= Atom("list");
 	maxXminY.m_tail.push_back(Expression(Atom(xmax *10)));
-	maxXminY.m_tail.push_back(Expression(Atom(ymin*-10)));
-
-
+	maxXminY.m_tail.push_back(Expression(Atom(ymin*10)));
+	maxXminY = maxXminY.setPropertyList(maxXminY, props);
+	
 	
 	Expression TopLine;
 	TopLine.m_head = Atom("list");
 	TopLine.m_tail.push_back(minXY);
 	TopLine.m_tail.push_back(maxXminY);
-	
+	TopLine = TopLine.setPropertyList(TopLine, props);
+
 	Expression BottomLine;
 	BottomLine.m_head = Atom("list");
 	BottomLine.m_tail.push_back(minXmaxY);
 	BottomLine.m_tail.push_back(maxXY);
+	BottomLine = BottomLine.setPropertyList(BottomLine, props);
 	
 	Expression RightLine;
 	RightLine.m_head = Atom("list");
 	RightLine.m_tail.push_back(minXY);
 	RightLine.m_tail.push_back(minXmaxY);
+	RightLine = RightLine.setPropertyList(RightLine, props);
 
 	Expression LeftLine;
 	LeftLine.m_head = Atom("list");
 	LeftLine.m_tail.push_back(maxXY);
 	LeftLine.m_tail.push_back(maxXminY);
+	LeftLine = LeftLine.setPropertyList(TopLine, props);
 
 
 	// build lines for axies 
@@ -264,8 +305,8 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)ymin) + "\"")));
 	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)xmax) + "\"")));
 	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymax) + "\"")));
-	Discrete.m_propertyList["object-name"] = Expression(Atom("discrete-plot"));
-	std::map<std::string, Expression> props;
+	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
+	//std::map<std::string, Expression> propsD;
 	//Expression Labels;
 	//Labels.m_head = Atom("list");
 	for(auto pr = options.tailConstBegin(); pr != options.tailConstEnd(); ++pr)

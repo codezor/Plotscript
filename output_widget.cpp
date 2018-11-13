@@ -86,7 +86,7 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 }
 
 // Discrete Plot generation 
-/*void OutputWidget::DisplayDiscretePlot()
+void OutputWidget::DisplayDiscretePlot()
 {	   
 	double N = 20;
 	double A = 3;
@@ -106,8 +106,11 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	double ymiddle =(ymax + ymin) / 2;
 	
 
-	QFont f("Courier");
+	QFont f =QFont("Monospace");
+	f.setStyleHint(QFont::TypeWriter);
 	f.setPointSize(1);
+
+	
 	
 	QPen dataPen;
 	dataPen.setColor(Qt::black);
@@ -131,7 +134,8 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	//Labeles->addWidget(StyleArea);
 	// Data bounding box
 	QRect dataBoundBox;
-	dataBoundBox.setRect(xmin, ymax, scaleX, scaleY);
+	dataBoundBox.setRect(xmin,ymin, N, N);
+	//dataBoundBox.moveCenter(dataBoundBox.width());
 	//QGraphicsScene *Plot = new QGraphicsScene;
 	//QGraphicsView *PlotArea = new QGraphicsView;
 	//PlotArea->setScene(Plot);
@@ -148,29 +152,38 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	QGraphicsTextItem* XLabel = scene->addText("X Label");
 	QGraphicsTextItem* YLabel = scene->addText("Y Label");
 	
-	Tittle->setPos(xmiddle, (ymax + 2 * A));
 	Tittle->setScale(1);
 	Tittle->setFont(f);
 
-	XLabel->setPos(xmiddle, (ymin-2*A));
+	Tittle->moveBy(-Tittle->boundingRect().width() / 2, -Tittle->boundingRect().height() / 2);	
+	Tittle->setTransformOriginPoint(Tittle->boundingRect().width() / 2, Tittle->boundingRect().height() / 2);
+	Tittle->moveBy(xmiddle, ( ymax +  A ));
+	
 	XLabel->setScale(1);
 	XLabel->setFont(f);
+	XLabel->moveBy(-XLabel->boundingRect().width() / 2, -XLabel->boundingRect().height() / 2);
+	XLabel->setTransformOriginPoint(XLabel->boundingRect().width() / 2, XLabel->boundingRect().height() / 2);
+	XLabel->moveBy(xmiddle, (ymin-A));
 	
-	YLabel->setPos((xmin-2*B), ymiddle);
-	YLabel->setRotation(-90);
 	YLabel->setScale(1);
 	YLabel->setFont(f);
-	//YLabel
+	YLabel->moveBy(-YLabel->boundingRect().width() / 2, -YLabel->boundingRect().height() / 2);
+	YLabel->setTransformOriginPoint(YLabel->boundingRect().width() / 2, YLabel->boundingRect().height() / 2);
+	YLabel->setRotation(-90);
+	YLabel->moveBy(( xmin -  B ), ymiddle);
 	
+	CrossHair();
+	qDebug() << "scene: Position: " << scene->sceneRect();
+	//qDebug() << "Text: Bounding Rect: " << Text->boundingRect() << "Position: " << Text->pos();
 	QLineF Xaxis;	
 	Xaxis.setLine(xmin, ymiddle, xmax, ymiddle);	
-	//Plot->addLine(Xaxis, dataPen);
+	scene->addLine(Xaxis, dataPen);
 	
 	QLineF Yaxis;
-	Yaxis.setLine(xmiddle, ymin, xmiddle, ymax);	
-	//Plot->addLine(Yaxis, dataPen);
+	Yaxis.setLine(xmiddle, ymin, xmiddle, ymax);
+	scene->addLine(Yaxis, dataPen);
 }
-*/
+
 void OutputWidget::DisplayClear() {
 	scene->clear();
 }

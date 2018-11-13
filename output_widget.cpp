@@ -75,12 +75,12 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	
 	Text->setScale(scale);	
 		
-	Text->moveBy(-Text->boundingRect().width() / 2, -Text->boundingRect().height() / 2);
-	Text->setTransformOriginPoint(Text->boundingRect().width() / 2, Text->boundingRect().height() / 2);
+	//Text->moveBy(-Text->boundingRect().width() / 2, -Text->boundingRect().height() / 2);
+	//Text->setTransformOriginPoint(Text->boundingRect().width() / 2, Text->boundingRect().height() / 2);
 	
 	Text->setRotation(rotation * 180 / ( std::atan2(0, -1) ));
-	Text->moveBy(x, -y);
-	CrossHair();
+	Text->moveBy(x, y);
+	//CrossHair();
 	qDebug() << "scene: Position: " << scene->sceneRect();
 	qDebug() << "Text: Bounding Rect: " << Text->boundingRect() << "Position: " << Text->pos();
 }

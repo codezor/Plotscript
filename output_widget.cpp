@@ -25,8 +25,8 @@ OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
 	layout->addWidget(view);
 	view->centerOn(0, 0);
 	
-	//view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	//view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
 	setLayout(layout);	
 }
@@ -47,8 +47,11 @@ void OutputWidget::DisplayPoint(double x, double y, double size) {
 	QPen pen;
 	pen.setColor(Qt::black);
 	pen.setWidth(0);
-	scene->addEllipse((x-size/2.0), (y-size/2.0), size, size, pen, QBrush(Qt::SolidPattern));	
-	
+	QGraphicsEllipseItem *Point =scene->addEllipse((x), (y), size, size, pen, QBrush(Qt::SolidPattern));
+	Point->moveBy(-Point->boundingRect().width() / 2, -Point->boundingRect().height() / 2);
+	Point->setTransformOriginPoint(Point->boundingRect().width() / 2, Point->boundingRect().height() / 2);
+	//Title->moveBy(xmiddle, ( -scaleY * ymax - A ));
+	qDebug() << "Pount: Position: " << Point->boundingRect();
 }
 
 void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, double thickness) {
@@ -56,7 +59,11 @@ void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, doubl
 	QPen pen;
 	pen.setColor(Qt::black);
 	pen.setWidth(thickness);	
-	scene->addLine(x1, y1, x2, y2, pen);
+	QGraphicsLineItem *Line = scene->addLine(x1, y1, x2, y2, pen);
+	//Line->moveBy(-Line->boundingRect().width() / 2, -Line->boundingRect().height() / 2);
+	//Line->setTransformOriginPoint(Line->boundingRect().width() / 2, Line->boundingRect().height() / 2);
+	
+	qDebug() << "Line: Position: " << Line->boundingRect();
 }
 
 void OutputWidget::DisplayText(QString write, double x, double y, double rotation, double scale) {
@@ -113,37 +120,10 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	QPen dataPen;
 	dataPen.setColor(Qt::black);
 	dataPen.setCosmetic(true);
-	// Outer most lebel box
-	//QRect labelBox;
-	//labelBox.setRect(xmin - B, ymax + A, xmax + 2 * B, ymax + 2 * A);
-	//QGraphicsScene *Labeles = new QGraphicsScene;
-	//QGraphicsView *LabelArea = new QGraphicsView;
-
-	//Labeles->setSceneRect(labelBox);
-	//scene->addWidget(LabelArea);
-
-	// middle bounding tick values should have floating point precesion
-	//QRectF tickBox;	
-	//tickBox.setRect(xmin - C, ymax + D, xmax + 2 * C, ymax + 2 * D);
-	//QGraphicsScene *Style = new QGraphicsScene;
-	//QGraphicsView *StyleArea = new QGraphicsView;
-	//StyleArea->setScene(Style);
-	//Style->setSceneRect(tickBox);
-	//Labeles->addWidget(StyleArea);
-	// Data bounding box
+	
 	QRect dataBoundBox;
 	dataBoundBox.setRect(xmin, ymin, N, N);
-	//dataBoundBox.moveCenter(dataBoundBox.width());
-	//QGraphicsScene *Plot = new QGraphicsScene;
-	//QGraphicsView *PlotArea = new QGraphicsView;
-	//PlotArea->setScene(Plot);
-	//Plot->setSceneRect(dataBoundBox);
-	//Style->addWidget(PlotArea);
-
-
-	//scene->addRect(labelBox, dataPen);
-	//scene->addRect(tickBox, dataPen);
-	//scene->addRect(dataBoundBox, dataPen);	
+		
 	title.remove("\"");
 	xlable.remove("\"");
 	ylabel.remove("\"");
@@ -157,20 +137,20 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	Title->moveBy(-Title->boundingRect().width() / 2, -Title->boundingRect().height() / 2);
 	Title->setTransformOriginPoint(Title->boundingRect().width() / 2, Title->boundingRect().height() / 2);
 	Title->moveBy(xmiddle, ( -scaleY* ymax - A ));
-
+	qDebug() << "Title: Position: " << Title->boundingRect();
 	XLabel->setScale(textscale);
 	XLabel->setFont(f);
 	XLabel->moveBy(-XLabel->boundingRect().width() / 2, -XLabel->boundingRect().height() / 2);
 	XLabel->setTransformOriginPoint(XLabel->boundingRect().width() / 2, XLabel->boundingRect().height() / 2);
 	XLabel->moveBy(xmiddle, ( -scaleY * ymin + A ));
-
+	qDebug() << "Xlabel: Position: " << XLabel->boundingRect();
 	YLabel->setScale(textscale);
 	YLabel->setFont(f);
 	YLabel->moveBy(-YLabel->boundingRect().width() / 2, -YLabel->boundingRect().height() / 2);
 	YLabel->setTransformOriginPoint(YLabel->boundingRect().width() / 2, YLabel->boundingRect().height() / 2);
 	YLabel->setRotation(-90);
 	YLabel->moveBy(( scaleX * xmin - B ), ymiddle);
-
+	qDebug() << "Ylabel: Position: " << YLabel->boundingRect();
 	CrossHair();
 	qDebug() << "scene: Position: " << scene->sceneRect();
 
@@ -192,26 +172,32 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	XMIN->moveBy(-XMIN->boundingRect().width() / 2, -XMIN->boundingRect().height() / 2);
 	XMIN->setTransformOriginPoint(XMIN->boundingRect().width() / 2, XMIN->boundingRect().height() / 2);
 	XMIN->moveBy(scaleX* xmin, ( -scaleY * ymin  +C));
-	
+	qDebug() << "Xmin: Position: " << XMIN->pos();
+
 	XMAX->setScale(textscale);
 	XMAX->setFont(f);
 
 	XMAX->moveBy(-XMAX->boundingRect().width() / 2, -XMAX->boundingRect().height() / 2);
 	XMAX->setTransformOriginPoint(XMAX->boundingRect().width() / 2, XMAX->boundingRect().height() / 2);
 	XMAX->moveBy(scaleX * xmax , ( -scaleY * ymin + C));
-
+	qDebug() << "Xmax: Position: " << XMAX->pos();
+	
 	YMIN->setScale(textscale);
 	YMIN->setFont(f);
 
 	YMIN->moveBy(-YMIN->boundingRect().width() / 2, -YMIN->boundingRect().height() / 2);
 	YMIN->setTransformOriginPoint(YMIN->boundingRect().width() / 2, YMIN->boundingRect().height() / 2);
 	YMIN->moveBy(scaleX * xmin -D, ( -scaleY * ymin  ));
-
+	qDebug() << "Ymin: Position: " << YMIN->pos();
+	
 	YMAX->setScale(textscale);
 	YMAX->setFont(f);
-	YMAX->moveBy(-YMAX->boundingRect().width() / 2, -YMAX->boundingRect().height() / 2);
+	
 	YMAX->setTransformOriginPoint(YMAX->boundingRect().width() / 2, YMAX->boundingRect().height() / 2);
+	YMAX->moveBy(-YMAX->boundingRect().width() / 2, -YMAX->boundingRect().height() / 2);
+	
 	YMAX->moveBy(scaleX * xmin - D, ( -scaleY * ymax ));
+	qDebug() << "Ymax: Position: " << YMAX->pos()<<YMAX->boundingRect();
 }
 
 void OutputWidget::DisplayClear() {

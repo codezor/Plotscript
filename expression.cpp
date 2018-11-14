@@ -69,15 +69,6 @@ Expression Expression::setPropertyList(const Expression expression_to_add, std::
 Expression
 Expression::setDiscretePlot(Expression DATA, Expression options)
 {
-	// has to be a list 
-	//if(!data.isHeadList())
-	//{
-	//}
-
-	// has to be a list 
-	//if(!Options.isHeadList())
-	//{
-//	}
 	Expression Discrete;
 	Discrete.m_head = Atom("list");
 	Expression Points;

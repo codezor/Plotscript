@@ -88,7 +88,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	double ymax;
 	//double xavg;
 	//double yavg;
-	
+
 	xmin = DATA.m_tail[0].m_tail[0].head().asNumber();
 	ymin = DATA.m_tail[0].m_tail[1].head().asNumber();
 	xmax = DATA.m_tail[0].m_tail[0].head().asNumber();
@@ -96,15 +96,11 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 
 
 	//
-	std::map<std::string, Expression> propsPoints;
-	propsPoints["\"object-name\""] = Expression(Atom("\"point\""));
-	propsPoints["\"size\""] = Expression(Atom(0.5));
+	
 	// (set-property "size" 0 (set-property "object-name" 
 	for(auto e = DATA.tailConstBegin(); e != DATA.tailConstEnd(); ++e)
 	{
-		Expression temppoint;
-		temppoint.m_head = Atom("list");
-		temppoint = temppoint.setPropertyList(temppoint, propsPoints);
+	
 		// find x Max
 		if(e->m_tail[0].head().asNumber() > xmax)
 		{
@@ -116,38 +112,51 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		{
 			xmin = e->m_tail[0].head().asNumber();
 		}
-			// find ymax
+		// find ymax
 		if(e->m_tail[1].head().asNumber() > ymax)
 		{
 			ymax = e->m_tail[1].head().asNumber();
 
 		}
-			//find ymin
+		//find ymin
 		if(e->m_tail[1].head().asNumber() < ymin)
 		{
-				ymin = e->m_tail[1].head().asNumber();
+			ymin = e->m_tail[1].head().asNumber();
 		}
-			//e->m_head = const Atom("list");
-			// point list
-			// make points
-		if(e->m_tail[0].head().asNumber() < 0){
-			temppoint.m_tail.push_back(Expression (Atom(e->m_tail[0].head().asNumber() * 10)));
+		//e->m_head = const Atom("list");
+		// point list
+	}	
+
+	double scaleX = 20 / ( xmax - xmin );
+	double scaleY = 20 / ( ymax - ymin );
+	std::map<std::string, Expression> propsPoints;
+	propsPoints["\"object-name\""] = Expression(Atom("\"point\""));
+	propsPoints["\"size\""] = Expression(Atom(0.5));
+	// make points
+	for(auto e = DATA.tailConstBegin(); e != DATA.tailConstEnd(); ++e)
+	{
+		Expression temppoint;
+		temppoint.m_head = Atom("list");
+		
+		if(e->m_tail[0].head().asNumber() < 0)
+		{
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[0].head().asNumber() * scaleX)));
 		}
 		if(e->m_tail[0].head().asNumber() > 0)
 		{
-			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[0].head().asNumber() * 10)));
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[0].head().asNumber() * scaleX)));
 		}
-		if( e->m_tail[0].head().asNumber() == 0 )
+		if(e->m_tail[0].head().asNumber() == 0)
 		{
-			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[0].head().asNumber() )));
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[0].head().asNumber())));
 		}
 		if(e->m_tail[1].head().asNumber() < 0)
 		{
-			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() * -10)));
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() * -scaleY)));
 		}
 		if(e->m_tail[1].head().asNumber() > 0)
 		{
-			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() * -10)));
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() * -scaleY)));
 
 
 		}
@@ -155,10 +164,11 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		{
 			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber())));
 		}
-			Points.m_tail.push_back(temppoint);		
+		temppoint = temppoint.setPropertyList(temppoint, propsPoints);
+		Points.m_tail.push_back(temppoint);
+	
+	//scale
 	}
-		//scale
-
 	
 	std::map<std::string, Expression> props;
 	props["\"object-name\""] = Expression(Atom("\"line\""));
@@ -176,7 +186,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		if(ymax < 0)
 		{
 			temp.m_tail.push_back(e->m_tail[0]);
-			temp.m_tail.push_back(Expression(ymax*10));
+			temp.m_tail.push_back(Expression(ymax*scaleY));
 			Line.m_tail.push_back(*e);
 			Line.m_tail.push_back(temp);
 		}
@@ -184,7 +194,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		else if(ymin > 0)
 		{
 			temp.m_tail.push_back(e->m_tail[0]);
-			temp.m_tail.push_back(Expression(ymin*-10));
+			temp.m_tail.push_back(Expression(ymin*-scaleY));
 			Line.m_tail.push_back(*e);
 			Line.m_tail.push_back(temp);
 		}
@@ -219,18 +229,18 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	yaxisP1.m_head = Atom("list");
 	
 	xaxisP1.m_tail.push_back(Expression(0.0));
-	xaxisP1.m_tail.push_back(Expression(ymin*-10));
+	xaxisP1.m_tail.push_back(Expression(ymin*-scaleY));
 	
 	xaxisP2.m_tail.push_back(Expression(0.0));
-	xaxisP2.m_tail.push_back(Expression(ymax*-10));
+	xaxisP2.m_tail.push_back(Expression(ymax*-scaleY));
 	
 	xaxis.m_tail.push_back(xaxisP1);
 	xaxis.m_tail.push_back(xaxisP2);
 	
-	yaxisP1.m_tail.push_back(Expression(xmin*10));
+	yaxisP1.m_tail.push_back(Expression(xmin*scaleX));
 	yaxisP1.m_tail.push_back(Expression(0.0));
 
-	yaxisP2.m_tail.push_back(Expression(xmax*10));
+	yaxisP2.m_tail.push_back(Expression(xmax*scaleX));
 	yaxisP2.m_tail.push_back(Expression(0.0));
 
 	yaxis.m_tail.push_back(yaxisP1);
@@ -243,25 +253,25 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	
 	Expression minXY;
 	minXY.m_head = Atom("list");
-	minXY.m_tail.push_back (Expression(Atom(xmin*10)));
-	minXY.m_tail.push_back(Expression(Atom(ymin*-10)));
+	minXY.m_tail.push_back (Expression(Atom(xmin*scaleX)));
+	minXY.m_tail.push_back(Expression(Atom(ymin*-scaleY)));
 	
 	
 	Expression maxXY;
 	maxXY.m_head = Atom("list");
-	maxXY.m_tail.push_back(Expression(Atom(xmax*10)));
-	maxXY.m_tail.push_back(Expression(Atom(ymax*-10)));
+	maxXY.m_tail.push_back(Expression(Atom(xmax*scaleX)));
+	maxXY.m_tail.push_back(Expression(Atom(ymax*-scaleY)));
 	
 	Expression minXmaxY;
 	minXmaxY.m_head = Atom("list");
-	minXmaxY.m_tail.push_back(Expression(Atom(xmin*10)));
-	minXmaxY.m_tail.push_back(Expression(Atom(ymax*-10)));
+	minXmaxY.m_tail.push_back(Expression(Atom(xmin*scaleX)));
+	minXmaxY.m_tail.push_back(Expression(Atom(ymax*-scaleY)));
 	
 
 	Expression maxXminY;
 	maxXminY.m_head= Atom("list");
-	maxXminY.m_tail.push_back(Expression(Atom(xmax *10)));
-	maxXminY.m_tail.push_back(Expression(Atom(ymin*-10)));
+	maxXminY.m_tail.push_back(Expression(Atom(xmax *scaleX)));
+	maxXminY.m_tail.push_back(Expression(Atom(ymin*-scaleY)));
 	
 	
 	Expression TopLine;
@@ -319,10 +329,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		}
 
 		Discrete.m_propertyList[property.head().asString()] = Expression(Atom(pr->m_tail[1].head()));
-		//else if(pr->m_tail[1].isHeadNumber())
-		//{
-			//propsD[pr->m_tail[0].head().asString()] = Expression(Atom(pr->m_tail[1].head().asNumber()));
-		//}
+		
 	}
 
 	

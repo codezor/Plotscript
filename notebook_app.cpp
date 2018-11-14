@@ -362,7 +362,10 @@ void NotebookApp::makeDiscretePlot(Expression exp) {
 
 	Expression textScale;
 	textScale = exp.getPropertyList("\"text-scale\"");
-
+	if(!textScale.isHeadNumber())
+	{
+		textScale = Expression(Atom(1.0));
+	}
 	Expression ymin;
 	ymin = exp.getPropertyList("\"ymin\"");
 

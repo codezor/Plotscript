@@ -44,7 +44,7 @@ private slots:
 	void DisplayText(QString write, double x, double y, double rotation, double scale);
 	void DisplayLine(double x1, double y1, double x2, double y2, double thickness);
 	void DisplayPoint(double x, double y, double size);
-	void DisplayDiscretePlot();
+	void DisplayDiscretePlot(QString title, QString xlable, QString ylabel, double xmin, double xmax, double ymin, double ymax, double textscale);
 	void DisplayClear();
 	// Display none or nothing
 

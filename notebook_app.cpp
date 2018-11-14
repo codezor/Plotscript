@@ -34,7 +34,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 	QObject::connect(this, SIGNAL(TextReady(QString, double , double, double, double)), output, SLOT(DisplayText(QString, double, double, double, double)));
 
 	// Draw the Discrete plot
-	QObject::connect(this, SIGNAL(discretePlotReady()), output, SLOT(DisplayDiscretePlot()));
+	QObject::connect(this, SIGNAL(discretePlotReady(QString , QString , QString , double , double , double , double, double )), output, SLOT(DisplayDiscretePlot(QString, QString, QString, double, double, double, double, double)));
 
 
 	// Clear the display
@@ -226,7 +226,7 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 			// Draw Plot discrete-plot
 			if (objectName.head().asString() == "\"discrete-plot\"") {
 				//
-				makeDiscretePlot();
+				makeDiscretePlot(exp);
 			}
 		}
 	}
@@ -319,14 +319,68 @@ void NotebookApp::makeText(Expression exp){
 	emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber(), textRotation.head().asNumber(), textScale.head().asNumber()));
 }
 
-void NotebookApp::makeDiscretePlot() {
+void NotebookApp::makeDiscretePlot(Expression exp) {
 
+	// discreete props list
 
-	//qDebug << exp;
-	//exp.head().asString
-	// send plot setting to make plot send all other object to other things
+	
+	for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e)
+	{
+		Expression express = *e;
+		std::string propertyKey = "\"object-name\"";
+		Expression objectName;
+		objectName = express.getPropertyList(propertyKey);
+		// Draw point
+		if(objectName.head().asString() == "\"point\"")
+		{
+			makePoint(*e);
+		}
+		// Draw line
+		if(objectName.head().asString() == "\"line\"")
+		{
+			makeLine(*e);
+		}
+		//DrawText
+		if(objectName.head().asString() == "\"text\"")
+		{
+			makeText(*e);
+		}
+		else
+		{
+			//whatGoesWhere(*e);
+		}
+	}
 
-	emit(discretePlotReady());
+	Expression title;
+	title = exp.getPropertyList("\"title\"");
+
+	Expression xlable;
+	xlable = exp.getPropertyList("\"abscissa-label\"");
+
+	Expression ylable;
+	ylable = exp.getPropertyList("\"ordinate-label\"");
+
+	Expression textScale;
+	textScale = exp.getPropertyList("\"text-scale\"");
+
+	Expression ymin;
+	ymin = exp.getPropertyList("\"ymin\"");
+
+	Expression ymax;
+	ymax = exp.getPropertyList("\"ymax\"");
+
+	Expression xmin;
+	xmin = exp.getPropertyList("\"xmin\"");
+	
+	Expression xmax;
+	xmax = exp.getPropertyList("\"xmax\"");
+
+	QString Qtitle = QString::fromStdString(title.head().asString());
+	QString Qxlable = QString::fromStdString(xlable.head().asString());
+	QString Qylabel = QString::fromStdString(ylable.head().asString());
+
+	//textScale = exp.getPropertyList("\"text-scale\"");
+	emit(discretePlotReady(Qtitle, Qxlable, Qylabel ,xmin.head().asNumber(), xmax.head().asNumber(), ymin.head().asNumber(), ymax.head().asNumber(), textScale.head().asNumber()));
 
 
 }

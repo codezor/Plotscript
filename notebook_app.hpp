@@ -34,7 +34,7 @@ signals:
 	void LineReady(double x1, double y1, double x2, double y2, double thickness);
 	void TextReady(QString write, double x, double y, double rotation, double scale);
 	
-	void discretePlotReady();
+	void discretePlotReady(QString title, QString xlable, QString ylabel, double xmin, double xmax, double ymin, double ymax, double textscale);
 	void ClearScene();
 
 private:
@@ -58,7 +58,7 @@ private:
 	void makeLine(Expression exp);
 	void makePoint(Expression exp);
 	void makeText(Expression exp);
-	void makeDiscretePlot();
+	void makeDiscretePlot(Expression exp);
 
 };
 

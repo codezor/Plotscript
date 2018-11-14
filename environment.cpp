@@ -612,7 +612,7 @@ range(const std::vector<Expression>& args)
 
  std::vector<Expression> rangeList;
 
-  if (!(lowerBound < upperBound) || !(increment > 0)) {
+  if (!(lowerBound <= upperBound) || !(increment >= 0)) {
     throw SemanticError(
       "Error in call to range: Arguments not what they should be");
   } else {
@@ -622,8 +622,9 @@ range(const std::vector<Expression>& args)
       rangeList.emplace_back(Expression(i));
       i = i + increment;
     }
-	Expression RL = list(rangeList);
-		return RL;//Expression(RL);
+	return (rangeList);
+	//Expression RL = list(rangeList);
+		//return RL;//Expression(RL);
   }
 };
 

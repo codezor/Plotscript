@@ -675,13 +675,14 @@ Expression::handle_apply(Environment& env) {
 	if ((!env.is_proc(procID) && !env.is_exp(procID)) || (!proc.m_tail.empty())) {
 		throw SemanticError("Error in apply firt argument is not a proceudure");
 	}
-	
+	Expression list = m_tail[1].eval(env);
+	m_tail[1] = list;
+
 	if (!m_tail[1].isHeadList())
 	{
-		//if(m_tail[1].head().asSymbol() != "range")
-		//{
+
 			throw SemanticError("Error: second argument to apply not a list");
-		//}
+		
 	}
 
 	Expression results;
@@ -733,17 +734,13 @@ Expression Expression::handle_map(Environment& env) {
 	{
 		throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
 	}
-	Expression list = m_tail[1].eval(env);
-	//env.add_exp(m_tail[0].head(), list);
-	//if (!m_tail[1].isHeadList() || !list.isHeadList() )
-	//{
+	Expression list = m_tail[1].eval(env);	
 	m_tail[1] = list;
-
 	
-		if( !list.isHeadList() )
-		{
-			throw SemanticError("Error: second argument to map not a list");
-		}
+	if( !list.isHeadList() )
+	{
+		throw SemanticError("Error: second argument to map not a list");
+	}
 	//}
 	
 	Expression results;

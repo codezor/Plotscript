@@ -110,7 +110,7 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	//scene->move
 
 	double xmiddle = (xmax + xmin ) / 2;
-	double ymiddle = ( ymax + ymin ) / 2;
+	double ymiddle = (ymax + ymin ) / 2;
 	double scaleX =  20 / abs( xmax - xmin );
 	double scaleY = 20 / abs( ymax - ymin );
 
@@ -119,14 +119,14 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	f.setPointSize(1);
 
 
-
+	
 	QPen dataPen;
 	dataPen.setColor(Qt::black);
 	dataPen.setCosmetic(true);
 	
-	QRect dataBoundBox;
-	dataBoundBox.setRect(scaleX*xmin-5, -scaleY*ymax-5, abs(xmax-xmin)*scaleX+10, abs(ymax - ymin)*scaleY+10);
-	scene->setSceneRect(dataBoundBox);
+	//QRect dataBoundBox;
+	//dataBoundBox.setRect(scaleX*xmin-5, -scaleY*ymax-5, abs(xmax-xmin)*scaleX, abs(ymax - ymin)*scaleY);
+	//scene->setSceneRect(dataBoundBox);
 	title.remove("\"");
 	xlable.remove("\"");
 	ylabel.remove("\"");
@@ -221,7 +221,9 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	
 	qDebug() << "Ymax: Position: " << YMAX->pos()<<YMAX->boundingRect()<< YMAX->sceneBoundingRect();
 	qDebug() << "ymin:"<<ymin << "ymax"<<ymax<<"xmin"<<xmin<<"xmax"<<xmax ;
-	this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+	//scene->sceneRect().moveCenter(scene->sceneRect().topLeft());
+	view->centerOn(xmiddle*scaleX + 5, ymiddle*-scaleY - 5);
+	//this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 void OutputWidget::DisplayClear() {

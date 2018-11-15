@@ -111,8 +111,8 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 
 	double xmiddle = (xmax + xmin ) / 2;
 	double ymiddle = ( ymax + ymin ) / 2;
-	double scaleX =  20 / ( xmax - xmin );
-	double scaleY = 20 / ( ymax - ymin );
+	double scaleX =  20 / abs( xmax - xmin );
+	double scaleY = 20 / abs( ymax - ymin );
 
 	QFont f = QFont("Monospace");
 	f.setStyleHint(QFont::TypeWriter);
@@ -124,9 +124,9 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	dataPen.setColor(Qt::black);
 	dataPen.setCosmetic(true);
 	
-	//QRect dataBoundBox;
-	//dataBoundBox.setRect(scaleX*xmin, scaleY*ymin, N+10, N+10);
-	//scene->setSceneRect(dataBoundBox);
+	QRect dataBoundBox;
+	dataBoundBox.setRect(scaleX*xmin-5, -scaleY*ymax-5, abs(xmax-xmin)*scaleX+10, abs(ymax - ymin)*scaleY+10);
+	scene->setSceneRect(dataBoundBox);
 	title.remove("\"");
 	xlable.remove("\"");
 	ylabel.remove("\"");
@@ -176,29 +176,22 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	QGraphicsTextItem *YMIN = scene->addText(YminT);
 	QGraphicsTextItem *YMAX = scene->addText(YmaxT);
 	
-
-
-	
 	//Yminitextbox.addText
 	XMIN->setFont(f);
 	XMIN->setScale(textscale);
 	XMIN->moveBy(-XMIN->boundingRect().width() / 2, -XMIN->boundingRect().height() / 2);
-	XMIN->setTransformOriginPoint(XMIN->boundingRect().width() / 2, XMIN->boundingRect().height() / 2);
-	
+	XMIN->setTransformOriginPoint(XMIN->boundingRect().width() / 2, XMIN->boundingRect().height() / 2);	
 	XMIN->moveBy(scaleX* xmin, ( -scaleY * ymin + C ));
-	//XMIN->setPos(scaleX* xmin, ( -scaleY * ymin + C ));
-
 	
-	qDebug() << "Xmin: Position: " << XMIN->pos() << XMIN->boundingRect();
 
+	qDebug() << "Xmin: Position: " << XMIN->pos() << XMIN->boundingRect();
 	
 	XMAX->setFont(f);
 	XMAX->setScale(textscale);
 	XMAX->moveBy(-XMAX->boundingRect().width() / 2,- XMAX->boundingRect().height() / 2);
-	XMAX->setTransformOriginPoint(-XMAX->boundingRect().width() / 2,- XMAX->boundingRect().height() / 2);
-	
+	XMAX->setTransformOriginPoint(-XMAX->boundingRect().width() / 2,- XMAX->boundingRect().height() / 2);	
 	XMAX->moveBy(scaleX * xmax , ( -scaleY * ymin + C));
-	//XMAX->setPos(scaleX * xmax, ( -scaleY * ymin + C ));
+	
 	
 	qDebug() << "Xmax: Position: " << XMAX->pos()<<XMAX->boundingRect();
 	
@@ -228,6 +221,7 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	
 	qDebug() << "Ymax: Position: " << YMAX->pos()<<YMAX->boundingRect()<< YMAX->sceneBoundingRect();
 	qDebug() << "ymin:"<<ymin << "ymax"<<ymax<<"xmin"<<xmin<<"xmax"<<xmax ;
+	this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 void OutputWidget::DisplayClear() {

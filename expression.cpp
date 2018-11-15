@@ -84,14 +84,10 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	ymin = DATA.m_tail[0].m_tail[1].head().asNumber();
 	xmax = DATA.m_tail[0].m_tail[0].head().asNumber();
 	ymax = DATA.m_tail[0].m_tail[1].head().asNumber();
-
-
-	//
 	
 	// (set-property "size" 0 (set-property "object-name" 
 	for(auto e = DATA.tailConstBegin(); e != DATA.tailConstEnd(); ++e)
-	{
-	
+	{	
 		// find x Max
 		if(e->m_tail[0].head().asNumber() > xmax)
 		{
@@ -189,6 +185,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 			Line.m_tail.push_back(*e);
 			Line.m_tail.push_back(temp);
 		}
+		
 		// drawn from axis
 		else
 		{
@@ -258,10 +255,6 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		yaxisP1.m_tail.push_back(Expression(0.0));
 		yaxisP2.m_tail.push_back(Expression(0.0));
 	}
-	
-
-	
-
 
 	yaxis.m_tail.push_back(yaxisP1);
 	yaxis.m_tail.push_back(yaxisP2);

@@ -118,8 +118,8 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		// point list
 	}	
 
-	double scaleX = 20 / ( xmax - xmin );
-	double scaleY = 20 / ( ymax - ymin );
+	double scaleX = 20 / abs( xmax - xmin );
+	double scaleY = 20 / abs( ymax - ymin );
 	std::map<std::string, Expression> propsPoints;
 	propsPoints["\"object-name\""] = Expression(Atom("\"point\""));
 	propsPoints["\"size\""] = Expression(Atom(0.5));
@@ -147,7 +147,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		}
 		if(e->m_tail[1].head().asNumber() > 0)
 		{
-			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() * -scaleY)));
+			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() *-scaleY)));
 
 
 		}
@@ -185,7 +185,7 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		else if(ymin > 0)
 		{
 			temp.m_tail.push_back(e->m_tail[0]);
-			temp.m_tail.push_back(Expression(ymin*-scaleY));
+			temp.m_tail.push_back(Expression(ymin*scaleY));
 			Line.m_tail.push_back(*e);
 			Line.m_tail.push_back(temp);
 		}
@@ -220,10 +220,10 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	yaxisP1.m_head = Atom("list");
 	
 	xaxisP1.m_tail.push_back(Expression(0.0));
-	xaxisP1.m_tail.push_back(Expression(ymin*-scaleY));
+	xaxisP1.m_tail.push_back(Expression(ymin*scaleY));
 	
 	xaxisP2.m_tail.push_back(Expression(0.0));
-	xaxisP2.m_tail.push_back(Expression(ymax*-scaleY));
+	xaxisP2.m_tail.push_back(Expression(ymax*scaleY));
 	
 	xaxis.m_tail.push_back(xaxisP1);
 	xaxis.m_tail.push_back(xaxisP2);
@@ -245,24 +245,24 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	Expression minXY;
 	minXY.m_head = Atom("list");
 	minXY.m_tail.push_back (Expression(Atom(xmin*scaleX)));
-	minXY.m_tail.push_back(Expression(Atom(ymin*-scaleY)));
+	minXY.m_tail.push_back(Expression(Atom(ymin*scaleY)));
 	
 	
 	Expression maxXY;
 	maxXY.m_head = Atom("list");
 	maxXY.m_tail.push_back(Expression(Atom(xmax*scaleX)));
-	maxXY.m_tail.push_back(Expression(Atom(ymax*-scaleY)));
+	maxXY.m_tail.push_back(Expression(Atom(ymax*scaleY)));
 	
 	Expression minXmaxY;
 	minXmaxY.m_head = Atom("list");
 	minXmaxY.m_tail.push_back(Expression(Atom(xmin*scaleX)));
-	minXmaxY.m_tail.push_back(Expression(Atom(ymax*-scaleY)));
+	minXmaxY.m_tail.push_back(Expression(Atom(ymax*scaleY)));
 	
 
 	Expression maxXminY;
 	maxXminY.m_head= Atom("list");
 	maxXminY.m_tail.push_back(Expression(Atom(xmax *scaleX)));
-	maxXminY.m_tail.push_back(Expression(Atom(ymin*-scaleY)));
+	maxXminY.m_tail.push_back(Expression(Atom(ymin*scaleY)));
 	
 	
 	Expression TopLine;

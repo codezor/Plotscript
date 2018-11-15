@@ -9,6 +9,8 @@
 #include <QCursor>
 #include <QGraphicsTextItem>
 #include <QPointF>
+#include <QTextBlockFormat>
+#include <QTextCursor>
 #include <cmath>
 
 #include <QDebug> // Debug
@@ -43,7 +45,7 @@ void OutputWidget::DisplayItem(QString Expression) {
 }
 
 void OutputWidget::DisplayPoint(double x, double y, double size) {
-	CrossHair();
+	//CrossHair();
 	QPen pen;
 	pen.setColor(Qt::black);
 	pen.setWidth(0);
@@ -104,7 +106,7 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	double D = 2;
 	//double P = 0.5;  // pont size
 
-	CrossHair();
+	//CrossHair();
 	//scene->move
 
 	double xmiddle = (xmax + xmin ) / 2;
@@ -128,39 +130,38 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	title.remove("\"");
 	xlable.remove("\"");
 	ylabel.remove("\"");
+
 	QGraphicsTextItem *Title = scene->addText(title);
 	QGraphicsTextItem* XLabel = scene->addText(xlable);
 	QGraphicsTextItem* YLabel = scene->addText(ylabel);
 
-	
 	Title->setFont(f);
-	//Title->document()->defaultTextoptions();
-	
 	Title->setScale(textscale);
+
+	//Title->moveBy(-Title->boundingRect().center().x(), -Title->boundingRect().center().x());
+	Title->moveBy(-Title->boundingRect().width() / 2, -Title->boundingRect().height() / 2);
 	
-	//Title->moveBy(-Title->boundingRect().width() / 2, -Title->boundingRect().height() / 2);
+	Title->setTransformOriginPoint(Title->boundingRect().center());
+	Title->moveBy(scaleX*xmiddle, ( -scaleY * ymax - A ));
 	
-	Title->setPos(xmiddle, ( -scaleY * ymax - A ));
-	Title->setTransformOriginPoint(Title->boundingRect().topLeft());
-	Title->boundingRect().moveCenter(Title->boundingRect().topLeft());
-	
+
 	qDebug() << "Title: Position: " << Title->boundingRect() << Title->pos() << Title->boundingRect();
 	XLabel->setScale(textscale);
 	XLabel->setFont(f);
-	//XLabel->moveBy(-XLabel->boundingRect().width() / 2, -XLabel->boundingRect().height() / 2);
+	XLabel->moveBy(-XLabel->boundingRect().width() / 2, -XLabel->boundingRect().height() / 2);
 	XLabel->setTransformOriginPoint(XLabel->boundingRect().width() / 2, XLabel->boundingRect().height() / 2);
-	XLabel->moveBy(xmiddle, (- scaleY * ymin + A ));
+	XLabel->moveBy(scaleX*xmiddle, (- scaleY * ymin + A ));
 	XLabel->setScale(textscale);
 	qDebug() << "Xlabel: Position: " << XLabel->boundingRect()<< XLabel->pos()<<XLabel->boundingRect();
 
 	YLabel->setFont(f);
-	//YLabel->moveBy(-YLabel->boundingRect().width() / 2, -YLabel->boundingRect().height() / 2);
+	YLabel->moveBy(-YLabel->boundingRect().width() / 2, -YLabel->boundingRect().height() / 2);
 	YLabel->setTransformOriginPoint(YLabel->boundingRect().width() / 2, YLabel->boundingRect().height() / 2);
 	YLabel->setRotation(-90);
-	YLabel->moveBy(( scaleX * xmin - B ), ymiddle);
+	YLabel->moveBy(( scaleX * xmin - B ), ymiddle* -scaleY);
 	YLabel->setScale(textscale);
 	qDebug() << "Ylabel: Position: " << YLabel->boundingRect()<< YLabel->pos()<< YLabel->boundingRect();
-	CrossHair();
+	
 	qDebug() << "scene: Position: " << scene->sceneRect();
 
 
@@ -181,7 +182,7 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	//Yminitextbox.addText
 	XMIN->setFont(f);
 	XMIN->setScale(textscale);
-	//XMIN->moveBy(-XMIN->boundingRect().width() / 2, -XMIN->boundingRect().height() / 2);
+	XMIN->moveBy(-XMIN->boundingRect().width() / 2, -XMIN->boundingRect().height() / 2);
 	XMIN->setTransformOriginPoint(XMIN->boundingRect().width() / 2, XMIN->boundingRect().height() / 2);
 	
 	XMIN->moveBy(scaleX* xmin, ( -scaleY * ymin + C ));
@@ -193,7 +194,7 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	
 	XMAX->setFont(f);
 	XMAX->setScale(textscale);
-	//XMAX->moveBy(-XMAX->boundingRect().width() / 2,- XMAX->boundingRect().height() / 2);
+	XMAX->moveBy(-XMAX->boundingRect().width() / 2,- XMAX->boundingRect().height() / 2);
 	XMAX->setTransformOriginPoint(-XMAX->boundingRect().width() / 2,- XMAX->boundingRect().height() / 2);
 	
 	XMAX->moveBy(scaleX * xmax , ( -scaleY * ymin + C));
@@ -205,14 +206,14 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	YMIN->setFont(f);
 	//QPointF yminloc(-YMIN->boundingRect().width() / 2, -YMIN->boundingRect().height() / 2);
 	YMIN->setScale(textscale);
-//	YMIN->moveBy(-YMIN->boundingRect().center().x(), -YMIN->boundingRect().center().y());
-	YMIN->setTransformOriginPoint(-YMIN->boundingRect().center());
+	YMIN->moveBy(-YMIN->boundingRect().center().x(), -YMIN->boundingRect().center().y());
+	//YMIN->setTransformOriginPoint(-YMIN->boundingRect().center());
 	
+	YMIN->setTransformOriginPoint(YMIN->boundingRect().width() / 2, YMIN->boundingRect().height() / 2);
+	//YMIN->boundingRect().moveCenter(YMIN->boundingRect().center());
 	
-	YMIN->boundingRect().moveCenter(YMIN->boundingRect().center());
-	//YMIN->setPos(scaleX * xmin - D, ( -scaleY * ymin );
 	YMIN->moveBy(scaleX * xmin -D, ( -scaleY * ymin  ));
-	//YMIN->setTransformOriginPoint(YMIN->boundingRect().width() / 2, YMIN->boundingRect().height() / 2);
+	
 	
 	qDebug() << "Ymin: Position: " << YMIN->pos() << YMIN->boundingRect();
 	
@@ -221,7 +222,7 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	YMAX->setScale(textscale);
 
 	YMAX->setTransformOriginPoint(YMAX->boundingRect().width() / 2, YMAX->boundingRect().height() / 2);
-//	YMAX->moveBy(-YMAX->boundingRect().width() / 2, -YMAX->boundingRect().height() / 2);
+	YMAX->moveBy(-YMAX->boundingRect().width() / 2, -YMAX->boundingRect().height() / 2);
 	//AX->setX() 
 	YMAX->moveBy(scaleX * xmin - D, (- scaleY * ymax ));
 	
@@ -236,7 +237,7 @@ void OutputWidget::resizeEvent(QResizeEvent *event) {
 	this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 	event->accept();
 }
-void OutputWidget::CrossHair()
+/*void OutputWidget::CrossHair()
 {
 	QPen P;
 	P.setColor(Qt::black);
@@ -245,4 +246,4 @@ void OutputWidget::CrossHair()
 	scene->addLine(QLineF(QPointF(0, -1), QPointF(0, 1)), P)->setPos(0, 0);
 	//qDebug() << "Croshair: Bounding Rect: " << Text->boundingRect() << "Position: " << Text->pos();
 
-}
+}*/

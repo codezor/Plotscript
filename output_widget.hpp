@@ -34,7 +34,7 @@ private:
 	
 
 	// maybe a text formatting function
-	void CrossHair();
+	//void CrossHair();
 	
 	void resizeEvent(QResizeEvent *event);
 	

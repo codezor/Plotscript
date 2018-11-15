@@ -219,12 +219,25 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	yaxisP1.m_head = Atom("list");
 	yaxisP1.m_head = Atom("list");
 	
-	xaxisP1.m_tail.push_back(Expression(0.0));
+	
+	
+	if (xmin>0){
+		xaxisP1.m_tail.push_back(Expression(xmin*scaleX));
+		xaxisP2.m_tail.push_back(Expression(xmin*scaleX));
+	}
+	else if(xmax < 0)
+	{
+		xaxisP1.m_tail.push_back(Expression(xmax*scaleX));
+		xaxisP2.m_tail.push_back(Expression(xmax*scaleX));
+	}
+	else
+	{
+		xaxisP1.m_tail.push_back(Expression(0.0));
+		xaxisP2.m_tail.push_back(Expression(0.0));
+	}
 	xaxisP1.m_tail.push_back(Expression(ymin*-scaleY));
-	
-	xaxisP2.m_tail.push_back(Expression(0.0));
 	xaxisP2.m_tail.push_back(Expression(ymax*-scaleY));
-	
+
 	xaxis.m_tail.push_back(xaxisP1);
 	xaxis.m_tail.push_back(xaxisP2);
 	

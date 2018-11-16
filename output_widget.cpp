@@ -122,9 +122,9 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	dataPen.setColor(Qt::black);
 	dataPen.setCosmetic(true);
 	
-	//QRect dataBoundBox;
-	//dataBoundBox.setRect(scaleX*xmin-A, -scaleY*ymax +B, abs(xmax-xmin)*scaleX, abs(ymax - ymin)*scaleY);
-	//scene->setSceneRect(dataBoundBox);
+	QRect dataBoundBox;
+	dataBoundBox.setRect(scaleX*xmin-A, -scaleY*ymax -B, abs(xmax-xmin)*scaleX +2*A, abs(ymax - ymin)*scaleY+2*B);
+	scene->setSceneRect(dataBoundBox);
 	
 	//dataBoundBox.m
 	title.remove("\"");
@@ -150,11 +150,12 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	
 
 	YLabel->setFont(f);
+	YLabel->setScale(textscale);
 	YLabel->moveBy(-YLabel->boundingRect().width() / 2, -YLabel->boundingRect().height() / 2);
 	YLabel->setTransformOriginPoint(YLabel->boundingRect().width() / 2, YLabel->boundingRect().height() / 2);
 	YLabel->setRotation(-90);
 	YLabel->moveBy(( scaleX * xmin - B ), ymiddle* -scaleY);
-	YLabel->setScale(textscale);
+	
 	
 
 
@@ -199,8 +200,8 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	
 	
 	//scene->sceneRect().moveCenter(scene->sceneRect().topLeft());
-	//view->centerOn(dataBoundBox.topLeft());
-	//view->centerOn(xmiddle*scaleX + 5, ymiddle*-scaleY - 5);
+	view->centerOn(dataBoundBox.center());
+	//1view->centerOn(xmiddle*scaleX + 5, ymiddle*-scaleY - 5);
 	//this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 	// Debug statments after all cordinate systems have be moved
 	qDebug() << "Title: Position: " << Title->boundingRect() << Title->pos() << Title->boundingRect();

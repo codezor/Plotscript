@@ -122,9 +122,9 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	dataPen.setColor(Qt::black);
 	dataPen.setCosmetic(true);
 	
-	QRect dataBoundBox;
-	dataBoundBox.setRect(scaleX*xmin-A, -scaleY*ymax +B, abs(xmax-xmin)*scaleX, abs(ymax - ymin)*scaleY);
-	scene->setSceneRect(dataBoundBox);
+	//QRect dataBoundBox;
+	//dataBoundBox.setRect(scaleX*xmin-A, -scaleY*ymax +B, abs(xmax-xmin)*scaleX, abs(ymax - ymin)*scaleY);
+	//scene->setSceneRect(dataBoundBox);
 	
 	//dataBoundBox.m
 	title.remove("\"");
@@ -198,8 +198,8 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	YMAX->moveBy(scaleX * xmin - D, (- scaleY * ymax ));
 	
 	
-	scene->sceneRect().moveCenter(scene->sceneRect().topLeft());
-	view->centerOn(dataBoundBox.topLeft());
+	//scene->sceneRect().moveCenter(scene->sceneRect().topLeft());
+	//view->centerOn(dataBoundBox.topLeft());
 	//view->centerOn(xmiddle*scaleX + 5, ymiddle*-scaleY - 5);
 	//this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 	// Debug statments after all cordinate systems have be moved

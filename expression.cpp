@@ -216,21 +216,24 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	yaxisP1.m_head = Atom("list");
 	yaxisP1.m_head = Atom("list");
 	
-	
-	
+	// Creation of the axies 
+	// if the x min > 0 then no axis should be drawn
 	if (xmin>0){
 		xaxisP1.m_tail.push_back(Expression(xmin*scaleX));
 		xaxisP2.m_tail.push_back(Expression(xmin*scaleX));
 	}
+	// no axis should be drawn
 	else if(xmax < 0)
 	{
 		xaxisP1.m_tail.push_back(Expression(xmax*scaleX));
 		xaxisP2.m_tail.push_back(Expression(xmax*scaleX));
 	}
+	// The only time the x axis should be drawn
 	else
 	{
 		xaxisP1.m_tail.push_back(Expression(0.0));
 		xaxisP2.m_tail.push_back(Expression(0.0));
+		xaxis = xaxis.setPropertyList(xaxis, props);
 	}
 	xaxisP1.m_tail.push_back(Expression(ymin*-scaleY));
 	xaxisP2.m_tail.push_back(Expression(ymax*-scaleY));
@@ -250,20 +253,18 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		yaxisP1.m_tail.push_back(Expression(ymax*-scaleY));
 		yaxisP2.m_tail.push_back(Expression(ymax*-scaleY));
 	}
+	// The only time the y axis should be drawn
 	else
 	{
 		yaxisP1.m_tail.push_back(Expression(0.0));
 		yaxisP2.m_tail.push_back(Expression(0.0));
+		yaxis = yaxis.setPropertyList(yaxis, props);
 	}
 
 	yaxis.m_tail.push_back(yaxisP1);
-	yaxis.m_tail.push_back(yaxisP2);
-
-
-	xaxis = xaxis.setPropertyList(xaxis, props);
-	yaxis = yaxis.setPropertyList(yaxis, props);
+	yaxis.m_tail.push_back(yaxisP2);	
 	
-	
+	// Drawing the boarders 
 	Expression minXY;
 	minXY.m_head = Atom("list");
 	minXY.m_tail.push_back (Expression(Atom(xmin*scaleX)));

@@ -104,10 +104,10 @@ void NotebookTest::testPoint() {
 	QCOMPARE(input->toPlainText(), QString("(set-property \"size\" 20 (make-point 0 0))"));
 
 
-	auto output = noteBook.findChild<QWidget*>("output");
-	auto outgraph = output->findChild<QGraphicsView*>();
-	auto outscene = outgraph->findChild<QGraphicsScene*>();
-	auto elipse = outscene->findChild<QGraphicsEllipseItem>();
+	//auto output = noteBook.findChild<QWidget*>("output");
+	//auto outgraph = output->findChild<QGraphicsView*>();
+	//auto outscene = outgraph->findChild<QGraphicsScene*>();
+	//auto elipse = outscene->findChild<QGraphicsEllipseItem>();
 	//QTest::qWait(5000);
 }
 

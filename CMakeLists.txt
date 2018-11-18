@@ -51,7 +51,7 @@ set(tui_src
 set(gui_src
 	startup_config.hpp
    notebook_app.hpp notebook_app.cpp
-    input_widget.hpp input_widget.cpp
+  input_widget.hpp input_widget.cpp
    output_widget.hpp output_widget.cpp
   )
 

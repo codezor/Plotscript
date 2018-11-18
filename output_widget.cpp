@@ -122,9 +122,9 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	dataPen.setColor(Qt::black);
 	dataPen.setCosmetic(true);
 	
-	QRect dataBoundBox;
-	dataBoundBox.setRect(scaleX*xmin-A, -scaleY*ymax -B, abs(xmax-xmin)*scaleX +2*A, abs(ymax - ymin)*scaleY+2*B);
-	scene->setSceneRect(dataBoundBox);
+	//QRect dataBoundBox;
+	//dataBoundBox.setRect(scaleX*xmin-A, -scaleY*ymax -B, abs(xmax-xmin)*scaleX +2*A, abs(ymax - ymin)*scaleY+2*B);
+	//scene->setSceneRect(dataBoundBox);
 	
 	//dataBoundBox.m
 	title.remove("\"");
@@ -140,22 +140,23 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	Title->moveBy(-Title->boundingRect().width() / 2, -Title->boundingRect().height() / 2);	
 	Title->setTransformOriginPoint(Title->boundingRect().center());
 	Title->moveBy(scaleX*xmiddle, ( -scaleY * ymax - A ));
+	qDebug() << "Title: Position: " << Title->boundingRect() << Title->pos() << Title->boundingRect();
+
 	
-	XLabel->setScale(textscale);
 	XLabel->setFont(f);
 	XLabel->moveBy(-XLabel->boundingRect().width() / 2, -XLabel->boundingRect().height() / 2);
 	XLabel->setTransformOriginPoint(XLabel->boundingRect().width() / 2, XLabel->boundingRect().height() / 2);
 	XLabel->moveBy(scaleX*xmiddle, (- scaleY * ymin + A ));
 	XLabel->setScale(textscale);
-	
+	qDebug() << "Xlabel: Position: " << XLabel->boundingRect() << XLabel->pos() << XLabel->boundingRect();
 
-	YLabel->setFont(f);
-	YLabel->setScale(textscale);
+	YLabel->setFont(f);	
 	YLabel->moveBy(-YLabel->boundingRect().width() / 2, -YLabel->boundingRect().height() / 2);
 	YLabel->setTransformOriginPoint(YLabel->boundingRect().width() / 2, YLabel->boundingRect().height() / 2);
 	YLabel->setRotation(-90);
 	YLabel->moveBy(( scaleX * xmin - B ), ymiddle* -scaleY);
-	
+	YLabel->setScale(textscale);
+	qDebug() << "Ylabel: Position: " << YLabel->boundingRect() << YLabel->pos() << YLabel->boundingRect();
 	
 
 
@@ -176,42 +177,40 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	XMIN->moveBy(-XMIN->boundingRect().width() / 2, -XMIN->boundingRect().height() / 2);
 	XMIN->setTransformOriginPoint(XMIN->boundingRect().width() / 2, XMIN->boundingRect().height() / 2);	
 	XMIN->moveBy(scaleX* xmin, ( -scaleY * ymin + C ));
-	
+	qDebug() << "Xmin: Position: " << XMIN->pos() << XMIN->boundingRect();
 	
 	XMAX->setFont(f);
 	XMAX->setScale(textscale);
 	XMAX->moveBy(-XMAX->boundingRect().width() / 2,- XMAX->boundingRect().height() / 2);
 	XMAX->setTransformOriginPoint(-XMAX->boundingRect().width() / 2,- XMAX->boundingRect().height() / 2);	
 	XMAX->moveBy(scaleX * xmax , ( -scaleY * ymin + C));	
-	
+	qDebug() << "Xmax: Position: " << XMAX->pos() << XMAX->boundingRect();
 	
 	YMIN->setFont(f);	
 	YMIN->setScale(textscale);
 	YMIN->moveBy(-YMIN->boundingRect().center().x(), -YMIN->boundingRect().center().y());
 	YMIN->setTransformOriginPoint(-YMIN->boundingRect().center());		
 	YMIN->moveBy(scaleX * xmin -D, ( -scaleY * ymin  ));		
-	
+	qDebug() << "Ymin: Position: " << YMIN->pos() << YMIN->boundingRect();
 	
 	YMAX->setFont(f);
 	YMAX->setScale(textscale);
 	YMAX->setTransformOriginPoint(YMAX->boundingRect().width() / 2, YMAX->boundingRect().height() / 2);
 	YMAX->moveBy(-YMAX->boundingRect().width() / 2, -YMAX->boundingRect().height() / 2);	
 	YMAX->moveBy(scaleX * xmin - D, (- scaleY * ymax ));
-	
-	
-	//scene->sceneRect().moveCenter(scene->sceneRect().topLeft());
-	view->centerOn(dataBoundBox.center());
-	//1view->centerOn(xmiddle*scaleX + 5, ymiddle*-scaleY - 5);
-	//this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-	// Debug statments after all cordinate systems have be moved
-	qDebug() << "Title: Position: " << Title->boundingRect() << Title->pos() << Title->boundingRect();
-	qDebug() << "Xlabel: Position: " << XLabel->boundingRect() << XLabel->pos() << XLabel->boundingRect();
-	qDebug() << "Ylabel: Position: " << YLabel->boundingRect() << YLabel->pos() << YLabel->boundingRect();
-	qDebug() << "scene: Position: " << scene->sceneRect();
-	qDebug() << "Xmin: Position: " << XMIN->pos() << XMIN->boundingRect();
-	qDebug() << "Xmax: Position: " << XMAX->pos() << XMAX->boundingRect();
-	qDebug() << "Ymin: Position: " << YMIN->pos() << YMIN->boundingRect();
 	qDebug() << "Ymax: Position: " << YMAX->pos() << YMAX->boundingRect() << YMAX->sceneBoundingRect();
+	
+	
+	view->centerOn(xmiddle*scaleX, ymiddle*-scaleY );
+	
+	
+	
+	
+	//qDebug() << "scene: Position: " << scene->sceneRect();
+	
+	
+	
+	
 	qDebug() << "ymin:" << ymin << "ymax" << ymax << "xmin" << xmin << "xmax" << xmax;
 }
 

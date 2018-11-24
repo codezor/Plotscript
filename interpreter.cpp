@@ -9,10 +9,10 @@
 #include "parse.hpp"
 #include "semantic_error.hpp"
 #include "token.hpp"
-//#include "startup_config.hpp"
 
-bool
-Interpreter::parseStream(std::istream& expression) noexcept
+
+// returns a bool but parses the information into the ast - input
+bool Interpreter::parseStream(std::istream& expression) noexcept
 {
 
   TokenSequenceType tokens = tokenize(expression);
@@ -22,9 +22,8 @@ Interpreter::parseStream(std::istream& expression) noexcept
   return (ast != Expression());
 };
 
-Expression
-Interpreter::evaluate()
-{
-
+// evaluates the ast enviornment - output
+Expression Interpreter::evaluate(){
+	// eval consumes the AST
   return ast.eval(env);
 }

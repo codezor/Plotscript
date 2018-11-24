@@ -15,7 +15,6 @@ NotebookApp::NotebookApp(QWidget* parent)
 	output->setParent(parent);
 	
 	//Start Up file should be called before input is avaliable	
-
 	startUp(interp);
 
 	// The user clicks shift+enter
@@ -36,7 +35,6 @@ NotebookApp::NotebookApp(QWidget* parent)
 	// Draw the Discrete plot
 	QObject::connect(this, SIGNAL(discretePlotReady(QString , QString , QString , double , double , double , double, double )), output, SLOT(DisplayDiscretePlot(QString, QString, QString, double, double, double, double, double)));
 
-
 	// Clear the display
 	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
 
@@ -45,9 +43,8 @@ NotebookApp::NotebookApp(QWidget* parent)
 	layout->addWidget(output, 1, 0);
 	
 	setLayout(layout);
-	
-
 }
+
 void NotebookApp::error(const std::string& err_str) {
 	std::stringstream outstream;
 	std::string out;
@@ -77,7 +74,7 @@ void NotebookApp::info(const std::string& err_str)
 	emit ExpressionReady(TextforOut);
 }
 
-
+// contains both parse and evaluate which will need to be done in a seperate thread
 void NotebookApp::startUp(Interpreter& interp) {
 	std::stringstream outstream;
 	std::string out;
@@ -107,7 +104,7 @@ void NotebookApp::startUp(Interpreter& interp) {
 	}
 	emit ExpressionReady(TextforOut);
 }
-
+// contains both parse and evaluate which will need to be done in a seperate thread
 void NotebookApp::eval_from_stream(std::istream& stream) {
 	std::stringstream outstream;
 	std::string out;
@@ -137,7 +134,7 @@ void NotebookApp::eval_from_stream(std::istream& stream) {
 	}
 	emit ExpressionReady(TextforOut);
 }
-
+// contains both parse and evaluate which will need to be done in a seperate thread
 void NotebookApp::eval_from_file(std::string filename) {
 	std::ifstream ifs(filename);
 	
@@ -163,6 +160,7 @@ void NotebookApp::eval_from_command(std::string argexp) {
 }
 
 //  REPL is a reapeated read-eval-print loop 
+// contains both parse and evaluate which will need to be done in a seperate thread
 void NotebookApp::repl(std::string line) //TODO: rename since this technically isn't a loop now
 {	
 	std::stringstream outstream;

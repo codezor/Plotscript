@@ -10,7 +10,8 @@ set(interpreter_src
   environment.hpp environment.cpp
   expression.hpp expression.cpp
   parse.hpp parse.cpp
-  interpreter.hpp interpreter.cpp
+  interpreter.hpp interpreter.cpp 
+  message_queue.hpp
   )
 
 # EDIT
@@ -25,8 +26,9 @@ set(unittest_src
   semantic_error.hpp
   token_tests.cpp
   unit_tests.cpp
+  test_queue.cpp
   )
- 
+
 # EDIT
 # add any files you create related to the interpreter here
 # excluding unit tests

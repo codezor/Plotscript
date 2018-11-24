@@ -233,14 +233,17 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	{
 		xaxisP1.m_tail.push_back(Expression(0.0));
 		xaxisP2.m_tail.push_back(Expression(0.0));
-		xaxis = xaxis.setPropertyList(xaxis, props);
+		
 	}
 	xaxisP1.m_tail.push_back(Expression(ymin*-scaleY));
 	xaxisP2.m_tail.push_back(Expression(ymax*-scaleY));
 
 	xaxis.m_tail.push_back(xaxisP1);
 	xaxis.m_tail.push_back(xaxisP2);
-	
+	if(xmax >= 0 && xmin <= 0)
+	{
+		xaxis = xaxis.setPropertyList(xaxis, props);
+	}
 	yaxisP1.m_tail.push_back(Expression(xmin*scaleX));
 	yaxisP2.m_tail.push_back(Expression(xmax*scaleX));
 	if(ymin > 0)
@@ -258,9 +261,12 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	{
 		yaxisP1.m_tail.push_back(Expression(0.0));
 		yaxisP2.m_tail.push_back(Expression(0.0));
+		
+	}
+	if(ymax >= 0 && ymin <= 0)
+	{
 		yaxis = yaxis.setPropertyList(yaxis, props);
 	}
-
 	yaxis.m_tail.push_back(yaxisP1);
 	yaxis.m_tail.push_back(yaxisP2);	
 	

@@ -14,6 +14,7 @@ It maintains an environment during evaluation.
 // module includes
 #include "environment.hpp"
 #include "expression.hpp"
+//#include "message_queue.hpp"
 
 /*! \class Interpreter
 \brief Class to parse and evaluate an expression (program)

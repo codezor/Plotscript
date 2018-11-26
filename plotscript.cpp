@@ -360,6 +360,7 @@ main(int argc, char* argv[])
 {
 	std::thread MainThread(repl);
 	MainThread.join();
+	return 0;
 
 	if(argc == 2)
 	{

@@ -13,39 +13,100 @@
 #include "semantic_error.hpp"
 #include "message_queue.hpp"
 
+/*typedef int Message;
+typedef message_queue<Message> MessageQueue;
+class Consumer
+{
+public:
+	// Looks like a  function call but it only produces this one thing
+	Consumer(MessageQueue* messageQueuePtr, int identifier)
+	{
+		mq = messageQueuePtr;
+		id = identifier;
+	}
+
+	void operator()() const
+	{
+		for(int i = 0; i < 10; ++i)
+		{
+			Message m;
+			mq->wait_and_pop(m);
+			int work_time = unif(gen); // generate random work time
+			std::cout << "Consumer " << id << " has taken product " << m
+				<< " will work for " << work_time << " ms." << std::endl;
+			std::this_thread::sleep_for(
+				std::chrono::milliseconds(work_time)); // random sleep time
+		}
+	}
+
+private:
+	int id;
+	MessageQueue* mq;
+};
+
+class Producer
+{
+public:
+	Producer(MessageQueue* messageQueuePtr)
+	{
+		mq = messageQueuePtr;
+	}
+
+	void operator()() const
+	{
+		for(int i = 0; i < 10; ++i)
+		{
+			mq->push(i);
+
+			std::cout << "Producer has added product " << i << std::endl;
+			int work_time = unif(gen);
+			std::this_thread::sleep_for(std::chrono::milliseconds(work_time));
+		}
+	}
+
+private:
+	MessageQueue* mq;
+};*/
+
 void
-prompt(){	
-  std::cout << "\nplotscript> ";
+prompt()
+{
+	std::cout << "\nplotscript> ";
 }
 
 std::string
 readline()
 {
-  std::string line;
-  std::getline(std::cin, line);
+	std::string line;
+	std::getline(std::cin, line);
 
-  return line;
+	return line;
 }
 
 void
 error(const std::string& err_str)
 {
-  std::cerr << "Error: " << err_str << std::endl;
+	
+	std::cerr << "Error: " << err_str << std::endl;
+	
 }
 
 void
 info(const std::string& err_str)
 {
-  std::cout << "Info: " << err_str << std::endl;
+	
+	std::cout << "Info: " << err_str << std::endl;
 }
 
 void EvalOne(Interpreter& interp, std::istringstream& expression)
 {
-	//message_queue<std::string> & input = message_queue<std::string>::get_instance();
+	message_queue<std::string> & input = message_queue<std::string>::get_instance();
 	message_queue<Expression> & output = message_queue<Expression>::get_instance();
 	// parsing and evaluating should occur in a seperate thread	
 	if(!interp.parseStream(expression))
 	{
+		//message_queue<std::string> & errorq = message_queue<std::string>::get_instance();
+		//errorq.push("Error: Invalid Expression. Could not parse.");
 		error("Invalid Expression. Could not parse.");
 		
 	}
@@ -54,33 +115,38 @@ void EvalOne(Interpreter& interp, std::istringstream& expression)
 		try
 		{
 			Expression exp = interp.evaluate();
-			std::cout << exp;
+			//std::cout << exp;
 			output.push(exp);
-			
+
 		}
 		catch(const SemanticError& ex)
 		{
 			std::cerr << ex.what() << std::endl;
-			
+
 		}
 	}
 }
 
 // contains parse and evaluate
-void startUp(Interpreter& interp) {
+void startUp(Interpreter& interp)
+{
 
 	std::ifstream ifs(STARTUP_FILE);
 	//EvalOne(interp, ifs);
-	if (!interp.parseStream(ifs)) {
+	if(!interp.parseStream(ifs))
+	{
 		error("Invalid Program. Could not parse.");
 		//return EXIT_FAILURE;
-	}	
-	else {
-		try {
+	}
+	else
+	{
+		try
+		{
 			Expression exp = interp.evaluate();
 			//std::cout << exp << std::endl;
 		}
-		catch (const SemanticError& ex) {
+		catch(const SemanticError& ex)
+		{
 			std::cerr << ex.what() << std::endl;
 			//return EXIT_FAILURE;
 		}
@@ -89,23 +155,29 @@ void startUp(Interpreter& interp) {
 
 int
 eval_from_stream(std::istream& stream, Interpreter& interp)
-{	
+{
 	// Parse 
-  if (!interp.parseStream(stream)) {
-    error("Invalid Program. Could not parse.");
-    return EXIT_FAILURE;
-  } else {
-    try {
-		// Evaluate
-      Expression exp = interp.evaluate();
-      std::cout << exp << std::endl;
-    } catch (const SemanticError& ex) {
-      std::cerr << ex.what() << std::endl;
-      return EXIT_FAILURE;
-    }
-  }
+	if(!interp.parseStream(stream))
+	{
+		error("Invalid Program. Could not parse.");
+		return EXIT_FAILURE;
+	}
+	else
+	{
+		try
+		{
+			// Evaluate
+			Expression exp = interp.evaluate();
+			std::cout << exp << std::endl;
+		}
+		catch(const SemanticError& ex)
+		{
+			std::cerr << ex.what() << std::endl;
+			return EXIT_FAILURE;
+		}
+	}
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 int
@@ -113,23 +185,24 @@ eval_from_file(std::string filename)
 {
 	Interpreter interp;
 	startUp(interp);
-  std::ifstream ifs(filename);
+	std::ifstream ifs(filename);
 
-  if (!ifs) {
-    error("Could not open file for reading.");
-    return EXIT_FAILURE;
-  }
-  return eval_from_stream(ifs, interp);
+	if(!ifs)
+	{
+		error("Could not open file for reading.");
+		return EXIT_FAILURE;
+	}
+	return eval_from_stream(ifs, interp);
 }
 
 int
 eval_from_command(std::string argexp)
-{	
+{
 	Interpreter interp;
 	startUp(interp);
-  std::istringstream expression(argexp);
+	std::istringstream expression(argexp);
 
-  return eval_from_stream(expression, interp);
+	return eval_from_stream(expression, interp);
 }
 
 // Im sure I shouln't do this 
@@ -157,21 +230,28 @@ void plotscript_thread_main()
 {
 	message_queue<std::string> & input = message_queue<std::string>::get_instance();
 	//message_queue<Expression> & output = message_queue<Expression>::get_instance();
-
+	message_queue<std::string> & errorq = message_queue<std::string>::get_instance();
+	
 	Interpreter interp;
 	startUp(interp);
 
 	while(true)
 	{
+
+		if(errorq.empty())
+		{
+		
 		//prompt();
 		std::string line;
 		input.wait_and_pop(line);
 
 		if(line.empty())
 			continue;
-			
-		std::istringstream expression(line);		
-		EvalOne(interp, expression);		
+
+		std::istringstream expression(line);
+		EvalOne(interp, expression);
+		}
+		
 	}
 }
 
@@ -180,14 +260,16 @@ void plotscript_thread_main()
 // contains a parse and evaluate
 void
 repl()
-{	
-	std::thread *kernalThread = nullptr;
-
+{
+	std::thread *kernalThread = nullptr;//(plotscript_thread_main);
+	//bool is_thread_alive = true;
+	message_queue<std::string> & errorq = message_queue<std::string>::get_instance();
 	message_queue<std::string> & input = message_queue<std::string>::get_instance();
 	message_queue<Expression> & output = message_queue<Expression>::get_instance();
-	
-	while(!std::cin.eof())
-	{
+
+	while(!std::cin.eof()){
+		
+
 		if(!output.empty())
 		{
 			Expression results;
@@ -195,7 +277,7 @@ repl()
 			std::cout << results << std::endl;
 			continue;
 		}
-
+		
 		prompt();
 		std::string line = readline();
 		if(line.empty())
@@ -205,13 +287,14 @@ repl()
 		{
 			if(kernalThread != nullptr)
 			{
-			
-					kernalThread->detach();
-					delete kernalThread;
-					kernalThread = nullptr;
-					continue;
+
+				kernalThread->detach();
+				delete kernalThread;
+				kernalThread = nullptr;
+				//is_thread_alive = false;
+				continue;
 			}
-			
+
 		}
 		else if(line == "%reset")
 		{
@@ -222,18 +305,19 @@ repl()
 				kernalThread = nullptr;
 				kernalThread = new std::thread(plotscript_thread_main);
 				continue;
-				
+
 			}
-		}		
+		}
 		else if(line == "%start")
 		{
 
 			if(kernalThread == nullptr)
 			{
-				kernalThread = new std::thread(plotscript_thread_main);	
-				continue;
-			}		
+				kernalThread = new std::thread(plotscript_thread_main);
 				
+			}
+			
+			continue;
 		}
 		else
 		{
@@ -246,56 +330,65 @@ repl()
 			}
 			else
 			{
-				input.push(line);
-				while(output.empty())
+				
+				input.push(line);				
+
+				while(output.empty() )
 				{
-					if(input.empty())
+					if(!errorq.empty())
 					{
+
+						std::string  er;
+						errorq.wait_and_pop(er);
 						break;
 					}
+
 				}
 				continue;
 			}
 
-		}		
-		
+		}
+
 	}
-	
+
 }
 
 
 
 int
 main(int argc, char* argv[])
-{	
-	
+{
+	std::thread MainThread(repl);
+	MainThread.join();
 
-  if (argc == 2) {
-	 
-	  // this will parse and evaluate
-    return eval_from_file(argv[1]);
-  
-  } 
- 
-  else if (argc == 3) {
-	  	  
+	if(argc == 2)
+	{
 
-    if (std::string(argv[1]) == "-e") {
-		// this will parse and evaluate 
-      return eval_from_command(argv[2]);
-    } 
-	else {
-      error("Incorrect number of command line arguments.");
-    }  
-	 
-  } 
- 
-  else {		
-		
-		std::thread Mainthread(repl);
-		Mainthread.join();
-	
-  }
- 
-  return EXIT_SUCCESS;
+		// this will parse and evaluate
+		return eval_from_file(argv[1]);
+
+	}
+
+	else if(argc == 3)
+	{
+
+
+		if(std::string(argv[1]) == "-e")
+		{
+			// this will parse and evaluate 
+			return eval_from_command(argv[2]);
+		}
+		else
+		{
+			error("Incorrect number of command line arguments.");
+		}
+
+	}
+
+	/*else
+	{
+		repl();
+	}*/
+
+	return EXIT_SUCCESS;
 }

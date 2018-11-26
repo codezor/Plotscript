@@ -145,7 +145,6 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 		{
 			temppoint.m_tail.push_back(Expression(Atom(e->m_tail[1].head().asNumber() *-scaleY)));
 
-
 		}
 		if(e->m_tail[1].head().asNumber() == 0)
 		{

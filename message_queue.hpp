@@ -12,12 +12,12 @@ template<typename MessageType>
 class message_queue
 {
 public:
-  message_queue(message_queue const&) = delete;  // singleton
-  void operator=(message_queue const&) = delete; // singleton
+ // message_queue(message_queue const&) = delete;  // singleton
+  //void operator=(message_queue const&) = delete; // singleton
 
-  static message_queue& get_instance() // singleton
+   static message_queue& get_instance() // singleton
   {
-    static message_queue instance;
+	static message_queue instance;
     return instance;
   }
 
@@ -64,10 +64,12 @@ public:
 
 	  return m_queue.size();
   }
-
-
+  message_queue()
+  {
+	 
+  }; // singleto
 private:
-  message_queue(){}; // singleton
+	
 
   std::queue<MessageType> m_queue;
   mutable std::mutex m_mutex;

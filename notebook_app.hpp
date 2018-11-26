@@ -43,6 +43,7 @@ private:
 	Interpreter interp;
 
 	void repl(std::string line);
+	//void plotscript_thread_main(message_queue<std::string> &queue);
 	void error(const std::string& err_str);
 	void info(const std::string& err_str);
 

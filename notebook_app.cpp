@@ -1,6 +1,6 @@
 
 #include "notebook_app.hpp"
-
+#include "message_queue.hpp"
 // should run the application similair to plocript
 NotebookApp::NotebookApp(QWidget* parent)
 	: QWidget(parent)
@@ -193,14 +193,20 @@ void NotebookApp::plotScriptInputReady(QString input) {
 	
 	// Turn input to string	
 	std::string line = input.toStdString();
-	
+	//message_queue<std::string> & plotscript_program_queue = message_queue<std::string>::get_instance();
+	//plotscript_program_queue.push(line);
 	// Clear output screan
 	emit(ClearScene());
 	
 	// evaluate input
+	//std::thread plotscript_thread(repl, std::ref(line));
+	//plotscript_thread.join();
+	//return 0;
 	repl(line);
 }
-
+//void plotscript_thread_main(message_queue<std::string> &queue)
+//{
+//}
 void NotebookApp::whatGoesWhere(Expression exp) {	
 		
 	if (!exp.isPropertyListEmpty()) {

@@ -12,6 +12,7 @@
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
 #include "message_queue.hpp"
+
 void
 prompt(){	
   std::cout << "\nplotscript> ";
@@ -38,14 +39,42 @@ info(const std::string& err_str)
   std::cout << "Info: " << err_str << std::endl;
 }
 
+void EvalOne(Interpreter& interp, std::istringstream& expression)
+{
+	//message_queue<std::string> & input = message_queue<std::string>::get_instance();
+	message_queue<Expression> & output = message_queue<Expression>::get_instance();
+	// parsing and evaluating should occur in a seperate thread	
+	if(!interp.parseStream(expression))
+	{
+		error("Invalid Expression. Could not parse.");
+		//return EXIT_FAILURE;
+	}
+	else
+	{
+		try
+		{
+			Expression exp = interp.evaluate();
+			output.push(exp);
+			//std::cout << exp << std::endl;
+			//return exp;
+		}
+		catch(const SemanticError& ex)
+		{
+			std::cerr << ex.what() << std::endl;
+			//return EXIT_FAILURE;
+		}
+	}
+}
+
 // contains parse and evaluate
 void startUp(Interpreter& interp) {
 
 	std::ifstream ifs(STARTUP_FILE);
+	//EvalOne(interp, ifs);
 	if (!interp.parseStream(ifs)) {
 		error("Invalid Program. Could not parse.");
 		//return EXIT_FAILURE;
-	}
+	}	
 	else {
 		try {
 			Expression exp = interp.evaluate();
@@ -53,16 +82,14 @@ void startUp(Interpreter& interp) {
 		}
 		catch (const SemanticError& ex) {
 			std::cerr << ex.what() << std::endl;
-			// return EXIT_FAILURE;
+			//return EXIT_FAILURE;
 		}
 	}
 }
 
 int
-eval_from_stream(std::istream& stream)
-{
-	Interpreter interp;
-	startUp(interp);
+eval_from_stream(std::istream& stream, Interpreter& interp)
+{	
 	// Parse 
   if (!interp.parseStream(stream)) {
     error("Invalid Program. Could not parse.");
@@ -82,7 +109,7 @@ eval_from_stream(std::istream& stream)
 }
 
 int
-eval_from_file(std::string filename)
+eval_from_file(std::string filename, Interpreter& interp)
 {
   std::ifstream ifs(filename);
 
@@ -90,20 +117,19 @@ eval_from_file(std::string filename)
     error("Could not open file for reading.");
     return EXIT_FAILURE;
   }
-  return eval_from_stream(ifs);
+  return eval_from_stream(ifs, interp);
 }
 
 int
-eval_from_command(std::string argexp)
-{
-	//eval_from_file(STARTUP_FILE);
+eval_from_command(std::string argexp, Interpreter& interp)
+{	
   std::istringstream expression(argexp);
 
-  return eval_from_stream(expression);
+  return eval_from_stream(expression, interp);
 }
 
 // Im sure I shouln't do this 
-int eval_from_message_queue(message_queue<std::string> &queue)
+int eval_from_message_queue(message_queue<std::string> &queue, Interpreter& interp)
 {
 	while(!queue.empty())
 	{
@@ -111,7 +137,7 @@ int eval_from_message_queue(message_queue<std::string> &queue)
 		//std::string const string = 
 		queue.wait_and_pop(string);
 		// Eval from command uses eval from stream. Eval from stream instantiates a new interpereter.
-		int const result = eval_from_command(string);
+		int const result = eval_from_command(string, interp);
 		if(result != EXIT_SUCCESS)
 		{
 			return result;
@@ -122,107 +148,124 @@ int eval_from_message_queue(message_queue<std::string> &queue)
 	return EXIT_SUCCESS;
 }
 
+
+void plotscript_thread_main()
+{
+	message_queue<std::string> & input = message_queue<std::string>::get_instance();
+	//message_queue<Expression> & output = message_queue<Expression>::get_instance();
+
+	Interpreter interp;
+	startUp(interp);
+	while(true)
+	{
+		//prompt();
+		std::string line;
+		input.wait_and_pop(line);
+
+		if(line.empty())
+			continue;
+		
+		//std::string plotscript_program;
+		//input.wait_and_pop(plotscript_program);	
+		std::istringstream expression(line);
+		EvalOne(interp, expression);
+	}
+}
+
+
 // A REPL is a repeated read-eval-print loop
 // contains a parse and evaluate
 void
 repl()
-{
-  Interpreter interp;   
-  startUp(interp);
-  //message_queue<std::string> & plotscript_program_queue = message_queue<std::string>::get_instance();
-  
-  while (!std::cin.eof()) {
-	
-    prompt();
-    std::string line = readline();	
-  
-	if (line.empty())
-      continue;
-	
-    std::istringstream expression(line);
+{	
+	std::thread *kernalThread = nullptr;
 
-	// parsing and evaluating should occur in a seperate thread
+	message_queue<std::string> & input = message_queue<std::string>::get_instance();
+	message_queue<Expression> & output = message_queue<Expression>::get_instance();
 	
-    if (!interp.parseStream(expression)) {
-      error("Invalid Expression. Could not parse.");
-    } else {
-      try {
-		  // interpret should occur in the same thread as parsing
-		
-        Expression exp = interp.evaluate();
-        std::cout << exp << std::endl;
-      } catch (const SemanticError& ex) {
-        std::cerr << ex.what() << std::endl;
-      }
-    }
-  }
-}
+	while(!std::cin.eof())
+	{
+		if(!output.empty())
+		{
+			Expression results;
+			output.wait_and_pop(results);
+			std::cout << results << std::endl;
+			continue;
+		}
 
-void plotscript_thread_main(message_queue<std::string> &queue)
-{
-	//message_queue<std::string> & queue = message_queue<std::string>::get_instance();
-	Interpreter interp;
-	startUp(interp);
-	//while(true)
-	//{
-		//std::string plotscript_program;
-		//queue.wait_and_pop(plotscript_program);
-
-		while(!std::cin.eof())
+		prompt();
+		std::string line = readline();
+		if(line.empty())
+			continue;
+		//else 
+		if(line == "%stop")
+		{
+			if(kernalThread != nullptr)
+			{
+			
+					kernalThread->detach();
+					delete kernalThread;
+					kernalThread = nullptr;
+					continue;
+			}
+			
+		}
+		else if(line == "%reset")
+		{
+			if(kernalThread != nullptr)
+			{
+				kernalThread->detach();
+				delete kernalThread;
+				kernalThread = nullptr;
+				kernalThread = new std::thread(plotscript_thread_main);
+				continue;
+				
+			}
+		}		
+		else if(line == "%start")
 		{
 
-			prompt();
-			std::string line = readline();
-			queue.push(line);
-
-			if(line.empty())
-				continue;
-		
-			std::istringstream expression(line);
-
-			// parsing and evaluating should occur in a seperate thread
-			if(!interp.parseStream(expression))
+			if(kernalThread == nullptr)
 			{
-				error("Invalid Expression. Could not parse.");
+				kernalThread = new std::thread(plotscript_thread_main);				
+			}		
+				
+		}
+		else
+		{
+			//std::istringstream expression(line);
+			//EvalOne(interp, expression);
+			if(kernalThread == nullptr)
+			{
+				error("Interpreter kernel not running");
 			}
 			else
 			{
-				try
+				input.push(line);
+				while(output.empty())
 				{
-					// interpret should occur in the same thread as parsing
 
-					Expression exp = interp.evaluate();
-					std::cout << exp << std::endl;
-				}
-				catch(const SemanticError& ex)
-				{
-					std::cerr << ex.what() << std::endl;
 				}
 			}
-			//std::cout << "In da threadz" << std::endl;
-		}
-	
 
+		}		
+		
+	}
 	
 }
 
+
+
 int
 main(int argc, char* argv[])
-{
-	message_queue<std::string> & plotscript_program_queue = message_queue<std::string>::get_instance();
-	//std::string test_program = "(+ 1 2)";
-	//plotscript_program_queue.push(test_program);
-	//eval_from_message_queue(plotscript_program_queue, interp);
-	//std::thread t1(eval_from_message_queue( plotscript_program_queue, interp));
-	//t1.join();
-	//return 0;
-	std::thread plotscript_thread(plotscript_thread_main, std::ref(plotscript_program_queue));
-	plotscript_thread.join();
-	return 0;
+{	
+	Interpreter interp;
+	startUp(interp);
+
   if (argc == 2) {
 	 
 	  // this will parse and evaluate
-    return eval_from_file(argv[1]);
+    return eval_from_file(argv[1], interp);
   
   } 
  
@@ -231,7 +274,7 @@ main(int argc, char* argv[])
 
     if (std::string(argv[1]) == "-e") {
 		// this will parse and evaluate 
-      return eval_from_command(argv[2]);
+      return eval_from_command(argv[2], interp);
     } 
 	else {
       error("Incorrect number of command line arguments.");
@@ -239,10 +282,9 @@ main(int argc, char* argv[])
 	 
   } 
  
-  else {	
-  
-	  // this will parse and evaluate  
-    repl();
+  else {		
+		
+		repl();		
 	
   }
  

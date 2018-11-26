@@ -26,7 +26,7 @@ set(unittest_src
   semantic_error.hpp
   token_tests.cpp
   unit_tests.cpp
-  test_queue.cpp
+ # test_queue.cpp
   )
 
 # EDIT

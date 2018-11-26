@@ -13,31 +13,30 @@ void worker(message_queue<int> &que)
 	}
 };
 
-TEST_CASE("Test example", "[ThreadSafeQueue]")
-{
-	
+TEST_CASE("Test meassage", "[message_queue]")
+{	
 	message_queue<int> &que = message_queue<int>::get_instance();
-	//std::string test_program = "(+ 1 2)";
+
   std::thread th1(worker, std::ref(que));
 
-  std::thread th2(worker, std::ref(que));
+  //std::thread th2(worker, std::ref(que));
 
   while (true) {
 
-    if (que.size() == 200) {
+    if (que.size() == 20) {
+		
       break;
     }
 
-    int result;
-   
+    int result;   
     while (que.try_pop( result)) {
-      //std::cout << result << " ";
+     // std::cout << result << " ";
     }
     //std::cout << "\n";
   }
 
   th1.join();
-  th2.join();
+//  th2.join();
 }
 // TEST_CASE( "", "[ThreadSafeVector]" ) {
 

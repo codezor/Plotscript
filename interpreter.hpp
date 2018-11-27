@@ -11,10 +11,17 @@ It maintains an environment during evaluation.
 #include <istream>
 #include <string>
 
+#include <thread>
+#include <queue>
+#include <condition_variable>
+#include <mutex>
+
 // module includes
 #include "environment.hpp"
 #include "expression.hpp"
-//#include "message_queue.hpp"
+#include "message_queue.hpp"
+
+
 
 /*! \class Interpreter
 \brief Class to parse and evaluate an expression (program)
@@ -31,13 +38,14 @@ public:
     \return true on successful parsing
    */
   bool parseStream(std::istream& expression) noexcept;
-
+ // bool parseStream() noexcept;
+  void parseStreamQueue();
   /*! Evaluate the Expression by walking the tree, returning the result.
     \return the Expression resulting from the evaluation in the current
     environment \throws SemanticError when a semantic error is encountered
    */
   Expression evaluate();
-
+ 
 private:
   // the environment
   Environment env;

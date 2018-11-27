@@ -3,6 +3,8 @@
 #include <sstream>
 #include <string>
 
+
+
 #include <thread>
 #include <queue>
 #include <condition_variable>
@@ -11,7 +13,7 @@
 #include"startup_config.hpp"
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
-#include "message_queue.hpp"
+//#include "message_queue.hpp"
 
 
 //typedef message_queue<std::string>  errorq;
@@ -100,14 +102,11 @@ info(const std::string& err_str)
 void EvalOne(Interpreter& interp, std::istringstream& expression)
 {
 	//message_queue<std::string>  input;
-	message_queue<Expression> &output= message_queue<Expression>::get_instance();
+	//message_queue<Expression> &output= message_queue<Expression>::get_instance();
 	// parsing and evaluating should occur in a seperate thread	
 	if(!interp.parseStream(expression))
-	{
-		//message_queue<std::string> & errorq = message_queue<std::string>::get_instance();
-		//errorq.push("Error: Invalid Expression. Could not parse.");
+	{		
 		error("Invalid Expression. Could not parse.");
-
 	}
 	else
 	{
@@ -115,7 +114,7 @@ void EvalOne(Interpreter& interp, std::istringstream& expression)
 		{
 			Expression exp = interp.evaluate();
 			//std::cout << exp;
-			output.push(exp);
+			//m_output.push(exp);
 
 		}
 		catch(const SemanticError& ex)
@@ -205,7 +204,7 @@ eval_from_command(std::string argexp)
 }
 
 // Im sure I shouln't do this 
-int eval_from_message_queue(message_queue<std::string> &queue)
+/*int eval_from_message_queue(message_queue<std::string> &queue)
 {
 	while(!queue.empty())
 	{
@@ -222,37 +221,31 @@ int eval_from_message_queue(message_queue<std::string> &queue)
 	}
 
 	return EXIT_SUCCESS;
-}
+}*/
 
 
-void plotscript_thread_main()
+/*void plotscript_thread_main()
 {
-	message_queue<std::string> &input = message_queue<std::string>::get_instance();
-	//message_queue<Expression> & output = message_queue<Expression>::get_instance();
-	message_queue<std::string>  &errorq = message_queue<std::string>::get_instance();
-
+	//message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+	message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
+	
 	Interpreter interp;
 	startUp(interp);
 
 	while(true)
-	{
-
-		if(errorq.empty())
-		{
-
+	{	
 			//prompt();
 			std::string line;
-			input.wait_and_pop(line);
+			m_input.wait_and_pop(line);
 
 			if(line.empty())
 				continue;
 
 			std::istringstream expression(line);
-			EvalOne(interp, expression);
-		}
+			EvalOne(interp, expression);	
 
 	}
-}
+}*/
 
 
 // A REPL is a repeated read-eval-print loop
@@ -260,19 +253,21 @@ void plotscript_thread_main()
 void
 repl()
 {
+	Interpreter interp;
+	//startUp(interp);
 	std::thread *kernalThread = nullptr;//(plotscript_thread_main);
 	//bool is_thread_alive = true;
-	message_queue<std::string> &input = message_queue<std::string>::get_instance();
-	message_queue<Expression> & output = message_queue<Expression>::get_instance();
-	message_queue<std::string>  &errorq = message_queue<std::string>::get_instance();
+	
+
 	while(!std::cin.eof())
 	{
+		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
 
-
-		if(!output.empty())
+		if(!m_output.empty())
 		{
 			Expression results;
-			output.wait_and_pop(results);
+			m_output.wait_and_pop(results);
 			std::cout << results << std::endl;
 			continue;
 		}
@@ -302,7 +297,8 @@ repl()
 				kernalThread->detach();
 				delete kernalThread;
 				kernalThread = nullptr;
-				kernalThread = new std::thread(plotscript_thread_main);
+			
+				kernalThread = new std::thread(&Interpreter::parseStreamQueue,&interp);
 				continue;
 
 			}
@@ -312,7 +308,7 @@ repl()
 
 			if(kernalThread == nullptr)
 			{
-				kernalThread = new std::thread(plotscript_thread_main);
+				kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
 
 			}
 
@@ -330,17 +326,10 @@ repl()
 			else
 			{
 
-				input.push(line);
+				m_input.push(line);
 
-				while(output.empty())
+				while(m_output.empty())
 				{
-					//if(!errorq.empty())
-					//{
-
-						//std::string  er;
-						//errorq.wait_and_pop(er);
-						//break;
-					//}
 
 				}
 				continue;
@@ -358,7 +347,7 @@ int
 main(int argc, char* argv[])
 {
 	std::thread *MainThread;
-	MainThread = new std::thread( repl );
+	MainThread = new std::thread(repl );
 	MainThread->join();
 	return 0;
 

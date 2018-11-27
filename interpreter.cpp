@@ -14,16 +14,36 @@
 // returns a bool but parses the information into the ast - input
 bool Interpreter::parseStream(std::istream& expression) noexcept
 {
+	TokenSequenceType tokens = tokenize(expression);
 
-  TokenSequenceType tokens = tokenize(expression);
+	ast = parse(tokens);
+	return ( ast != Expression() );
+}
 
-  ast = parse(tokens);
+void Interpreter::parseStreamQueue()
+{
+	message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
+	while(true)
+	{
+		if(!m_input.empty())
+		{
+			std::string line;
+			m_input.wait_and_pop(line);
+			std::istringstream exps(line);
 
-  return (ast != Expression());
-};
+			TokenSequenceType tokens = tokenize(exps);
 
+			ast = parse(tokens);
+			message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+
+			m_output.push(ast.eval(env));
+		}
+	}
+	//return false;
+}
 // evaluates the ast enviornment - output
 Expression Interpreter::evaluate(){
 	// eval consumes the AST
+	
   return ast.eval(env);
 }

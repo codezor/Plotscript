@@ -32,11 +32,11 @@ set(unittest_src
 # EDIT
 # add any files you create related to the interpreter here
 # excluding unit tests
-#set(notebookgui_src
-#	notebook_app.hpp notebook_app.cpp
-#   input_widget.hpp input_widget.cpp
-#  output_widget.hpp output_widget.cpp
-#)
+set(notebookgui_src
+	notebook_app.hpp notebook_app.cpp
+	input_widget.hpp input_widget.cpp
+	output_widget.hpp output_widget.cpp
+)
 set(STARTUP_FILE ${CMAKE_SOURCE_DIR}/startup.pls)
 configure_file(${CMAKE_SOURCE_DIR}/startup_config.hpp.in ${CMAKE_BINARY_DIR}/startup_config.hpp)
 configure_file(${CMAKE_SOURCE_DIR}/startup.pls ${CMAKE_BINARY_DIR})
@@ -52,9 +52,9 @@ set(tui_src
 # add source for any GUI modules here
 set(gui_src
 	startup_config.hpp
-   notebook_app.hpp notebook_app.cpp
-  input_widget.hpp input_widget.cpp
-   output_widget.hpp output_widget.cpp
+  # notebook_app.hpp notebook_app.cpp
+  # input_widget.hpp input_widget.cpp
+  # output_widget.hpp output_widget.cpp
   )
 
 # EDIT
@@ -148,16 +148,17 @@ endif()
 # Build the notebook executable and tests if Qt is available
 # --------------------------------------------------------
 
+
 if (Qt5Widgets_FOUND AND Qt5Test_FOUND)
 
-  add_executable(notebook ${gui_main} ${gui_src})
+  add_executable(notebook ${gui_main} ${gui_src} ${notebookgui_src})
   if(UNIX AND NOT APPLE AND CMAKE_COMPILER_IS_GNUCXX)
     target_link_libraries(notebook interpreter Qt5::Widgets pthread gcov)
   else(UNIX AND NOT APPLE AND CMAKE_COMPILER_IS_GNUCXX)
     target_link_libraries(notebook interpreter Qt5::Widgets)
   endif()
 
-  add_executable(notebook_test ${gui_test_src} ${gui_src})
+  add_executable(notebook_test ${gui_test_src} ${gui_src} ${notebookgui_src})
   if(UNIX AND NOT APPLE AND CMAKE_COMPILER_IS_GNUCXX)
     target_link_libraries(notebook_test interpreter Qt5::Widgets Qt5::Test pthread gcov)
   else(UNIX AND NOT APPLE AND CMAKE_COMPILER_IS_GNUCXX)

@@ -1,6 +1,9 @@
 #include <QApplication>
 #include <QWidget>
-
+#include <thread>
+#include <queue>
+#include <condition_variable>
+#include <mutex>
 #include "notebook_app.hpp"
 int
 main(int argc, char* argv[])

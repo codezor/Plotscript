@@ -16,13 +16,13 @@ private slots:
   void initTestCase();
 
   // TODO: implement additional tests here
-  void testFindInputWidget();
-  void testFindOutputWidget();
-  void testInput();
-  void testOutput();
-  void testPoint();
-  void testLine();
-  void testString();
+  //void testFindInputWidget();
+  //void testFindOutputWidget();
+  //void testInput();
+  //void testOutput();
+  //void testPoint();
+  //void testLine();
+  //void testString();
   //void testDiscretePlotLayout();
 
 
@@ -37,7 +37,7 @@ void NotebookTest::initTestCase()
 	noteBook.show();
 	//QVERIFY(true);
 }
-void NotebookTest::testFindInputWidget() {
+/*void NotebookTest::testFindInputWidget() {
 	
 	auto input = noteBook.findChild<QPlainTextEdit*>("input");
 
@@ -155,7 +155,7 @@ void NotebookTest::testString() {
 	//auto outscene = outgraph->findChild<QGraphicsScene*>();
 	//auto elipse = outscene->findChild<QGraphicsLineItem>();
 	//QTest::qWait(5000);
-}
+}*/
 /*void NotebookTest::testDiscretePlotLayout()
 {
 

@@ -47,3 +47,7 @@ Expression Interpreter::evaluate(){
 	
   return ast.eval(env);
 }
+void Interpreter::clearInterp()
+{
+	env.reset();
+}

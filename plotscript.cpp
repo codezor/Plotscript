@@ -254,12 +254,13 @@ void
 repl()
 {
 	Interpreter interp;
-	//startUp(interp);
+	
+	startUp(interp);
 	std::thread *kernalThread = nullptr;//(plotscript_thread_main);
 	//bool is_thread_alive = true;
 	
 
-	while(!std::cin.eof())
+	while(!std::cin.eof())	
 	{
 		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
@@ -281,7 +282,7 @@ repl()
 		{
 			if(kernalThread != nullptr)
 			{
-
+								
 				kernalThread->detach();
 				delete kernalThread;
 				kernalThread = nullptr;
@@ -294,10 +295,16 @@ repl()
 		{
 			if(kernalThread != nullptr)
 			{
-				kernalThread->detach();
+				if(kernalThread->joinable())
+				{
+					kernalThread->detach();
+					kernalThread->~thread();
+				}
+				kernalThread->~thread();
 				delete kernalThread;
 				kernalThread = nullptr;
-			
+				interp.clearInterp();
+				startUp(interp);
 				kernalThread = new std::thread(&Interpreter::parseStreamQueue,&interp);
 				continue;
 
@@ -305,7 +312,7 @@ repl()
 		}
 		else if(line == "%start")
 		{
-
+			
 			if(kernalThread == nullptr)
 			{
 				kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
@@ -316,7 +323,7 @@ repl()
 		}
 		else
 		{
-			//std::istringstream expression(line);
+			
 			//EvalOne(interp, expression);
 			if(kernalThread == nullptr)
 			{
@@ -325,9 +332,28 @@ repl()
 			}
 			else
 			{
+				std::istringstream expression(line);
+				if(!interp.parseStream(expression))
+				{
+					error("Invalid Expression. Could not parse.");
+					continue;
+				}
+				else
+				{
+					try
+					{
+						interp.evaluate();
+						//std::cout << exp;
+						//m_output.push(exp);
 
+					}
+					catch(const SemanticError& ex)
+					{
+						std::cerr << ex.what() << std::endl;
+						continue;
+					}
+				}
 				m_input.push(line);
-
 				while(m_output.empty())
 				{
 
@@ -337,6 +363,14 @@ repl()
 
 		}
 
+	}
+	if(kernalThread != nullptr)
+	{
+		if(kernalThread->joinable())
+		{
+			kernalThread->join();
+			//delete kernalThread;
+		}
 	}
 
 }
@@ -348,9 +382,8 @@ main(int argc, char* argv[])
 {
 	std::thread *MainThread;
 	MainThread = new std::thread(repl );
-	MainThread->join();
-	return 0;
-
+	
+	
 	if(argc == 2)
 	{
 
@@ -379,6 +412,9 @@ main(int argc, char* argv[])
 	{
 		repl();
 	}*/
-
+	//if(MainThread->joinable())
+	//{
+		MainThread->join();
+	//}
 	return EXIT_SUCCESS;
 }

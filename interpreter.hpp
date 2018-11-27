@@ -45,7 +45,7 @@ public:
     environment \throws SemanticError when a semantic error is encountered
    */
   Expression evaluate();
- 
+  void clearInterp();
 private:
   // the environment
   Environment env;

@@ -1,6 +1,10 @@
-
+#include <thread>
+#include <queue>
+#include <condition_variable>
+#include <mutex>
 #include "notebook_app.hpp"
-#include "message_queue.hpp"
+
+//#include "message_queue.hpp"
 // should run the application similair to plocript
 NotebookApp::NotebookApp(QWidget* parent)
 	: QWidget(parent)
@@ -162,31 +166,120 @@ void NotebookApp::eval_from_command(std::string argexp) {
 //  REPL is a reapeated read-eval-print loop 
 // contains both parse and evaluate which will need to be done in a seperate thread
 void NotebookApp::repl(std::string line) //TODO: rename since this technically isn't a loop now
-{	
+{
+	
+	std::thread *kernalThread = nullptr;
+	Interpreter interp;
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;	
-	std::istringstream expression(line);	
-	
-	if (!interp.parseStream(expression)) {
-		out ="Error: Invalid Expression. Could not parse.";
-		// Send a Parse error to output
-		TextforOut = QString::fromStdString(out);
-		emit ExpressionReady(TextforOut);
-	}
+	//std::istringstream expression(line);
+	while(true){
+		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
 
-	else {
-		try {
-			Expression exp = interp.evaluate();
-			whatGoesWhere(exp);			
+		if(!m_output.empty())
+		{
+			Expression results;
+			m_output.wait_and_pop(results);
+			whatGoesWhere(results);
+			//std::cout << results << std::endl;
+			//continue;
 		}
-		catch (const SemanticError& ex) {
-			outstream  << ex.what();
-			out = outstream.str();
-			TextforOut = QString::fromStdString(out);
-			emit ExpressionReady(TextforOut);
-		}		
-	}	
+
+		//prompt();
+		//std::string line = readline();
+		if(line.empty())
+			continue;
+		//else 
+			if(line == "%stop")
+			{
+				if(kernalThread != nullptr)
+				{
+
+					kernalThread->join();
+					delete kernalThread;
+					kernalThread = nullptr;
+					//is_thread_alive = false;
+					continue;
+				}
+
+			}
+			else if(line == "%reset")
+			{
+				if(kernalThread != nullptr)
+				{
+					kernalThread->join();
+					delete kernalThread;
+					kernalThread = nullptr;
+
+					kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
+					continue;
+
+				}
+			}
+			else if(line == "%start")
+			{
+
+				if(kernalThread == nullptr)
+				{
+					kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
+
+				}
+
+				continue;
+			}
+			else
+			{
+				//std::istringstream expression(line);
+				//EvalOne(interp, expression);
+				if(kernalThread == nullptr)
+				{
+					out = "Interpreter kernel not running.";
+					// Send a Parse error to output
+					TextforOut = QString::fromStdString(out);
+					emit ExpressionReady(TextforOut);// error("Interpreter kernel not running");
+					//continue;
+				}
+
+				else
+				{
+					std::istringstream expression(line);
+
+					if(!interp.parseStream(expression))
+					{
+						out = "Error: Invalid Expression. Could not parse.";
+						// Send a Parse error to output
+						TextforOut = QString::fromStdString(out);
+						emit ExpressionReady(TextforOut);
+					}
+					else
+					{
+						try
+						{
+							Expression exp = interp.evaluate();
+							//whatGoesWhere(exp);
+							m_input.push(line);
+						}
+						catch(const SemanticError& ex)
+						{
+							outstream << ex.what();
+							out = outstream.str();
+							TextforOut = QString::fromStdString(out);
+							emit ExpressionReady(TextforOut);
+						}
+
+						while(m_output.empty())
+						{
+
+						}
+						continue;
+					}
+					//m_input.push(line);
+
+				}
+			}
+	}
 }
 
 void NotebookApp::plotScriptInputReady(QString input) {
@@ -203,6 +296,7 @@ void NotebookApp::plotScriptInputReady(QString input) {
 	//plotscript_thread.join();
 	//return 0;
 	repl(line);
+	//std::thread *GUIThread= new std::thread(&NotebookApp::repl, std::ref(line) );
 }
 //void plotscript_thread_main(message_queue<std::string> &queue)
 //{

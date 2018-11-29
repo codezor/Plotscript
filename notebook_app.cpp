@@ -174,34 +174,33 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 	std::string out;
 	QString TextforOut;	
 	//std::istringstream expression(line);
-	while(true){
+	//while(true){
 		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
 
-		if(!m_output.empty())
+		/*if(!m_output.empty())
 		{
 			Expression results;
 			m_output.wait_and_pop(results);
 			whatGoesWhere(results);
 			//std::cout << results << std::endl;
-			//continue;
-		}
-
+			continue;
+		}*/
 		//prompt();
 		//std::string line = readline();
-		if(line.empty())
-			continue;
+		//if(line.empty())
+			//continue;
 		//else 
 			if(line == "%stop")
 			{
 				if(kernalThread != nullptr)
 				{
 
-					kernalThread->join();
+					kernalThread->detach();
 					delete kernalThread;
 					kernalThread = nullptr;
 					//is_thread_alive = false;
-					continue;
+					//continue;
 				}
 
 			}
@@ -209,12 +208,12 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			{
 				if(kernalThread != nullptr)
 				{
-					kernalThread->join();
+					kernalThread->detach();
 					delete kernalThread;
 					kernalThread = nullptr;
 
 					kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
-					continue;
+					//continue;
 
 				}
 			}
@@ -227,7 +226,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 
 				}
 
-				continue;
+				//continue;
 			}
 			else
 			{
@@ -267,18 +266,21 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 							out = outstream.str();
 							TextforOut = QString::fromStdString(out);
 							emit ExpressionReady(TextforOut);
+							//continue;
 						}
 
 						while(m_output.empty())
 						{
 
 						}
-						continue;
-					}
+						///continue;
+
+
 					//m_input.push(line);
 
+					}
 				}
-			}
+			
 	}
 }
 
@@ -290,19 +292,65 @@ void NotebookApp::plotScriptInputReady(QString input) {
 	//plotscript_program_queue.push(line);
 	// Clear output screan
 	emit(ClearScene());
-	
+	repl(line);
 	// evaluate input
-	//std::thread plotscript_thread(repl, std::ref(line));
+	//std::thread *MainThread;
+	//MainThread = new std::thread(&NotebookApp::repl,line);
+	//MainThread->join();
 	//plotscript_thread.join();
 	//return 0;
-	repl(line);
+
+	// new std::thread(repl, line); //
+	
 	//std::thread *GUIThread= new std::thread(&NotebookApp::repl, std::ref(line) );
 }
 //void plotscript_thread_main(message_queue<std::string> &queue)
 //{
 //}
 void NotebookApp::whatGoesWhere(Expression exp) {	
-		
+	message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+	if(!m_output.empty())
+		{
+			Expression results;
+			m_output.wait_and_pop(results);
+			if(!results.isPropertyListEmpty())
+			{
+				std::string propertyKey = "\"object-name\"";
+				Expression objectName;
+				objectName = results.getPropertyList(propertyKey);
+				if(objectName.isHeadString())
+				{
+					// Draw point
+					if(objectName.head().asString() == "\"point\"")
+					{
+						makePoint(results);
+					}
+					// Draw line
+					if(objectName.head().asString() == "\"line\"")
+					{
+						makeLine(results);
+					}
+					//DrawText
+					if(objectName.head().asString() == "\"text\"")
+					{
+						makeText(results);
+					}
+					// Draw Plot discrete-plot
+					if(objectName.head().asString() == "\"discrete-plot\"")
+					{
+						//
+						makeDiscretePlot(results);
+					}
+				}
+			}
+			else if(results.isHeadList())
+			{
+				for(auto e = results.tailConstBegin(); e != exp.tailConstEnd(); ++e)
+				{
+					whatGoesWhere(*e);
+				}
+			}
+	}
 	if (!exp.isPropertyListEmpty()) {
 		std::string propertyKey = "\"object-name\"";
 		Expression objectName;

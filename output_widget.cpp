@@ -111,8 +111,8 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 
 	double xmiddle = ( xmax + xmin ) / 2;
 	double ymiddle = ( ymax + ymin ) / 2;
-	double scaleX = 20 / ( xmax - xmin );
-	double scaleY = 20 / ( ymax - ymin );
+	double scaleX = 20 / abs( xmax - xmin );
+	double scaleY = 20 / abs( ymax - ymin );
 
 	QFont f = QFont("Monospace");
 	f.setStyleHint(QFont::TypeWriter);

@@ -260,7 +260,8 @@ repl()
 	//bool is_thread_alive = true;
 	
 
-	while(!std::cin.eof())	
+//while(!std::cin.eof())	
+	while(true)
 	{
 		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
@@ -283,6 +284,7 @@ repl()
 			if(kernalThread != nullptr)
 			{
 								
+				//kernalThread->join().fo;
 				kernalThread->detach();
 				delete kernalThread;
 				kernalThread = nullptr;
@@ -295,12 +297,10 @@ repl()
 		{
 			if(kernalThread != nullptr)
 			{
-				if(kernalThread->joinable())
-				{
-					kernalThread->detach();
-					kernalThread->~thread();
-				}
-				kernalThread->~thread();
+				
+				kernalThread->detach();
+				
+					//ExitProccess				//kernalThread->~thread();
 				delete kernalThread;
 				kernalThread = nullptr;
 				interp.clearInterp();
@@ -364,14 +364,14 @@ repl()
 		}
 
 	}
-	if(kernalThread != nullptr)
-	{
-		if(kernalThread->joinable())
-		{
-			kernalThread->join();
+	//if(kernalThread != nullptr)
+	//{
+		//if(kernalThread->joinable())
+		//{
+			//kernalThread->join();
 			//delete kernalThread;
-		}
-	}
+		//}
+	//}
 
 }
 
@@ -414,7 +414,7 @@ main(int argc, char* argv[])
 	}*/
 	//if(MainThread->joinable())
 	//{
-		MainThread->join();
+		MainThread->detach();
 	//}
 	return EXIT_SUCCESS;
 }

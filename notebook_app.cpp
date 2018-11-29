@@ -173,11 +173,11 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;	
-	std::promise<bool> exitSignal;
-	std::future<bool> futureObj = exitSignal.get_future();
+	//std::promise<bool> exitSignal;
+	//std::future<bool> futureObj = exitSignal.get_future();
 	//std::istringstream expression(line);
 	//while(true){
-		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+		//message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
 
 		/*if(!m_output.empty())
@@ -262,7 +262,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 						try
 						{
 							Expression exp = interp.evaluate();
-							//whatGoesWhere(exp);
+							whatGoesWhere(exp);
 							m_input.push(line);
 						}
 						catch(const SemanticError& ex)
@@ -274,19 +274,19 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 							//continue;
 						}
 
-						while(m_output.empty())
-						{
+						//while(m_output.empty())
+						//{
 
-						}
-						///continue;
+						//}
+						//continue;
 
 
 					//m_input.push(line);
 
 					}
 				}
-			//}
-	}
+			}
+	//}
 }
 
 void NotebookApp::plotScriptInputReady(QString input) {

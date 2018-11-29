@@ -114,7 +114,7 @@ void EvalOne(Interpreter& interp, std::istringstream& expression)
 		try
 		{
 			Expression exp = interp.evaluate();
-			//std::cout << exp;
+			std::cout << exp;
 			//m_output.push(exp);
 
 		}
@@ -257,7 +257,8 @@ repl()
 	Interpreter interp;
 	
 	startUp(interp);
-	std::thread *kernalThread = nullptr;//(plotscript_thread_main);
+
+	std::thread *kernalThread =new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);
 	//std::promise<bool> exitSignal;
 	//std::future<bool> futureObj = exitSignal.get_future();
 	//bool is_thread_alive = true;
@@ -275,7 +276,7 @@ repl()
 			std::cout << results << std::endl;
 			continue;
 		}
-
+		
 		prompt();
 		std::string line = readline();
 		if(line.empty())
@@ -288,6 +289,10 @@ repl()
 				//0exitSignal.set_value(false);
 				//kernalThread->join();
 				m_input.push(line);
+				while(!m_input.empty())
+				{
+
+				}
 				kernalThread->join();
 				delete kernalThread;
 				//kernalThread->~thread();
@@ -309,7 +314,7 @@ repl()
 				kernalThread->join();
 				//kernalThread->detach();
 				
-					//ExitProccess				//kernalThread->~thread();
+					//ExitProccess				
 				delete kernalThread;
 				kernalThread = nullptr;
 				interp.clearInterp();
@@ -389,7 +394,7 @@ repl()
 int
 main(int argc, char* argv[])
 {
-	std::thread MainThread = std::thread(repl );
+	//std::thread MainThread = std::thread(repl );
 	
 	repl();
 	if(argc == 2)
@@ -421,9 +426,9 @@ main(int argc, char* argv[])
 		repl();
 	}*/
 	//if(MainThread.joinable())
-	//{
-		MainThread.join();
-		return 0;
+	//{ 
+		//MainThread.join();
+		//return 0;
 	//}
 	return EXIT_SUCCESS;
 }

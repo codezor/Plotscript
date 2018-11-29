@@ -15,6 +15,7 @@ It maintains an environment during evaluation.
 #include <queue>
 #include <condition_variable>
 #include <mutex>
+#include <future>
 
 // module includes
 #include "environment.hpp"

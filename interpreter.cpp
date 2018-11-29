@@ -29,6 +29,11 @@ void Interpreter::parseStreamQueue()
 		{
 			std::string line;
 			m_input.wait_and_pop(line);
+			if(line =="%stop")
+			{
+				break;
+			}
+			
 			std::istringstream exps(line);
 
 			TokenSequenceType tokens = tokenize(exps);
@@ -40,6 +45,7 @@ void Interpreter::parseStreamQueue()
 		}
 	}
 	//return false;
+	return;
 }
 // evaluates the ast enviornment - output
 Expression Interpreter::evaluate(){

@@ -9,6 +9,7 @@
 #include <queue>
 #include <condition_variable>
 #include <mutex>
+#include <future>
 
 #include"startup_config.hpp"
 #include "interpreter.hpp"
@@ -257,6 +258,8 @@ repl()
 	
 	startUp(interp);
 	std::thread *kernalThread = nullptr;//(plotscript_thread_main);
+	//std::promise<bool> exitSignal;
+	//std::future<bool> futureObj = exitSignal.get_future();
 	//bool is_thread_alive = true;
 	
 
@@ -282,10 +285,12 @@ repl()
 		{
 			if(kernalThread != nullptr)
 			{
-								
-				//kernalThread->join().fo;
-				kernalThread->detach();
+				//0exitSignal.set_value(false);
+				//kernalThread->join();
+				m_input.push(line);
+				kernalThread->join();
 				delete kernalThread;
+				//kernalThread->~thread();
 				kernalThread = nullptr;
 				//is_thread_alive = false;
 				continue;
@@ -296,8 +301,13 @@ repl()
 		{
 			if(kernalThread != nullptr)
 			{
-				
-				kernalThread->detach();
+				m_input.push("%stop");
+				while(!m_input.empty())
+				{
+
+				}
+				kernalThread->join();
+				//kernalThread->detach();
 				
 					//ExitProccess				//kernalThread->~thread();
 				delete kernalThread;
@@ -379,10 +389,9 @@ repl()
 int
 main(int argc, char* argv[])
 {
-	std::thread *MainThread;
-	MainThread = new std::thread(repl );
+	//std::thread MainThread = std::thread(repl );
 	
-	
+	repl();
 	if(argc == 2)
 	{
 
@@ -411,9 +420,9 @@ main(int argc, char* argv[])
 	{
 		repl();
 	}*/
-	//if(MainThread->joinable())
-	//{
-		MainThread->join();
-	//}
+	/*if(MainThread.joinable())
+	{
+		MainThread.join();
+	}*/
 	return EXIT_SUCCESS;
 }

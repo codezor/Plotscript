@@ -173,6 +173,8 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;	
+	std::promise<bool> exitSignal;
+	std::future<bool> futureObj = exitSignal.get_future();
 	//std::istringstream expression(line);
 	//while(true){
 		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
@@ -195,8 +197,8 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			{
 				if(kernalThread != nullptr)
 				{
-
-					kernalThread->detach();
+					m_input.push(line);
+					kernalThread->join();
 					delete kernalThread;
 					kernalThread = nullptr;
 					//is_thread_alive = false;
@@ -208,8 +210,11 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			{
 				if(kernalThread != nullptr)
 				{
-					kernalThread->detach();
+
+					m_input.push("%stop");
+					kernalThread->join();
 					delete kernalThread;
+
 					kernalThread = nullptr;
 
 					kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
@@ -280,7 +285,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 
 					}
 				}
-			
+			//}
 	}
 }
 
@@ -350,6 +355,7 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 					whatGoesWhere(*e);
 				}
 			}
+			//return;
 	}
 	if (!exp.isPropertyListEmpty()) {
 		std::string propertyKey = "\"object-name\"";

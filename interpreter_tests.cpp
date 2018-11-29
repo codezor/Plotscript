@@ -19,10 +19,10 @@ Expression run(const std::string & program){
   if(!ok){
     std::cerr << "Failed to parse: " << program << std::endl;
   }
-  REQUIRE(ok == true);
+  CHECK(ok == true);
 
   Expression result;
-  REQUIRE_NOTHROW(result = interp.evaluate());
+  CHECK_NOTHROW(result = interp.evaluate());
 
   return result;
 }
@@ -37,7 +37,7 @@ TEST_CASE( "Test Interpreter parser with expected input", "[interpreter]" ) {
 
   bool ok = interp.parseStream(iss);
 
-  REQUIRE(ok == true);
+  CHECK(ok == true);
 }
 
 TEST_CASE( "Test Interpreter parser with numerical literals", "[interpreter]" ) {
@@ -51,7 +51,7 @@ TEST_CASE( "Test Interpreter parser with numerical literals", "[interpreter]" ) 
 
     bool ok = interp.parseStream(iss);
 
-    REQUIRE(ok == true);
+	CHECK(ok == true);
   }
 
   {
@@ -61,7 +61,7 @@ TEST_CASE( "Test Interpreter parser with numerical literals", "[interpreter]" ) 
 
     bool ok = interp.parseStream(iss);
 
-    REQUIRE(ok == false);
+	CHECK(ok == false);
   }
 }
 
@@ -73,7 +73,7 @@ TEST_CASE( "Test Interpreter parser with truncated input", "[interpreter]" ) {
 
     Interpreter interp;
     bool ok = interp.parseStream(iss);
-    REQUIRE(ok == false);
+	CHECK(ok == false);
   }
 
   {
@@ -82,7 +82,7 @@ TEST_CASE( "Test Interpreter parser with truncated input", "[interpreter]" ) {
 
     Interpreter interp;
     bool ok = interp.parseStream(iss);
-    REQUIRE(ok == false);
+	CHECK(ok == false);
   }
 }
 
@@ -95,7 +95,7 @@ TEST_CASE( "Test Interpreter parser with extra input", "[interpreter]" ) {
 
   bool ok = interp.parseStream(iss);
 
-  REQUIRE(ok == false);
+  CHECK(ok == false);
 }
 
 TEST_CASE( "Test Interpreter parser with single non-keyword", "[interpreter]" ) {
@@ -107,7 +107,7 @@ TEST_CASE( "Test Interpreter parser with single non-keyword", "[interpreter]" ) 
 
   bool ok = interp.parseStream(iss);
 
-  REQUIRE(ok == false);
+  CHECK(ok == false);
 }
 
 TEST_CASE( "Test Interpreter parser with empty input", "[interpreter]" ) {
@@ -119,7 +119,7 @@ TEST_CASE( "Test Interpreter parser with empty input", "[interpreter]" ) {
 
   bool ok = interp.parseStream(iss);
 
-  REQUIRE(ok == false);
+  CHECK(ok == false);
 }
 
 TEST_CASE( "Test Interpreter parser with empty expression", "[interpreter]" ) {
@@ -131,7 +131,7 @@ TEST_CASE( "Test Interpreter parser with empty expression", "[interpreter]" ) {
 
   bool ok = interp.parseStream(iss);
 
-  REQUIRE(ok == false);
+  CHECK(ok == false);
 }
 
 TEST_CASE( "Test Interpreter parser with bad number string", "[interpreter]" ) {
@@ -143,7 +143,7 @@ TEST_CASE( "Test Interpreter parser with bad number string", "[interpreter]" ) {
 
   bool ok = interp.parseStream(iss);
 
-  REQUIRE(ok == false);
+  CHECK(ok == false);
 }
 
 TEST_CASE( "Test Interpreter parser with incorrect input. Regression Test", "[interpreter]" ) {
@@ -155,7 +155,7 @@ TEST_CASE( "Test Interpreter parser with incorrect input. Regression Test", "[in
 
   bool ok = interp.parseStream(iss);
 
-  REQUIRE(ok == false);
+  CHECK(ok == false);
 }
 
 TEST_CASE( "Test Interpreter result with literal expressions", "[interpreter]" ) {
@@ -163,30 +163,27 @@ TEST_CASE( "Test Interpreter result with literal expressions", "[interpreter]" )
   { // Number
     std::string program = "(4)";
     Expression result = run(program);
-    REQUIRE(result == Expression(4.));
+	CHECK(result == Expression(4.));
   }
 
   { // Symbol
     std::string program = "(pi)";
     Expression result = run(program);
-    REQUIRE(result == Expression(atan2(0, -1)));
+	CHECK(result == Expression(atan2(0, -1)));
   }
 
   { // Complex
 	  std::string program = "(I)";
 	  Expression result = run(program);
-	  REQUIRE(result == Expression(std::complex<double>(0.0, 1.0)));
+	  CHECK(result == Expression(std::complex<double>(0.0, 1.0)));
   }
 
   { //	String
 	  std::string program = "(\"foo\")";
 	  Expression result = run(program);
 	  std::string answer = "\"foo\"";
-	  REQUIRE(result == Expression(answer));
+	  CHECK(result == Expression(answer));
   }
-
-
-
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter]" ) {
@@ -195,21 +192,21 @@ TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter
     std::string program = "(+ 1 2)";
     INFO(program);
     Expression result = run(program);
-    REQUIRE(result == Expression(3.));
+	CHECK(result == Expression(3.));
   }
 
   { // add, 3-ary case
     std::string program = "(+ 1 2 3)";
     INFO(program);
     Expression result = run(program);
-    REQUIRE(result == Expression(6.));
+	CHECK(result == Expression(6.));
   }
 
   { // add, 6-ary case
     std::string program = "(+ 1 2 3 4 5 6)";
     INFO(program);
     Expression result = run(program);
-    REQUIRE(result == Expression(21.));
+	CHECK(result == Expression(21.));
   }
 }
 
@@ -219,28 +216,28 @@ TEST_CASE( "Test Interpreter special forms: begin and define", "[interpreter]" )
     std::string program = "(define answer 42)";
     INFO(program);
     Expression result = run(program);
-    REQUIRE(result == Expression(42.));
+	CHECK(result == Expression(42.));
   }
 
   {
     std::string program = "(begin (define answer 42)\n(answer))";
     INFO(program);
     Expression result = run(program);
-    REQUIRE(result == Expression(42.));
+	CHECK(result == Expression(42.));
   }
 
   {
     std::string program = "(begin (define answer (+ 9 11)) (answer))";
     INFO(program);
     Expression result = run(program);
-    REQUIRE(result == Expression(20.));
+	CHECK(result == Expression(20.));
   }
 
   {
     std::string program = "(begin (define a 1) (define b 1) (+ a b))";
     INFO(program);
     Expression result = run(program);
-    REQUIRE(result == Expression(2.));
+	CHECK(result == Expression(2.));
   }
 }
 
@@ -249,7 +246,7 @@ TEST_CASE( "Test a medium-sized expression", "[interpreter]" ) {
   {
     std::string program = "(+ (+ 10 1) (+ 30 (+ 1 1)))";
     Expression result = run(program);
-    REQUIRE(result == Expression(43.));
+	CHECK(result == Expression(43.));
   }
 }
 
@@ -263,7 +260,7 @@ TEST_CASE("Test a List expression", "[interpreter]") {
 		answer.emplace_back(Atom(10.0));
 		answer.emplace_back(Atom(1.0));	
 		answer.emplace_back(Atom(2.0));		
-		REQUIRE(result == answer);
+		CHECK(result == answer);
 	}
 	{
 		std::string program = "(join (list 10 1) (list 2))";
@@ -273,7 +270,7 @@ TEST_CASE("Test a List expression", "[interpreter]") {
 		answer.emplace_back(Atom(10.0));
 		answer.emplace_back(Atom(1.0));
 		answer.emplace_back(Atom(2.0));
-		REQUIRE(result == answer);
+		CHECK(result == answer);
 	}
 
 	{
@@ -286,7 +283,7 @@ TEST_CASE("Test a List expression", "[interpreter]") {
 		answer.emplace_back(Atom(2.0));
 		answer.emplace_back(Atom(3.0));
 		answer.emplace_back(Atom(4.0));
-		REQUIRE(result == answer);
+		CHECK(result == answer);
 	}
 }
 TEST_CASE("Testing Lambda", "[interpreter]") {
@@ -295,7 +292,7 @@ TEST_CASE("Testing Lambda", "[interpreter]") {
 		std::string input = "(begin (define a 1) (define x 100)(define f (lambda (x) (begin (define b 12)(+ a b x))))(f 2))";
 		INFO(input);
 		Expression result = run(input);
-		REQUIRE(result == Expression(15.0));
+		CHECK(result == Expression(15.0));
 	}
 
 	{
@@ -306,9 +303,9 @@ TEST_CASE("Testing Lambda", "[interpreter]") {
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 
 	{
@@ -319,10 +316,10 @@ TEST_CASE("Testing Lambda", "[interpreter]") {
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 }
 
@@ -332,7 +329,7 @@ TEST_CASE("Testing apply", "[interpreter]")
 		std::string input = "(apply + (list 1 2 3 4))";
 		INFO(input);
 		Expression result = run(input);
-		REQUIRE(result == Expression(10.0));
+		CHECK(result == Expression(10.0));
 	}
 
 	{
@@ -343,10 +340,10 @@ TEST_CASE("Testing apply", "[interpreter]")
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 		
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError );
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError );
 	}
 
 	{
@@ -357,10 +354,10 @@ TEST_CASE("Testing apply", "[interpreter]")
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 	{
 		std::string input = "(apply + )";
@@ -370,10 +367,10 @@ TEST_CASE("Testing apply", "[interpreter]")
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 
 	{
@@ -384,10 +381,10 @@ TEST_CASE("Testing apply", "[interpreter]")
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 }
 TEST_CASE("Testing map", "[interpreter]")
@@ -401,7 +398,7 @@ TEST_CASE("Testing map", "[interpreter]")
 		answer.append(Atom(0.5));
 		answer.append(Atom(0.25));
 
-		REQUIRE(result == Expression(answer));
+		CHECK(result == Expression(answer));
 	}
 
 	{
@@ -412,10 +409,10 @@ TEST_CASE("Testing map", "[interpreter]")
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 
 	{
@@ -426,10 +423,10 @@ TEST_CASE("Testing map", "[interpreter]")
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 
 	{
@@ -440,10 +437,10 @@ TEST_CASE("Testing map", "[interpreter]")
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 
 
@@ -455,10 +452,10 @@ TEST_CASE("Testing map", "[interpreter]")
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
+		CHECK(ok == true);
 		INFO(input);
 
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 	}
 }
 TEST_CASE("Testing set-property and get property", "[interpreter]") {
@@ -468,13 +465,13 @@ TEST_CASE("Testing set-property and get property", "[interpreter]") {
 		std::string input = "(define b (set-property \"note\" \"a number\" 3))";
 		INFO(input);
 		Expression result = run(input);
-		REQUIRE(result == Expression(3));
+		CHECK(result == Expression(3));
 	}
 	{
 		std::string input = "(define make-point (set-property \"size\" 0 (set-property \"object-name\" \"point\" 3)))";
 		INFO(input);
 		Expression result = run(input);
-		REQUIRE(result == Expression(3));
+		CHECK(result == Expression(3));
 	}
 	{
 		std::string input = "(set-property \"note\" \"a number\" )";
@@ -483,8 +480,8 @@ TEST_CASE("Testing set-property and get property", "[interpreter]") {
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK(ok == true);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 
 	}
 	{
@@ -494,8 +491,8 @@ TEST_CASE("Testing set-property and get property", "[interpreter]") {
 		std::istringstream iss(input);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK(ok == true);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 
 	}
 }
@@ -506,7 +503,7 @@ TEST_CASE("Testing get-property", "[interpreter]" )
 		INFO(getinput);
 		Expression getresult = run(getinput);
 		std::string property = "\"a number\"";
-		REQUIRE(getresult == Expression(property));
+		CHECK(getresult == Expression(property));
 
 	}
 	{
@@ -514,7 +511,7 @@ TEST_CASE("Testing get-property", "[interpreter]" )
 		INFO(getinput);
 		Expression getresult = run(getinput);
 		std::string property = "NONE";
-		REQUIRE(getresult == Expression(property));
+		CHECK(getresult == Expression(property));
 
 	}
 	{
@@ -524,8 +521,8 @@ TEST_CASE("Testing get-property", "[interpreter]" )
 		std::istringstream iss(getinput);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK(ok == true);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 
 	}
 	{
@@ -535,8 +532,8 @@ TEST_CASE("Testing get-property", "[interpreter]" )
 		std::istringstream iss(getinput);
 
 		bool ok = interp.parseStream(iss);
-		REQUIRE(ok == true);
-		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+		CHECK(ok == true);
+		CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 
 	}
 }
@@ -555,7 +552,7 @@ TEST_CASE( "Test arithmetic procedures", "[interpreter]" ) {
 
     for(auto s : programs){
       Expression result = run(s);
-      REQUIRE(result == Expression(-1.));
+      CHECK(result == Expression(-1.));
     }
   }
 }
@@ -573,9 +570,9 @@ TEST_CASE( "Test some semantically invalid expresions", "[interpreter]" ) {
       std::istringstream iss(s);
 
       bool ok = interp.parseStream(iss);
-      REQUIRE(ok == true);
+      CHECK(ok == true);
 
-      REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+      CHECK_THROWS_AS(interp.evaluate(), SemanticError);
     }
 }
 
@@ -590,9 +587,9 @@ TEST_CASE( "Test for exceptions from semantically incorrect input", "[interprete
   std::istringstream iss(input);
 
   bool ok = interp.parseStream(iss);
-  REQUIRE(ok == true);
+  CHECK(ok == true);
 
-  REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+  CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 }
 
 TEST_CASE( "Test malformed define", "[interpreter]" ) {
@@ -606,9 +603,9 @@ TEST_CASE( "Test malformed define", "[interpreter]" ) {
   std::istringstream iss(input);
 
   bool ok = interp.parseStream(iss);
-  REQUIRE(ok == true);
+  CHECK(ok == true);
 
-  REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+  CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 }
 
 TEST_CASE( "Test using number as procedure", "[interpreter]" ) {
@@ -621,8 +618,8 @@ TEST_CASE( "Test using number as procedure", "[interpreter]" ) {
   std::istringstream iss(input);
 
   bool ok = interp.parseStream(iss);
-  REQUIRE(ok == true);
+  CHECK(ok == true);
 
-  REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+  CHECK_THROWS_AS(interp.evaluate(), SemanticError);
 }
 

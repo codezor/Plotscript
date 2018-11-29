@@ -168,26 +168,28 @@ void NotebookApp::eval_from_command(std::string argexp) {
 void NotebookApp::repl(std::string line) //TODO: rename since this technically isn't a loop now
 {
 	
-	std::thread *kernalThread = nullptr;
+	//std::thread *kernalThread = nullptr;
 	Interpreter interp;
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;	
+	std::thread *kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);
+
 	//std::promise<bool> exitSignal;
 	//std::future<bool> futureObj = exitSignal.get_future();
 	//std::istringstream expression(line);
 	//while(true){
-		//message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
 
-		/*if(!m_output.empty())
+		if(!m_output.empty())
 		{
 			Expression results;
 			m_output.wait_and_pop(results);
 			whatGoesWhere(results);
 			//std::cout << results << std::endl;
-			continue;
-		}*/
+			//continue;
+		}
 		//prompt();
 		//std::string line = readline();
 		//if(line.empty())
@@ -262,7 +264,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 						try
 						{
 							Expression exp = interp.evaluate();
-							whatGoesWhere(exp);
+							//whatGoesWhere(exp);
 							m_input.push(line);
 						}
 						catch(const SemanticError& ex)

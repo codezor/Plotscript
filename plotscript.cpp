@@ -389,7 +389,7 @@ repl()
 int
 main(int argc, char* argv[])
 {
-	//std::thread MainThread = std::thread(repl );
+	std::thread MainThread = std::thread(repl );
 	
 	repl();
 	if(argc == 2)
@@ -420,9 +420,9 @@ main(int argc, char* argv[])
 	{
 		repl();
 	}*/
-	/*if(MainThread.joinable())
+	if(MainThread.joinable())
 	{
 		MainThread.join();
-	}*/
+	}
 	return EXIT_SUCCESS;
 }

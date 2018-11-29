@@ -260,8 +260,7 @@ repl()
 	//bool is_thread_alive = true;
 	
 
-//while(!std::cin.eof())	
-	while(true)
+    while(!std::cin.eof())	
 	{
 		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
@@ -414,7 +413,7 @@ main(int argc, char* argv[])
 	}*/
 	//if(MainThread->joinable())
 	//{
-		MainThread->detach();
+		MainThread->join();
 	//}
 	return EXIT_SUCCESS;
 }

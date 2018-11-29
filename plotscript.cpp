@@ -420,9 +420,10 @@ main(int argc, char* argv[])
 	{
 		repl();
 	}*/
-	if(MainThread.joinable())
-	{
+	//if(MainThread.joinable())
+	//{
 		MainThread.join();
-	}
+		return 0;
+	//}
 	return EXIT_SUCCESS;
 }

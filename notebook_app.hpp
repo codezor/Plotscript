@@ -10,6 +10,9 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <QPushButton>
+#include <QButtonGroup>
+#include <QGraphicsGridLayout>
 // From the main program
 #include"startup_config.hpp"
 #include "interpreter.hpp"
@@ -38,9 +41,16 @@ signals:
 	void ClearScene();
 
 private:
+	Interpreter interp;
+
 	InputWidget* input;
 	OutputWidget* output;
-	Interpreter interp;
+	QGridLayout * layout;
+	QPushButton *startButton;
+	QPushButton *stopButton;
+	QPushButton *resetButton;
+	QPushButton *interruptButton;
+
 
 	void repl(std::string line);
 	//void plotscript_thread_main(message_queue<std::string> &queue);

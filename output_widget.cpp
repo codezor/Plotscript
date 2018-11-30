@@ -98,6 +98,7 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 // Discrete Plot generation 
 void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString ylabel, double xmin, double xmax, double ymin, double ymax, double textscale)
 {
+	view->setAlignment(Qt::AlignAbsolute);
 
 	//double N = 20;
 	double A = 3;
@@ -112,21 +113,22 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	double xmiddle = ( xmax + xmin ) / 2;
 	double ymiddle = ( ymax + ymin ) / 2;
 	double scaleX = 20 / abs( xmax - xmin );
-	double scaleY = 20 / abs( ymax - ymin );
+	double scaleY = -20 / abs( ymax - ymin );
 
 	QFont f = QFont("Monospace");
+	
 	f.setStyleHint(QFont::TypeWriter);
 	f.setPointSize(1);
 
 	QPen dataPen;
 	dataPen.setColor(Qt::black);
 	dataPen.setCosmetic(true);
-
-	QRect dataBoundBox;
-	dataBoundBox.setRect(-scaleX*xmin , scaleY*ymin , 2*scaleX  , 2*scaleY );
-	scene->setSceneRect(dataBoundBox);
+	
+	//QRect dataBoundBox;
+	//dataBoundBox.setRect(-xmiddle*scaleX/2, -scaleY*ymiddle/2, 2*scaleX + 2*A  , 2*scaleY+ 2*A );
+	//scene->setSceneRect(dataBoundBox);
 	//view->centerOn(xmiddle*scaleX + A, ymiddle*-scaleY + B);
-	view->centerOn(dataBoundBox.center());
+	//View->centerOn(dataBoundBox.center());
 	//dataBoundBox.m
 	title.remove("\"");
 	xlable.remove("\"");
@@ -138,32 +140,33 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 
 	Title->setFont(f);
 	Title->setScale(textscale);
-
+	Title->setParent(scene);
+	
 	//Title->moveBy(-Title->boundingRect().center().x(), -Title->boundingRect().center().x());
 	Title->moveBy(-Title->boundingRect().width() / 2, -Title->boundingRect().height() / 2);
 
 	Title->setTransformOriginPoint(Title->boundingRect().center());
-	Title->moveBy(scaleX*xmiddle, ( -scaleY * ymax - A ));
+	Title->moveBy(scaleX*xmiddle, ( scaleY * ymax - 3 ));
+	//Title->scenePos(scaleX*xmiddle, ( scaleY * ymax - 3 ))
 
-
-	qDebug() << "Title: Position: " << Title->boundingRect() << Title->pos() << Title->boundingRect();
+	qDebug() << "Title: Position: " << Title->scenePos() << Title->pos() << Title->boundingRect();
 	XLabel->setScale(textscale);
 	XLabel->setFont(f);
 	XLabel->moveBy(-XLabel->boundingRect().width() / 2, -XLabel->boundingRect().height() / 2);
 	XLabel->setTransformOriginPoint(XLabel->boundingRect().width() / 2, XLabel->boundingRect().height() / 2);
-	XLabel->moveBy(scaleX*xmiddle, ( -scaleY * ymin + A ));
-	XLabel->setScale(textscale);
+	XLabel->moveBy(scaleX*xmiddle, ( scaleY * ymin + A ));
+	
 	qDebug() << "Xlabel: Position: " << XLabel->boundingRect() << XLabel->pos() << XLabel->boundingRect();
-
+	YLabel->setScale(textscale);
 	YLabel->setFont(f);
 	YLabel->moveBy(-YLabel->boundingRect().width() / 2, -YLabel->boundingRect().height() / 2);
 	YLabel->setTransformOriginPoint(YLabel->boundingRect().width() / 2, YLabel->boundingRect().height() / 2);
 	YLabel->setRotation(-90);
-	YLabel->moveBy(( scaleX * xmin - B ), ymiddle* -scaleY);
-	YLabel->setScale(textscale);
+	YLabel->moveBy(( scaleX * xmin - B ), ymiddle* scaleY);
+	
 	qDebug() << "Ylabel: Position: " << YLabel->boundingRect() << YLabel->pos() << YLabel->boundingRect();
 
-	qDebug() << "scene: Position: " << scene->sceneRect();
+	//qDebug() << "scene: Position: " << scene->sceneRect();
 
 
 	// Adding tic marks
@@ -180,9 +183,9 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	//Yminitextbox.addText
 	XMIN->setFont(f);
 	XMIN->setScale(textscale);
-	XMIN->moveBy(-XMIN->boundingRect().width() / 2, -XMIN->boundingRect().height() / 2);
+	XMIN->moveBy(-XMIN->boundingRect().width() / 2,  -XMIN->boundingRect().height() / 2);
 	XMIN->setTransformOriginPoint(XMIN->boundingRect().width() / 2, XMIN->boundingRect().height() / 2);
-	XMIN->moveBy(scaleX* xmin, ( -scaleY * ymin + C ));
+	XMIN->moveBy(scaleX* xmin, ( scaleY * ymin +C ));
 
 
 	qDebug() << "Xmin: Position: " << XMIN->pos() << XMIN->boundingRect();
@@ -190,40 +193,36 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 	XMAX->setFont(f);
 	XMAX->setScale(textscale);
 	XMAX->moveBy(-XMAX->boundingRect().width() / 2, -XMAX->boundingRect().height() / 2);
-	XMAX->setTransformOriginPoint(-XMAX->boundingRect().width() / 2, -XMAX->boundingRect().height() / 2);
-	XMAX->moveBy(scaleX * xmax, ( -scaleY * ymin + C ));
+	XMAX->setTransformOriginPoint(XMAX->boundingRect().width() / 2, XMAX->boundingRect().height() / 2);
+	XMAX->moveBy(scaleX * xmax, ( scaleY * ymin + C ));
 
 
 	qDebug() << "Xmax: Position: " << XMAX->pos() << XMAX->boundingRect();
 
 
-	YMIN->setFont(f);
-	//QPointF yminloc(-YMIN->boundingRect().width() / 2, -YMIN->boundingRect().height() / 2);
+	YMIN->setFont(f);	
 	YMIN->setScale(textscale);
-	YMIN->moveBy(-YMIN->boundingRect().center().x(), -YMIN->boundingRect().center().y());
-	//YMIN->setTransformOriginPoint(-YMIN->boundingRect().center());
-
+	YMIN->moveBy(-YMIN->boundingRect().width() / 2,- YMIN->boundingRect().height() / 2);
 	YMIN->setTransformOriginPoint(YMIN->boundingRect().width() / 2, YMIN->boundingRect().height() / 2);
 	//YMIN->boundingRect().moveCenter(YMIN->boundingRect().center());
 
-	YMIN->moveBy(scaleX * xmin - D, ( -scaleY * ymin ));
+	YMIN->moveBy(scaleX * xmin - D, ( scaleY * ymin ));
 
 
 	qDebug() << "Ymin: Position: " << YMIN->pos() << YMIN->boundingRect();
 
 
 	YMAX->setFont(f);
-	YMAX->setScale(textscale);
-
-	YMAX->setTransformOriginPoint(YMAX->boundingRect().width() / 2, YMAX->boundingRect().height() / 2);
+	YMAX->setScale(textscale); 
 	YMAX->moveBy(-YMAX->boundingRect().width() / 2, -YMAX->boundingRect().height() / 2);
-	//AX->setX() 
-	YMAX->moveBy(scaleX * xmin - D, ( -scaleY * ymax ));
+	YMAX->setTransformOriginPoint(YMAX->boundingRect().width() / 2, YMAX->boundingRect().height() / 2);
+	
+	YMAX->moveBy(scaleX * xmin - D, ( scaleY * ymax ));
 
 	qDebug() << "Ymax: Position: " << YMAX->pos() << YMAX->boundingRect() << YMAX->sceneBoundingRect();
 	qDebug() << "ymin:" << ymin << "ymax" << ymax << "xmin" << xmin << "xmax" << xmax;
 	//scene->sceneRect().moveCenter(scene->sceneRect().topLeft());
-	//view->centerOn(xmiddle*scaleX + 5, ymiddle*-scaleY - 5);
+	view->centerOn(scene->itemsBoundingRect().center());
 	view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 

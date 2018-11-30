@@ -17,7 +17,31 @@ NotebookApp::NotebookApp(QWidget* parent)
 	
 	input->setParent(parent);
 	output->setParent(parent);
+
+	// Buttons 
+	startButton = new QPushButton("Start Kernel", parent);
+	startButton->setObjectName("start");
 	
+	stopButton = new QPushButton("Stop Kernel", parent);
+	stopButton->setObjectName("stop");
+
+	resetButton = new QPushButton("Reset Kernal", parent);
+	resetButton->setObjectName("reset");
+
+	interruptButton = new QPushButton("Interrupt", parent);
+	interruptButton->setObjectName("interrupt");
+
+	layout = new QGridLayout;
+	layout->addWidget(startButton, 0, 0);
+	layout->addWidget(stopButton, 0, 1);
+	layout->addWidget(resetButton, 0, 2);
+	layout->addWidget(interruptButton, 0, 3);
+	layout->addWidget(input, 1, 0, 1, 4);
+	layout->addWidget(output, 2, 0, 1, 4);
+
+	setLayout(layout);
+
+
 	//Start Up file should be called before input is avaliable	
 	startUp(interp);
 
@@ -42,11 +66,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 	// Clear the display
 	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
 
-	auto layout = new QGridLayout();
-	layout->addWidget(input, 0, 0);
-	layout->addWidget(output, 1, 0);
 	
-	setLayout(layout);
 }
 
 void NotebookApp::error(const std::string& err_str) {
@@ -173,13 +193,13 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;	
-	std::thread *kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);
+	//std::thread *kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);
 
 	//std::promise<bool> exitSignal;
 	//std::future<bool> futureObj = exitSignal.get_future();
-	//std::istringstream expression(line);
+	std::istringstream expression(line);
 	//while(true){
-		message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+		/*message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
 
 		if(!m_output.empty())
@@ -189,13 +209,13 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			whatGoesWhere(results);
 			//std::cout << results << std::endl;
 			//continue;
-		}
+		}*/
 		//prompt();
 		//std::string line = readline();
 		//if(line.empty())
 			//continue;
 		//else 
-			if(line == "%stop")
+		/*	if(line == "%stop")
 			{
 				if(kernalThread != nullptr)
 				{
@@ -234,8 +254,8 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 				}
 
 				//continue;
-			}
-			else
+			}*/
+			/*else
 			{
 				//std::istringstream expression(line);
 				//EvalOne(interp, expression);
@@ -249,8 +269,8 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 				}
 
 				else
-				{
-					std::istringstream expression(line);
+				{*/
+					//std::istringstream expression(line);
 
 					if(!interp.parseStream(expression))
 					{
@@ -264,8 +284,8 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 						try
 						{
 							Expression exp = interp.evaluate();
-							//whatGoesWhere(exp);
-							m_input.push(line);
+							whatGoesWhere(exp);
+							//m_input.push(line);
 						}
 						catch(const SemanticError& ex)
 						{
@@ -286,8 +306,8 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 					//m_input.push(line);
 
 					}
-				}
-			}
+				//}
+			//}//
 	//}
 }
 
@@ -315,7 +335,7 @@ void NotebookApp::plotScriptInputReady(QString input) {
 //{
 //}
 void NotebookApp::whatGoesWhere(Expression exp) {	
-	message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
+	/*message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 	if(!m_output.empty())
 		{
 			Expression results;
@@ -358,7 +378,7 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 				}
 			}
 			//return;
-	}
+	}*/
 	if (!exp.isPropertyListEmpty()) {
 		std::string propertyKey = "\"object-name\"";
 		Expression objectName;

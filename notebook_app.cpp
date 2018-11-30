@@ -189,7 +189,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 {
 	
 	//std::thread *kernalThread = nullptr;
-	Interpreter interp;
+	// interp;
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;	

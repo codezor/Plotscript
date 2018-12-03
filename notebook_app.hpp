@@ -29,7 +29,7 @@ public:
 
 private slots:		
 	// Keypress in the input widget has occurred
-	void plotScriptInputReady(QString  input);
+	void plotScriptInputReady(QString  InputText);
 	void stopButtonPressed();
 	void startButtonPressed();
 	void resetButtonPressed();

@@ -286,11 +286,11 @@ void NotebookApp::resetButtonPressed()
 	repl("%reset");
 }
 
-void NotebookApp::plotScriptInputReady(QString input) {
+void NotebookApp::plotScriptInputReady(QString InputText) {
 	
 	// Turn input to string	
-	std::string line = input.toStdString();
-
+	std::string line = InputText.toStdString();
+	input->setReadOnly(true);
 	// Clear output screan
 	emit(ClearScene());
 	repl(line);
@@ -329,13 +329,16 @@ void NotebookApp::outputPolling()
 
 				QString TextforOut;
 				TextforOut = QString::fromStdString(results.error);
+
 				emit ExpressionReady(TextforOut);
+				input->setReadOnly(false);
 				break;
 			}
 			else if(results.type == OutMessage_t::noterr)
 			{
 				Expression exp = exp;//interp.evaluate();
 				whatGoesWhere(results.exp);
+				input->setReadOnly(false);
 				break;
 				//std::cout << results.exp << std::endl;
 			}

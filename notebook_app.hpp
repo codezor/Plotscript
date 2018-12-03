@@ -30,6 +30,9 @@ public:
 private slots:		
 	// Keypress in the input widget has occurred
 	void plotScriptInputReady(QString  input);
+	void stopButtonPressed();
+	void startButtonPressed();
+	void resetButtonPressed();
 
 signals: 
 	void ExpressionReady(QString Expression);
@@ -39,6 +42,9 @@ signals:
 	
 	void discretePlotReady(QString title, QString xlable, QString ylabel, double xmin, double xmax, double ymin, double ymax, double textscale);
 	void ClearScene();
+
+	//void StartButton();
+	//void StopButton();
 
 private:
 	Interpreter interp;
@@ -51,6 +57,9 @@ private:
 	QPushButton *resetButton;
 	QPushButton *interruptButton;
 
+	std::thread * m_plotscript_thread_ptr { nullptr }; // = new std::thread(&Interpreter::parseStreamQueue, &interp);
+
+	bool m_interrupt{ false };
 
 	void repl(std::string line);
 	//void plotscript_thread_main(message_queue<std::string> &queue);
@@ -64,7 +73,7 @@ private:
 	
 	// Determine what the expression type is and sends it to the approprate output 
 	void whatGoesWhere(Expression exp);
-	
+	void outputPolling();
 	void makeExpression(Expression exp);
 	void makeLine(Expression exp);
 	void makePoint(Expression exp);

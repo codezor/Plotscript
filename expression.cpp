@@ -36,6 +36,7 @@ Expression::Expression(const Expression& a,std::map<std::string, Expression>& es
 	m_propertyList.insert(es.begin(), es.end());
 		
 }
+
 Expression
 Expression::getPropertyList(std::string key) {
 	//this->m_propertyList;
@@ -349,15 +350,29 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 
 		Discrete.m_propertyList[property.head().asString()] = Expression(Atom(pr->m_tail[1].head()));
 		
-	}
+	}	
 
-	
-
-	Discrete.setPropertyList(Discrete, propsD);
-	
+	Discrete.setPropertyList(Discrete, propsD);	
 
 	return Discrete;
 };
+
+Expression Expression::MakeRange(Expression Bounds)
+{
+	double lowerBound = Bounds.m_tail[0].head().asNumber();
+	double upperBound = Bounds.m_tail[1].head().asNumber();
+	double DeltaX = abs(upperBound - lowerBound) / 50;
+	Expression rangeList;
+	rangeList.m_head = Atom("list");
+	double i = lowerBound;
+	while(i <= upperBound)
+	{
+		rangeList.m_tail.emplace_back(Expression(i));
+		i = i + DeltaX;
+	}
+	return rangeList;
+}
+
 
 Expression::Expression(const std::vector<Expression>& es)
 {
@@ -719,7 +734,7 @@ Expression Expression::handle_map(Environment& env) {
 	// Check only two areguments
 	if (m_tail.size() != 2) {
 		throw SemanticError(
-			"Error during evaluation: invalid number of arguments to apply");
+			"Error during evaluation: invalid number of arguments to map");
 	}
 
 	if (!m_tail[0].head().isSymbol()) {
@@ -731,7 +746,7 @@ Expression Expression::handle_map(Environment& env) {
 	
 
 	if ((!env.is_proc(var) && !env.is_exp(var)) || (!proc.m_tail.empty())) {
-		throw SemanticError("Error in apply firt argument is not a proceudure");
+		throw SemanticError("Error in map firt argument is not a proceudure");
 	}
 
 	
@@ -775,6 +790,51 @@ Expression Expression::handle_map(Environment& env) {
 	
 	return Expression(results);
 }
+Expression Expression::setContinuousPlot(Environment&env)
+{
+	env.is_known(Atom());
+	Expression Bounds = m_tail[1];
+	Expression XRange =Bounds.MakeRange(Bounds);
+	Expression results;
+	results.m_head = Atom("map");
+	results.m_tail.emplace_back(m_tail[0]);
+	results.m_tail.emplace_back(XRange);
+	Expression YRange = results.eval(env);
+	Expression options = m_tail[2];
+
+	Expression Datapoints;
+	int n = XRange.m_tail.size();
+	int m = YRange.m_tail.size();
+	if(n != m)
+	{
+		std::stringstream s; s << __FILE__ << ":" << __LINE__; throw ( s.str() );
+	}
+	
+	auto xi = XRange.tailConstBegin();
+	auto yi = YRange.tailConstBegin();
+	for(int i = 0; i < n; ++i)
+	{
+		
+		std::vector<Expression> Point;
+		Point.emplace_back(*xi);
+		Point.emplace_back(*yi);
+		Datapoints.m_tail.push_back(Expression(Point));
+		++xi;
+		++yi;
+	}
+	
+	Expression Continous;
+	
+
+	return Expression(Continous.setDiscretePlot(Datapoints, options));
+}
+
+bool Expression::m_interrupt = false;
+
+void Expression::interrupt()
+{
+	m_interrupt = true;
+}
 
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
@@ -782,8 +842,14 @@ Expression Expression::handle_map(Environment& env) {
 Expression
 Expression::eval(Environment& env)
 {
+	// handle interrupt
+	if(m_interrupt == true)
+	{
+		m_interrupt = false; // reset the interrupt signal
+		throw Interrupted();
+	}
 
-  if (m_tail.empty() && m_head.asSymbol() != "list") {
+	if (m_tail.empty() && m_head.asSymbol() != "list") {
     return handle_lookup(m_head, env);
   }
   // handle begin special-form
@@ -803,6 +869,10 @@ Expression::eval(Environment& env)
   }
   else if (m_head.isSymbol() && m_head.asSymbol() == "map") {
 	  return handle_map(env);
+  }
+  else if(m_head.isSymbol() && m_head.asSymbol() == "continuous-plot")
+  {
+	  return setContinuousPlot(env);
   }
   // else attempt to treat as procedure
   else {

@@ -9,6 +9,7 @@
 NotebookApp::NotebookApp(QWidget* parent)
 	: QWidget(parent)
 {
+	m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, & interp);
 	
 	input = new InputWidget;
 	output = new OutputWidget;
@@ -65,8 +66,9 @@ NotebookApp::NotebookApp(QWidget* parent)
 
 	// Clear the display
 	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
-
-	
+	QObject::connect(stopButton, SIGNAL(pressed()), this, SLOT(stopButtonPressed()));
+	QObject::connect(startButton, SIGNAL(pressed()), this, SLOT(startButtonPressed()));
+	QObject::connect(resetButton, SIGNAL(pressed()), this, SLOT(resetButtonPressed()));
 }
 
 void NotebookApp::error(const std::string& err_str) {
@@ -126,7 +128,7 @@ void NotebookApp::startUp(Interpreter& interp) {
 			// return EXIT_FAILURE;
 		}
 	}
-	emit ExpressionReady(TextforOut);
+	//emit ExpressionReady(TextforOut);
 }
 // contains both parse and evaluate which will need to be done in a seperate thread
 void NotebookApp::eval_from_stream(std::istream& stream) {
@@ -187,234 +189,213 @@ void NotebookApp::eval_from_command(std::string argexp) {
 // contains both parse and evaluate which will need to be done in a seperate thread
 void NotebookApp::repl(std::string line) //TODO: rename since this technically isn't a loop now
 {
-	
-	//std::thread *kernalThread = nullptr;
+
+	//std::thread *m_plotscript_thread_ptr = nullptr;
 	// interp;
 	std::stringstream outstream;
 	std::string out;
-	QString TextforOut;	
-	//std::thread *kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);
-
-	//std::promise<bool> exitSignal;
-	//std::future<bool> futureObj = exitSignal.get_future();
-	std::istringstream expression(line);
+	QString TextforOut;
+	//std::thread *m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);
+	
 	//while(true){
-		/*message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
-		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
+	//message_queue<OutMessage_t> &m_output = message_queue<OutMessage_t>::get_instance();
+	message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
 
-		if(!m_output.empty())
+
+	std::istringstream expression(line);
+	//prompt();
+	//std::string line = readline();
+	//if(line.empty())
+		//continue;
+		if(line == "%stop")
 		{
-			Expression results;
-			m_output.wait_and_pop(results);
-			whatGoesWhere(results);
-			//std::cout << results << std::endl;
-			//continue;
-		}*/
-		//prompt();
-		//std::string line = readline();
-		//if(line.empty())
-			//continue;
-		//else 
-		/*	if(line == "%stop")
+			if(m_plotscript_thread_ptr != nullptr)
 			{
-				if(kernalThread != nullptr)
-				{
-					m_input.push(line);
-					kernalThread->join();
-					delete kernalThread;
-					kernalThread = nullptr;
-					//is_thread_alive = false;
-					//continue;
-				}
-
-			}
-			else if(line == "%reset")
-			{
-				if(kernalThread != nullptr)
+				//0exitSignal.set_value(false);
+				//m_plotscript_thread_ptr->join();
+				m_input.push(line);
+				while(!m_input.empty())
 				{
 
-					m_input.push("%stop");
-					kernalThread->join();
-					delete kernalThread;
-
-					kernalThread = nullptr;
-
-					kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
-					//continue;
-
 				}
-			}
-			else if(line == "%start")
-			{
-
-				if(kernalThread == nullptr)
-				{
-					kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
-
-				}
-
+				m_plotscript_thread_ptr->join();
+				delete m_plotscript_thread_ptr;
+				//m_plotscript_thread_ptr->~thread();
+				m_plotscript_thread_ptr = nullptr;
+				//is_thread_alive = false;
 				//continue;
-			}*/
-			/*else
+			}
+
+		}
+		else if(line == "%reset")
+		{
+			if(m_plotscript_thread_ptr != nullptr)
 			{
-				//std::istringstream expression(line);
-				//EvalOne(interp, expression);
-				if(kernalThread == nullptr)
+				m_input.push("%stop");
+				while(!m_input.empty())
 				{
-					out = "Interpreter kernel not running.";
-					// Send a Parse error to output
-					TextforOut = QString::fromStdString(out);
-					emit ExpressionReady(TextforOut);// error("Interpreter kernel not running");
-					//continue;
+
 				}
+				m_plotscript_thread_ptr->join();
+				//m_plotscript_thread_ptr->detach();
 
-				else
-				{*/
-					//std::istringstream expression(line);
+					//ExitProccess				
+				delete m_plotscript_thread_ptr;
+				m_plotscript_thread_ptr = nullptr;
+				interp.clearInterp();
+				startUp(interp);
+				m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);
+				//continue;
 
-					if(!interp.parseStream(expression))
-					{
-						out = "Error: Invalid Expression. Could not parse.";
-						// Send a Parse error to output
-						TextforOut = QString::fromStdString(out);
-						emit ExpressionReady(TextforOut);
-					}
-					else
-					{
-						try
-						{
-							Expression exp = interp.evaluate();
-							whatGoesWhere(exp);
-							//m_input.push(line);
-						}
-						catch(const SemanticError& ex)
-						{
-							outstream << ex.what();
-							out = outstream.str();
-							TextforOut = QString::fromStdString(out);
-							emit ExpressionReady(TextforOut);
-							//continue;
-						}
+			}
+		}
+		else if(line == "%start")
+		{
 
-						//while(m_output.empty())
-						//{
+			if(m_plotscript_thread_ptr == nullptr)
+			{
+				m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);
+			}
 
-						//}
-						//continue;
+			//continue;
+		}//
+		else
+		{			
+			if(m_plotscript_thread_ptr == nullptr)
+			{
+				emit ExpressionReady("Interpreter kernel not running");
+				//continue;
+			}
+			else
+			{
+				m_input.push(line);
+			}			
+		}
 
+}
 
-					//m_input.push(line);
+void NotebookApp::stopButtonPressed()
+{
+	repl("%stop");
+}
 
-					}
-				//}
-			//}//
-	//}
+void NotebookApp::startButtonPressed()
+{
+	repl("%start");
+}
+
+void NotebookApp::resetButtonPressed()
+{
+	repl("%reset");
 }
 
 void NotebookApp::plotScriptInputReady(QString input) {
 	
 	// Turn input to string	
 	std::string line = input.toStdString();
-	//message_queue<std::string> & plotscript_program_queue = message_queue<std::string>::get_instance();
-	//plotscript_program_queue.push(line);
+
 	// Clear output screan
 	emit(ClearScene());
 	repl(line);
-	// evaluate input
-	//std::thread *MainThread;
-	//MainThread = new std::thread(&NotebookApp::repl,line);
-	//MainThread->join();
-	//plotscript_thread.join();
-	//return 0;
-
-	// new std::thread(repl, line); //
+	outputPolling();
 	
-	//std::thread *GUIThread= new std::thread(&NotebookApp::repl, std::ref(line) );
 }
-//void plotscript_thread_main(message_queue<std::string> &queue)
-//{
-//}
-void NotebookApp::whatGoesWhere(Expression exp) {	
-	/*message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
-	if(!m_output.empty())
-		{
-			Expression results;
-			m_output.wait_and_pop(results);
-			if(!results.isPropertyListEmpty())
-			{
-				std::string propertyKey = "\"object-name\"";
-				Expression objectName;
-				objectName = results.getPropertyList(propertyKey);
-				if(objectName.isHeadString())
-				{
-					// Draw point
-					if(objectName.head().asString() == "\"point\"")
-					{
-						makePoint(results);
-					}
-					// Draw line
-					if(objectName.head().asString() == "\"line\"")
-					{
-						makeLine(results);
-					}
-					//DrawText
-					if(objectName.head().asString() == "\"text\"")
-					{
-						makeText(results);
-					}
-					// Draw Plot discrete-plot
-					if(objectName.head().asString() == "\"discrete-plot\"")
-					{
-						//
-						makeDiscretePlot(results);
-					}
-				}
-			}
-			else if(results.isHeadList())
-			{
-				for(auto e = results.tailConstBegin(); e != exp.tailConstEnd(); ++e)
-				{
-					whatGoesWhere(*e);
-				}
-			}
-			//return;
-	}*/
-	if (!exp.isPropertyListEmpty()) {
-		std::string propertyKey = "\"object-name\"";
-		Expression objectName;
-		objectName = exp.getPropertyList(propertyKey);
-		if (objectName.isHeadString() )
-		{
-			// Draw point
-			if (objectName.head().asString() == "\"point\""){
-				makePoint(exp);
-			}
-			// Draw line
-			if (objectName.head().asString() == "\"line\"") {
-				makeLine(exp);
-			}
-			//DrawText
-			if (objectName.head().asString() == "\"text\"") {
-				makeText(exp);
-			}
-			// Draw Plot discrete-plot
-			if (objectName.head().asString() == "\"discrete-plot\"") {
-				//
-				makeDiscretePlot(exp);
-			}
-		}
-	}
-	else if (exp.isHeadList()) {
-		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
-			whatGoesWhere(*e);
-		}
-	}
+void NotebookApp::outputPolling()
+{
 
-	// Regular plot script things 
-	else
-	{
-		makeExpression(exp);				
+	while(true){
+		if(m_plotscript_thread_ptr == nullptr)
+		{
+			emit ExpressionReady("Interpreter kernel not running");
+			break; //continue;
+		}
+
+		message_queue<OutMessage_t> &m_output = message_queue<OutMessage_t>::get_instance();
+		//message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
+		Expression exp;
+		if(!m_output.empty())
+		{
+			OutMessage_t results;
+			m_output.wait_and_pop(results);
+			while(m_output.try_pop(results) == false)
+			{
+				if(m_interrupt == true  )
+				{
+					emit ExpressionReady("Error: interpreter kernel interrupted");
+					m_interrupt = false;
+				}
+			}
+			if(results.type == OutMessage_t::Errorstring)
+			{
+
+				QString TextforOut;
+				TextforOut = QString::fromStdString(results.error);
+				emit ExpressionReady(TextforOut);
+				break;
+			}
+			else if(results.type == OutMessage_t::noterr)
+			{
+				Expression exp = exp;//interp.evaluate();
+				whatGoesWhere(results.exp);
+				break;
+				//std::cout << results.exp << std::endl;
+			}
+
+			continue;
+		}
 	}
+	
+}
+
+
+void NotebookApp::whatGoesWhere(Expression exp) {	
+
+	
+
+		if(!exp.isPropertyListEmpty())
+		{
+			std::string propertyKey = "\"object-name\"";
+			Expression objectName;
+			objectName = exp.getPropertyList(propertyKey);
+			if(objectName.isHeadString())
+			{
+				// Draw point
+				if(objectName.head().asString() == "\"point\"")
+				{
+					makePoint(exp);
+				}
+				// Draw line
+				if(objectName.head().asString() == "\"line\"")
+				{
+					makeLine(exp);
+				}
+				//DrawText
+				if(objectName.head().asString() == "\"text\"")
+				{
+					makeText(exp);
+				}
+				// Draw Plot discrete-plot
+				if(objectName.head().asString() == "\"discrete-plot\"")
+				{
+					//
+					makeDiscretePlot(exp);
+				}
+			}
+		}
+		else if(exp.isHeadList())
+		{
+			for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e)
+			{
+				whatGoesWhere(*e);
+			}
+		}
+
+		// Regular plot script things 
+		else
+		{
+			makeExpression(exp);
+		}
+	
 }
 
 void NotebookApp::makeExpression(Expression exp) {

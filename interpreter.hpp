@@ -23,7 +23,11 @@ It maintains an environment during evaluation.
 #include "message_queue.hpp"
 
 
-
+//union OutMessage_t
+//{
+	//std::string error;
+	//Expression exp;
+//}OutMessage;
 /*! \class Interpreter
 \brief Class to parse and evaluate an expression (program)
 
@@ -47,6 +51,7 @@ public:
    */
   Expression evaluate();
   void clearInterp();
+
 private:
   // the environment
   Environment env;

@@ -676,10 +676,7 @@ Expression discreteplot(const std::vector<Expression>& args)
 	{
 		throw SemanticError("Error in call to get-property: invalid number of arguments.");
 	}
-	//double xmax;
-	//double xmin;
-	//double ymin;
-	//double t
+	
 	// Data allows us to make the boarders 
 	Expression Data;
 	
@@ -693,7 +690,6 @@ Expression discreteplot(const std::vector<Expression>& args)
 	//return PlotD;
 
 };
-
 
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
@@ -715,6 +711,7 @@ Environment::Shadow(const Environment& ENV,  Environment& shadow)
 
 	return Environment(shadow);
 };
+
 
 bool
 Environment::is_known(const Atom& sym) const
@@ -914,7 +911,12 @@ Environment::reset()
   // Procedure get-property
   envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
 
+  // Procedure discrete-plot
   envmap.emplace("discrete-plot", EnvResult(ProcedureType, discreteplot));
+
+  // Procedure continuous-plots
+ // envmap.emplace("continuous-plot", EnvResult(ProcedureType, continuousplot));
+
  // envmap.emplace("tee", EnvResult(ProcedureType, tree_view));
 }
 

@@ -49,7 +49,7 @@ public:
 
   // TODO : Enviornment copy constructor for Enviornment
   // TODO : get Enviornment method - maybe
-  
+   
   /*! Determine if an Expression is built into the environment.
 	\param sym the symbol to lookup
 	\return true if the symbol has been defined as a built in environment expression.

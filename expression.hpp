@@ -71,7 +71,11 @@ public:
   /// returns a property entery
   Expression setPropertyList(const Expression expression_to_add, std::map<std::string, Expression> property) const noexcept;
 
+  /// returns  a DiscretePlot
   Expression setDiscretePlot(Expression DATA, Expression options);
+
+  /// returns a continous plot
+ // Expression setContinuousPlot(Expression Func, Expression Bounds, Expression Options);
 
   /// convienience member to determine if head atom is a number
   bool isHeadNumber() const noexcept;
@@ -103,8 +107,14 @@ public:
 //  Tree view used for debugging 
  //void tree_view(std::string) const;
   
+	Expression MakeRange(Expression);
 // the properties of an expression 
 	//std::map<std::string, Expression> m_propertyList; // TODO: Make this private
+
+	struct Interrupted : public std::exception {};
+	static bool m_interrupt;
+	static void interrupt(); // Usage: Expression::interrupt();
+
 private:
   // the head of the expression
   Atom m_head;
@@ -127,6 +137,7 @@ private:
   Expression handle_apply(Environment& env);
   Expression handle_map(Environment& env);
   Expression store_lamba(Environment& env, Expression& original);
+  Expression setContinuousPlot(Environment&env);
   // list
   //bool m_isList = false;
 };

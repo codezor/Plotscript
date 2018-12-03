@@ -6,12 +6,22 @@ www.justsoftwaresolutions.co.uk/threading/implementing-a-thread-safe-queue-using
 #include <mutex>
 #include <queue>
 
-
+struct OutMessage_t
+{
+	std::string error;
+	Expression exp;
+	enum MessageType
+	{
+		Errorstring, noterr
+	};
+	MessageType type;
+};
 // two message queues will be needed one for input and one for output
 template<typename MessageType>
 class message_queue
 {
 public:
+	
 	message_queue(message_queue const&) = delete;  // singleton
 	void operator=(message_queue const&) = delete; // singleton
 

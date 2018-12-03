@@ -260,7 +260,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 		{			
 			if(m_plotscript_thread_ptr == nullptr)
 			{
-				emit ExpressionReady("Interpreter kernel not running");
+				emit ExpressionReady("Error: Interpreter kernel not running");
 				//continue;
 			}
 			else

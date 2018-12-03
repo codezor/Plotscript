@@ -14,10 +14,10 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 		
 		event->accept(); 
 	}
-	else if(event->matches(QKeySequence::Copy))
-	{
+	//else if(event->matches(QKeySequence::Copy))
+	//{
 
-	}
+	//}
 	// All other keys should not take action
 	else{			
 		// Allow these key press events to type in the plaintextedit box

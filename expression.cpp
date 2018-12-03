@@ -66,9 +66,8 @@ Expression Expression::setPropertyList(const Expression expression_to_add, std::
 	
 	return Expression(expression_to_add, property);
 }
-
-Expression
-Expression::setDiscretePlot(Expression DATA, Expression options)
+// TODO: pull redundent information
+Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 {
 	Expression Discrete;
 	Discrete.m_head = Atom("list");
@@ -216,7 +215,9 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 	yaxisP1.m_head = Atom("list");
 	yaxisP1.m_head = Atom("list");
 	
-	// Creation of the axies 
+	// TODO: Axies creation common among plots should  be seperate function 
+	// Creation of the axies  ------------------------------------------------------------
+	
 	// if the x min > 0 then no axis should be drawn
 	if (xmin>0){
 		xaxisP1.m_tail.push_back(Expression(xmin*scaleX));
@@ -356,6 +357,50 @@ Expression::setDiscretePlot(Expression DATA, Expression options)
 
 	return Discrete;
 };
+//Expression Plotboarders(double Xmin, double Xmax, double Ymin, double Ymax )
+//{	
+	//return Expression();
+//}
+
+Expression Expression::setContinuousPlot(Environment&env)
+{
+	env.is_known(Atom());
+	Expression Bounds = m_tail[1];
+	Expression XRange = Bounds.MakeRange(Bounds);
+	Expression results;
+	results.m_head = Atom("map");
+	results.m_tail.emplace_back(m_tail[0]);
+	results.m_tail.emplace_back(XRange);
+	Expression YRange = results.eval(env);
+	Expression options = m_tail[2];
+
+	Expression Datapoints;
+	int n = XRange.m_tail.size();
+	int m = YRange.m_tail.size();
+	if(n != m)
+	{
+		std::stringstream s; s << __FILE__ << ":" << __LINE__; throw ( s.str() );
+	}
+
+	auto xi = XRange.tailConstBegin();
+	auto yi = YRange.tailConstBegin();
+
+	// this only makes points it needs to make lines
+	for(int i = 0; i < n; ++i)	{
+
+		std::vector<Expression> Point;
+		Point.emplace_back(*xi);
+		Point.emplace_back(*yi);
+		Datapoints.m_tail.push_back(Expression(Point));
+		++xi;
+		++yi;
+	}
+
+	Expression Continous;
+
+	// change this to not use discreet plot
+	return Expression(Continous.setDiscretePlot(Datapoints, options));
+}
 
 Expression Expression::MakeRange(Expression Bounds)
 {
@@ -372,8 +417,6 @@ Expression Expression::MakeRange(Expression Bounds)
 	}
 	return rangeList;
 }
-
-
 Expression::Expression(const std::vector<Expression>& es)
 {
 	// maybe set the head to list and then modify list printing to ignore the "list" head?
@@ -790,44 +833,7 @@ Expression Expression::handle_map(Environment& env) {
 	
 	return Expression(results);
 }
-Expression Expression::setContinuousPlot(Environment&env)
-{
-	env.is_known(Atom());
-	Expression Bounds = m_tail[1];
-	Expression XRange =Bounds.MakeRange(Bounds);
-	Expression results;
-	results.m_head = Atom("map");
-	results.m_tail.emplace_back(m_tail[0]);
-	results.m_tail.emplace_back(XRange);
-	Expression YRange = results.eval(env);
-	Expression options = m_tail[2];
 
-	Expression Datapoints;
-	int n = XRange.m_tail.size();
-	int m = YRange.m_tail.size();
-	if(n != m)
-	{
-		std::stringstream s; s << __FILE__ << ":" << __LINE__; throw ( s.str() );
-	}
-	
-	auto xi = XRange.tailConstBegin();
-	auto yi = YRange.tailConstBegin();
-	for(int i = 0; i < n; ++i)
-	{
-		
-		std::vector<Expression> Point;
-		Point.emplace_back(*xi);
-		Point.emplace_back(*yi);
-		Datapoints.m_tail.push_back(Expression(Point));
-		++xi;
-		++yi;
-	}
-	
-	Expression Continous;
-	
-
-	return Expression(Continous.setDiscretePlot(Datapoints, options));
-}
 
 bool Expression::m_interrupt = false;
 

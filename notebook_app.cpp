@@ -9,7 +9,7 @@
 NotebookApp::NotebookApp(QWidget* parent)
 	: QWidget(parent)
 {
-	m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, & interp);
+	m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);
 	
 	input = new InputWidget;
 	output = new OutputWidget;
@@ -45,7 +45,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 
 	//Start Up file should be called before input is avaliable	
 	startUp(interp);
-
+	
 	// The user clicks shift+enter
 	QObject::connect(input,SIGNAL(inputReady(QString)),this, SLOT(plotScriptInputReady(QString)));
 
@@ -66,9 +66,9 @@ NotebookApp::NotebookApp(QWidget* parent)
 
 	// Clear the display
 	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
-	QObject::connect(stopButton, SIGNAL(pressed()), this, SLOT(stopButtonPressed()));
-	QObject::connect(startButton, SIGNAL(pressed()), this, SLOT(startButtonPressed()));
-	QObject::connect(resetButton, SIGNAL(pressed()), this, SLOT(resetButtonPressed()));
+	QObject::connect(stopButton, SIGNAL(released()), this, SLOT(stopButtonPressed()));
+	QObject::connect(startButton, SIGNAL(released()), this, SLOT(startButtonPressed()));
+	QObject::connect(resetButton, SIGNAL(released()), this, SLOT(resetButtonPressed()));
 }
 
 void NotebookApp::error(const std::string& err_str) {
@@ -203,10 +203,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 
 
 	std::istringstream expression(line);
-	//prompt();
-	//std::string line = readline();
-	//if(line.empty())
-		//continue;
+	
 		if(line == "%stop")
 		{
 			if(m_plotscript_thread_ptr != nullptr)
@@ -304,6 +301,7 @@ void NotebookApp::outputPolling()
 {
 
 	while(true){
+		
 		if(m_plotscript_thread_ptr == nullptr)
 		{
 			emit ExpressionReady("Interpreter kernel not running");
@@ -317,14 +315,15 @@ void NotebookApp::outputPolling()
 		{
 			OutMessage_t results;
 			m_output.wait_and_pop(results);
-			while(m_output.try_pop(results) == false)
-			{
-				if(m_interrupt == true  )
-				{
-					emit ExpressionReady("Error: interpreter kernel interrupted");
-					m_interrupt = false;
-				}
-			}
+			//while(m_output.try_pop(results) == false)
+			//{
+				//if(m_interrupt == true  )
+				//{
+					//emit ExpressionReady("Error: interpreter kernel interrupted");
+					//m_interrupt = false;
+					//break;
+				//}
+			//}
 			if(results.type == OutMessage_t::Errorstring)
 			{
 

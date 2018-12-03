@@ -23,11 +23,13 @@ bool Interpreter::parseStream(std::istream& expression) noexcept
 void Interpreter::parseStreamQueue()
 {
 
-	message_queue<OutMessage_t> &m_output = message_queue<OutMessage_t>::get_instance();
-	message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
+	
+	
 
 	while(true)
 	{
+		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
+		message_queue<OutMessage_t> &m_output = message_queue<OutMessage_t>::get_instance();
 		if(!m_input.empty())
 		{
 			std::string line;

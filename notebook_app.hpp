@@ -59,7 +59,7 @@ private:
 
 	std::thread * m_plotscript_thread_ptr { nullptr }; // = new std::thread(&Interpreter::parseStreamQueue, &interp);
 
-	bool m_interrupt{ false };
+	//bool m_interrupt{ false };
 
 	void repl(std::string line);
 	//void plotscript_thread_main(message_queue<std::string> &queue);

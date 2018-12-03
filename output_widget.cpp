@@ -42,6 +42,7 @@ void OutputWidget::DisplayItem(QString Expression) {
 	Text->setPos(0,0);
 	
 	//qDebug ()<< "Bounding Rect: "<<Text->boundingRect() << "Position: "<< Text->pos();
+
 }
 
 void OutputWidget::DisplayPoint(double x, double y, double size) {
@@ -54,6 +55,7 @@ void OutputWidget::DisplayPoint(double x, double y, double size) {
 	Point->setTransformOriginPoint(Point->boundingRect().width() / 2, Point->boundingRect().height() / 2);
 	//Title->moveBy(xmiddle, ( -scaleY * ymax - A ));
 	qDebug() << "Point: Position: " << Point->boundingRect();
+	
 }
 
 void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, double thickness) {
@@ -93,6 +95,9 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	//CrossHair();
 	qDebug() << "scene: Position: " << scene->sceneRect();
 	qDebug() << "Text: Bounding Rect: " << Text->boundingRect() << "Position: " << Text->pos();
+
+	
+	
 }
 
 // Discrete Plot generation 
@@ -232,6 +237,7 @@ void OutputWidget::DisplayClear() {
 void OutputWidget::resizeEvent(QResizeEvent *event) {
 	this->view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 	event->accept();
+	
 }
 /*void OutputWidget::CrossHair()
 {

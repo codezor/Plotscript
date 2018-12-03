@@ -33,6 +33,7 @@ private slots:
 	void stopButtonPressed();
 	void startButtonPressed();
 	void resetButtonPressed();
+	void EnableInputWidget();
 
 signals: 
 	void ExpressionReady(QString Expression);
@@ -42,7 +43,7 @@ signals:
 	
 	void discretePlotReady(QString title, QString xlable, QString ylabel, double xmin, double xmax, double ymin, double ymax, double textscale);
 	void ClearScene();
-
+	void OutputWidgetDisplayed();
 	//void StartButton();
 	//void StopButton();
 

@@ -64,6 +64,9 @@ NotebookApp::NotebookApp(QWidget* parent)
 	// Draw the Discrete plot
 	QObject::connect(this, SIGNAL(discretePlotReady(QString , QString , QString , double , double , double , double, double )), output, SLOT(DisplayDiscretePlot(QString, QString, QString, double, double, double, double, double)));
 
+	// Engable the input widget once the output widget is displaying 
+	QObject::connect(this, SIGNAL(OutputWidgetDisplayed()), this, SLOT(EnableInputWidget()));
+
 	// Clear the display
 	QObject::connect(this, SIGNAL(ClearScene()), output, SLOT(DisplayClear()));
 	QObject::connect(stopButton, SIGNAL(released()), this, SLOT(stopButtonPressed()));
@@ -260,11 +263,12 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 		{			
 			if(m_plotscript_thread_ptr == nullptr)
 			{
-				emit ExpressionReady("Error: Interpreter kernel not running");
+				//emit ExpressionReady("Error: Interpreter kernel not running");
 				//continue;
 			}
 			else
 			{
+				input->setReadOnly(true);
 				m_input.push(line);
 			}			
 		}
@@ -290,7 +294,7 @@ void NotebookApp::plotScriptInputReady(QString InputText) {
 	
 	// Turn input to string	
 	std::string line = InputText.toStdString();
-	input->setReadOnly(true);
+	//input->setReadOnly(true);
 	// Clear output screan
 	emit(ClearScene());
 	repl(line);
@@ -304,7 +308,7 @@ void NotebookApp::outputPolling()
 		
 		if(m_plotscript_thread_ptr == nullptr)
 		{
-			emit ExpressionReady("Interpreter kernel not running");
+			emit ExpressionReady("Error: Interpreter kernel not running");
 			break; //continue;
 		}
 
@@ -315,6 +319,7 @@ void NotebookApp::outputPolling()
 		{
 			OutMessage_t results;
 			m_output.wait_and_pop(results);
+			
 			//while(m_output.try_pop(results) == false)
 			//{
 				//if(m_interrupt == true  )
@@ -330,15 +335,13 @@ void NotebookApp::outputPolling()
 				QString TextforOut;
 				TextforOut = QString::fromStdString(results.error);
 
-				emit ExpressionReady(TextforOut);
-				input->setReadOnly(false);
+				emit ExpressionReady(TextforOut);				
 				break;
 			}
 			else if(results.type == OutMessage_t::noterr)
 			{
 				Expression exp = exp;//interp.evaluate();
-				whatGoesWhere(results.exp);
-				input->setReadOnly(false);
+				whatGoesWhere(results.exp);				
 				break;
 				//std::cout << results.exp << std::endl;
 			}
@@ -410,6 +413,7 @@ void NotebookApp::makeExpression(Expression exp) {
 		out = outstream.str();
 		TextforOut = QString::fromStdString(out);
 		emit ExpressionReady(TextforOut);
+		emit OutputWidgetDisplayed();
 	}
 }
 
@@ -434,7 +438,7 @@ void NotebookApp::makeLine(Expression exp){
 
 	emit(LineReady(p1[0].head().asNumber(), p1[1].head().asNumber(), p2[0].head().asNumber(), 
 		p2[1].head().asNumber(), lineThickness.head().asNumber()));
-
+	emit OutputWidgetDisplayed();
 }
 
 void NotebookApp::makePoint(Expression exp){
@@ -453,6 +457,7 @@ void NotebookApp::makePoint(Expression exp){
 	Expression y = cordinates.back();
 
 	emit(EllipseReady(x.head().asNumber(), y.head().asNumber(), pointSize.head().asNumber()));
+	emit OutputWidgetDisplayed();
 }
 
 void NotebookApp::makeText(Expression exp){
@@ -474,6 +479,7 @@ void NotebookApp::makeText(Expression exp){
 	textPosition = exp.getPropertyList("\"position\"");
 	//textPosition = exp.getPropertyList("\"position\"");
 	emit(TextReady(words, cordinates[0].head().asNumber(), cordinates[1].head().asNumber(), textRotation.head().asNumber(), textScale.head().asNumber()));
+	emit OutputWidgetDisplayed();
 }
 
 void NotebookApp::makeDiscretePlot(Expression exp) {
@@ -541,6 +547,12 @@ void NotebookApp::makeDiscretePlot(Expression exp) {
 
 	//textScale = exp.getPropertyList("\"text-scale\"");
 	emit(discretePlotReady(Qtitle, Qxlable, Qylabel ,xmin.head().asNumber(), xmax.head().asNumber(), ymin.head().asNumber(), ymax.head().asNumber(), textScale.head().asNumber()));
+	emit OutputWidgetDisplayed();
 
+}
 
+void NotebookApp::EnableInputWidget()
+{
+
+	input->setReadOnly(false);
 }

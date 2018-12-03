@@ -50,6 +50,7 @@ private slots:
 
 signals:
 	void ExpressionEvaluated(QString Expression);	
+	
 };
 
 #endif

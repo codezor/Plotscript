@@ -84,7 +84,7 @@ void
 error(const std::string& err_str)
 {
 
-	std::cerr  << err_str << std::endl;
+	std::cerr  <<"Error: "<< err_str << std::endl;
 
 }
 
@@ -111,7 +111,6 @@ void EvalOne(Interpreter& interp, std::istringstream& expression)
 			Expression exp = interp.evaluate();
 			std::cout << exp;
 			//m_output.push(exp);
-
 		}
 		catch(const SemanticError& ex)
 		{
@@ -326,14 +325,11 @@ void repl()
 			}
 		}
 		else if(line == "%start")
-		{
-			
+		{			
 			if(kernalThread == nullptr)
 			{
 				kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
-
 			}
-
 			continue;
 		}
 		else if(line == "%exit")
@@ -341,28 +337,19 @@ void repl()
 			m_input.push("%stop");
 			while(!m_input.empty())
 			{
-
 			}
 			kernalThread->join();
-			//kernalThread->detach();
-
-				//ExitProccess				
+			//ExitProccess				
 			delete kernalThread;
 			kernalThread = nullptr;
 			return;
 		}
 		else
-		{
-			
-			//EvalOne(interp, expression);
+		{				
 			if(kernalThread == nullptr)
-			{
-				error("Interpreter kernel not running");
+			{	error("Interpreter kernel not running");
 				continue;
 			}
-		else
-			{
-				}
 				m_input.push(line);
 				while(m_output.empty())
 				{
@@ -370,7 +357,6 @@ void repl()
 				}
 				continue;
 			}
-
 		}	
 }
 

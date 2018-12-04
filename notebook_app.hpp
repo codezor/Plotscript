@@ -33,6 +33,7 @@ private slots:
 	void stopButtonPressed();
 	void startButtonPressed();
 	void resetButtonPressed();
+	void interruptButtonPressed();
 	void EnableInputWidget();
 
 signals: 

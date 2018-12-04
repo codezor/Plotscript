@@ -72,6 +72,8 @@ NotebookApp::NotebookApp(QWidget* parent)
 	QObject::connect(stopButton, SIGNAL(released()), this, SLOT(stopButtonPressed()));
 	QObject::connect(startButton, SIGNAL(released()), this, SLOT(startButtonPressed()));
 	QObject::connect(resetButton, SIGNAL(released()), this, SLOT(resetButtonPressed()));
+	QObject::connect(interruptButton, SIGNAL(released()), this, SLOT(interruptButtonPressed()));
+
 }
 
 void NotebookApp::error(const std::string& err_str) {
@@ -289,7 +291,10 @@ void NotebookApp::resetButtonPressed()
 {
 	repl("%reset");
 }
-
+void NotebookApp::interruptButtonPressed()
+{
+	repl("%interupt");
+}
 void NotebookApp::plotScriptInputReady(QString InputText) {
 	
 	// Turn input to string	

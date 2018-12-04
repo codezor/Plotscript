@@ -601,7 +601,7 @@ Expression
 range(const std::vector<Expression>& args)
 {
   if (!nargs_equal(args, 3)) {
-    throw SemanticError("Error in call to range: invalid number of arguments.");
+    throw SemanticError("Error: in call to range: invalid number of arguments.");
   }
   // require_numeric(lowerBound, "range");
   // require_numeric(upperBound, "range");
@@ -612,10 +612,15 @@ range(const std::vector<Expression>& args)
 
  std::vector<Expression> rangeList;
 
-  if (!(lowerBound <= upperBound) || !(increment >= 0)) {
-    throw SemanticError(
-      "Error in call to range: Arguments not what they should be");
-  } else {
+  if ( !(increment >= 0)) {
+    	throw SemanticError("Error: negative or zero increment in range");
+  }
+  else if( lowerBound > upperBound )
+  {	  
+	  throw SemanticError("Error: begin greater than end in range");	
+  }
+  else
+  {
 	 // rangeList.head() = "list";
     double i = lowerBound;
     while (i <= upperBound) {

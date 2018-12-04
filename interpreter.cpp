@@ -41,7 +41,7 @@ void Interpreter::parseStreamQueue()
 			{
 			//	error();
 				OutMessage_t out;
-				out.error = "Invalid Expression. Could not parse.";
+				out.error = "Error: Invalid Expression. Could not parse.";
 				out.type = OutMessage_t::Errorstring;
 				m_output.push(out);
 				continue;

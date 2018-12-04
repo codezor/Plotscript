@@ -84,7 +84,7 @@ void
 error(const std::string& err_str)
 {
 
-	std::cerr  <<"Error: "<< err_str << std::endl;
+	std::cerr  << err_str << std::endl;
 
 }
 
@@ -102,7 +102,7 @@ void EvalOne(Interpreter& interp, std::istringstream& expression)
 	// parsing and evaluating should occur in a seperate thread	
 	if(!interp.parseStream(expression))
 	{		
-		error("Invalid Expression. Could not parse.");
+		error("Error: Invalid Expression. Could not parse.");
 	}
 	else
 	{
@@ -387,7 +387,7 @@ main(int argc, char* argv[])
 		}
 		else
 		{
-			error("Incorrect number of command line arguments.");
+			error("Error: Incorrect number of command line arguments.");
 		}
 
 	}

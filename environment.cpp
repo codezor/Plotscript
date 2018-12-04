@@ -475,7 +475,7 @@ first(const std::vector<Expression>& args)
 {
   if (!nargs_equal(args, 1)) {
     throw SemanticError(
-      "Error in call to first: more than one argument in call to first.");
+      "Error: in call to first more than one argument in call to first.");
   }
   
   
@@ -601,7 +601,7 @@ Expression
 range(const std::vector<Expression>& args)
 {
   if (!nargs_equal(args, 3)) {
-    throw SemanticError("Error: in call to range: invalid number of arguments.");
+    throw SemanticError("Error: in call to range invalid number of arguments.");
   }
   // require_numeric(lowerBound, "range");
   // require_numeric(upperBound, "range");

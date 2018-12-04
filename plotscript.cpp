@@ -84,7 +84,7 @@ void
 error(const std::string& err_str)
 {
 
-	std::cerr << "Error: " << err_str << std::endl;
+	std::cerr  << err_str << std::endl;
 
 }
 

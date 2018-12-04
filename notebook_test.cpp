@@ -1,8 +1,3 @@
-
-
-
-
-
 #include <QTest>
 #include "notebook_app.hpp"
 #include "input_widget.hpp"

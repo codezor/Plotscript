@@ -7,6 +7,7 @@
 #include <utility>
 #include <string>
 #include <map>
+#include <iomanip>
 
 Expression::Expression() {}
 
@@ -200,7 +201,7 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 	// make lines
 	// TODO: Axies creation common among plots should  be seperate function 
 	// Creation of the axies  ------------------------------------------------------------
-
+	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
 /*
 	Expression xaxis;
 	xaxis.m_head = Atom("list");
@@ -487,13 +488,25 @@ Expression Expression::PlotBoardersAndOptions(double xmin, double xmax, double y
 	Discrete.m_tail.push_back(LeftLine);
 	Discrete.m_tail.push_back(xaxis);
 	Discrete.m_tail.push_back(yaxis);
-
+	std::string temp;
 	// push back scaled axis
-	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )xmin) + "\"")));
-	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymin) + "\"")));
-	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )xmax) + "\"")));
-	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymax) + "\"")));
-	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
+	std::stringstream strsxmin;
+	strsxmin << std::setprecision(0);
+	strsxmin << xmin;
+	Discrete.m_tail.push_back(Expression(Atom("\"" + strsxmin.str() + "\"")));
+	std::stringstream strsymin;
+	strsymin << std::setprecision(0);
+	strsymin << ymin;
+	Discrete.m_tail.push_back(Expression(Atom("\"" + strsymin.str() + "\"")));
+	std::stringstream strsxmax;
+	strsxmax << std::setprecision(0);
+	strsxmax << xmax;
+	Discrete.m_tail.push_back(Expression(Atom("\"" + strsxmax.str() + "\"")));
+	std::stringstream strsymax;
+	strsymax << std::setprecision(0);
+	strsymax << ymax;
+	Discrete.m_tail.push_back(Expression(Atom("\"" + strsymax.str() + "\"")));
+	//Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
 	Discrete.m_propertyList["\"xmin\""] = Expression(Atom(xmin));
 	Discrete.m_propertyList["\"xmax\""] = Expression(Atom(xmax));
 	Discrete.m_propertyList["\"ymin\""] = Expression(Atom(ymin));
@@ -576,10 +589,10 @@ Expression Expression::setContinuousPlot(Environment&env)
 
 	}
 
-	double scaleX = 20 / abs(xmax - xmin);
+	double scaleX = 20.0 / abs(xmax - xmin);
 
-	double scaleY = -20 / abs(ymax - ymin);
-
+	double scaleY = -20.0 / abs(ymax - ymin);
+	
 	auto xii = XRange.tailConstBegin();
 	auto yii = YRange.tailConstBegin();
 	//for(int i = 0; i < n; ++i)
@@ -617,6 +630,7 @@ Expression Expression::setContinuousPlot(Environment&env)
 	Continous.m_tail.push_back(Lines);
 	
 	Continous = Continous.PlotBoardersAndOptions(xmin, xmax, ymin, ymax, scaleX, scaleY, Continous, options);
+	Continous.m_propertyList["\"object-name\""] = Expression(Atom("\"continuous-plot\""));
 	// change this to not use discreet plot
 	// return //Continous.setDiscretePlot(Datapoints, options));
 	return Expression(Continous);
@@ -626,7 +640,7 @@ Expression Expression::MakeRange(Expression Bounds)
 {
 	double lowerBound = Bounds.m_tail[0].head().asNumber();
 	double upperBound = Bounds.m_tail[1].head().asNumber();
-	double DeltaX = (upperBound - lowerBound) / 50;
+	double DeltaX = (upperBound - lowerBound) / 51.0;
 	Expression rangeList;
 	rangeList.m_head = Atom("list");
 	double i = lowerBound;

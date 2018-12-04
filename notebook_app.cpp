@@ -79,7 +79,7 @@ void NotebookApp::error(const std::string& err_str) {
 	std::string out;
 	QString TextforOut;
 	
-	outstream << "Error: " << err_str;
+	outstream << err_str;
 	out = outstream.str();
 	TextforOut = QString::fromStdString(out);
 
@@ -299,7 +299,7 @@ void NotebookApp::plotScriptInputReady(QString InputText) {
 	emit(ClearScene());
 	repl(line);
 	outputPolling();
-	
+	//return EXIT_SUCCESS;
 }
 void NotebookApp::outputPolling()
 {
@@ -380,7 +380,7 @@ void NotebookApp::whatGoesWhere(Expression exp) {
 					makeText(exp);
 				}
 				// Draw Plot discrete-plot
-				if(objectName.head().asString() == "\"discrete-plot\"")
+				if(objectName.head().asString() == "\"discrete-plot\"" || objectName.head().asString() == "\"continuous-plot\"")
 				{
 					//
 					makeDiscretePlot(exp);

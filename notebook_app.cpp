@@ -350,13 +350,7 @@ void NotebookApp::outputPolling()
 				break;
 				//std::cout << results.exp << std::endl;
 			}
-			else if(results.type == OutMessage_t::err)
-			{
-				QString TextforOut;
-				TextforOut =  results.ext.what();
-				emit ExpressionReady(TextforOut);
-				break;
-			}
+			
 
 			continue;
 		}

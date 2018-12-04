@@ -273,10 +273,7 @@ void repl()
 			{
 				std::cout << results.exp << std::endl;
 			}
-			else if(results.type == OutMessage_t::err)
-			{
-				std::cerr << results.ext.what() << std::endl;
-			}
+			
 			
 			continue;
 		}

@@ -11,10 +11,10 @@ struct OutMessage_t
 {
 	std::string error;
 	Expression exp;
-	std::exception ext;
+	
 	enum MessageType
 	{
-		Errorstring, noterr, err 
+		Errorstring, noterr,  
 	};
 	MessageType type;
 };

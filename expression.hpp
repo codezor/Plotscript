@@ -76,6 +76,7 @@ public:
 
   /// returns a continous plot
  // Expression setContinuousPlot(Expression Func, Expression Bounds, Expression Options);
+  Expression PlotBoardersAndOptions(double xmin, double xmax, double ymin, double ymax, double scaleX, double scaleY, Expression Discrete, Expression options);
 
   /// convienience member to determine if head atom is a number
   bool isHeadNumber() const noexcept;

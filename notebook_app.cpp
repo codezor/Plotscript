@@ -26,7 +26,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 	stopButton = new QPushButton("Stop Kernel", parent);
 	stopButton->setObjectName("stop");
 
-	resetButton = new QPushButton("Reset Kernal", parent);
+	resetButton = new QPushButton("Reset Kernel", parent);
 	resetButton->setObjectName("reset");
 
 	interruptButton = new QPushButton("Interrupt", parent);

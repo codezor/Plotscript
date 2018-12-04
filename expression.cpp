@@ -198,7 +198,10 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 		Discrete.m_tail.push_back(Line);
 	}
 	// make lines
-	
+	// TODO: Axies creation common among plots should  be seperate function 
+	// Creation of the axies  ------------------------------------------------------------
+
+/*
 	Expression xaxis;
 	xaxis.m_head = Atom("list");
 	
@@ -214,9 +217,6 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 	Expression yaxisP2;
 	yaxisP1.m_head = Atom("list");
 	yaxisP1.m_head = Atom("list");
-	
-	// TODO: Axies creation common among plots should  be seperate function 
-	// Creation of the axies  ------------------------------------------------------------
 	
 	// if the x min > 0 then no axis should be drawn
 	if (xmin>0){
@@ -353,14 +353,172 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 		
 	}	
 
-	Discrete.setPropertyList(Discrete, propsD);	
-
+	//Discrete.setPropertyList(Discrete, propsD);	*/
+	Discrete= Discrete.PlotBoardersAndOptions(xmin, xmax, ymin, ymax, scaleX, scaleY, Discrete, options);
 	return Discrete;
 };
-//Expression Plotboarders(double Xmin, double Xmax, double Ymin, double Ymax )
-//{	
-	//return Expression();
-//}
+Expression Expression::PlotBoardersAndOptions(double xmin, double xmax, double ymin, double ymax , double scaleX, double scaleY, Expression Discrete, Expression options)
+{	
+	std::map<std::string, Expression> props;
+	props["\"object-name\""] = Expression(Atom("\"line\""));
+	props["\"thickness\""] = Expression(Atom(0));
+	Expression xaxis;
+	xaxis.m_head = Atom("list");
+
+	Expression xaxisP1;
+	Expression xaxisP2;
+	xaxisP1.m_head = Atom("list");
+	xaxisP1.m_head = Atom("list");
+
+	Expression yaxis;
+	yaxis.m_head = Atom("list");
+
+	Expression yaxisP1;
+	Expression yaxisP2;
+	yaxisP1.m_head = Atom("list");
+	yaxisP1.m_head = Atom("list");
+
+	// if the x min > 0 then no axis should be drawn
+	if(xmin > 0)
+	{
+		xaxisP1.m_tail.push_back(Expression(xmin*scaleX));
+		xaxisP2.m_tail.push_back(Expression(xmin*scaleX));
+	}
+	// no axis should be drawn
+	else if(xmax < 0)
+	{
+		xaxisP1.m_tail.push_back(Expression(xmax*scaleX));
+		xaxisP2.m_tail.push_back(Expression(xmax*scaleX));
+	}
+	// The only time the x axis should be drawn
+	else
+	{
+		xaxisP1.m_tail.push_back(Expression(0.0));
+		xaxisP2.m_tail.push_back(Expression(0.0));
+
+	}
+	xaxisP1.m_tail.push_back(Expression(ymin*scaleY));
+	xaxisP2.m_tail.push_back(Expression(ymax*scaleY));
+
+	xaxis.m_tail.push_back(xaxisP1);
+	xaxis.m_tail.push_back(xaxisP2);
+	if(xmax >= 0 && xmin <= 0)
+	{
+		xaxis = xaxis.setPropertyList(xaxis, props);
+	}
+	yaxisP1.m_tail.push_back(Expression(xmin*scaleX));
+	yaxisP2.m_tail.push_back(Expression(xmax*scaleX));
+	if(ymin > 0)
+	{
+		yaxisP1.m_tail.push_back(Expression(ymin*scaleY));
+		yaxisP2.m_tail.push_back(Expression(ymin*scaleY));
+	}
+	else if(ymax < 0)
+	{
+		yaxisP1.m_tail.push_back(Expression(ymax*scaleY));
+		yaxisP2.m_tail.push_back(Expression(ymax*scaleY));
+	}
+	// The only time the y axis should be drawn
+	else
+	{
+		yaxisP1.m_tail.push_back(Expression(0.0));
+		yaxisP2.m_tail.push_back(Expression(0.0));
+
+	}
+	if(ymax >= 0 && ymin <= 0)
+	{
+		yaxis = yaxis.setPropertyList(yaxis, props);
+	}
+	yaxis.m_tail.push_back(yaxisP1);
+	yaxis.m_tail.push_back(yaxisP2);
+
+	// Drawing the boarders 
+	Expression minXY;
+	minXY.m_head = Atom("list");
+	minXY.m_tail.push_back(Expression(Atom(xmin*scaleX)));
+	minXY.m_tail.push_back(Expression(Atom(ymin*scaleY)));
+
+
+	Expression maxXY;
+	maxXY.m_head = Atom("list");
+	maxXY.m_tail.push_back(Expression(Atom(xmax*scaleX)));
+	maxXY.m_tail.push_back(Expression(Atom(ymax*scaleY)));
+
+	Expression minXmaxY;
+	minXmaxY.m_head = Atom("list");
+	minXmaxY.m_tail.push_back(Expression(Atom(xmin*scaleX)));
+	minXmaxY.m_tail.push_back(Expression(Atom(ymax*scaleY)));
+
+
+	Expression maxXminY;
+	maxXminY.m_head = Atom("list");
+	maxXminY.m_tail.push_back(Expression(Atom(xmax *scaleX)));
+	maxXminY.m_tail.push_back(Expression(Atom(ymin*scaleY)));
+
+
+	Expression TopLine;
+	TopLine.m_head = Atom("list");
+	TopLine.m_tail.push_back(minXY);
+	TopLine.m_tail.push_back(maxXminY);
+	TopLine = TopLine.setPropertyList(TopLine, props);
+
+	Expression BottomLine;
+	BottomLine.m_head = Atom("list");
+	BottomLine.m_tail.push_back(minXmaxY);
+	BottomLine.m_tail.push_back(maxXY);
+	BottomLine = BottomLine.setPropertyList(BottomLine, props);
+
+	Expression RightLine;
+	RightLine.m_head = Atom("list");
+	RightLine.m_tail.push_back(minXY);
+	RightLine.m_tail.push_back(minXmaxY);
+	RightLine = RightLine.setPropertyList(RightLine, props);
+
+	Expression LeftLine;
+	LeftLine.m_head = Atom("list");
+	LeftLine.m_tail.push_back(maxXY);
+	LeftLine.m_tail.push_back(maxXminY);
+	LeftLine = LeftLine.setPropertyList(LeftLine, props);
+
+	// Insert Lines
+	Discrete.m_tail.push_back(TopLine);
+	Discrete.m_tail.push_back(BottomLine);
+	Discrete.m_tail.push_back(RightLine);
+	Discrete.m_tail.push_back(LeftLine);
+	Discrete.m_tail.push_back(xaxis);
+	Discrete.m_tail.push_back(yaxis);
+
+	// push back scaled axis
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )xmin) + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymin) + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )xmax) + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymax) + "\"")));
+	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
+	Discrete.m_propertyList["\"xmin\""] = Expression(Atom(xmin));
+	Discrete.m_propertyList["\"xmax\""] = Expression(Atom(xmax));
+	Discrete.m_propertyList["\"ymin\""] = Expression(Atom(ymin));
+	Discrete.m_propertyList["\"ymax\""] = Expression(Atom(ymax));
+
+	std::map<std::string, Expression> propsD;
+	for(auto pr = options.tailConstBegin(); pr != options.tailConstEnd(); ++pr)
+	{
+		// Make a property list
+		Expression property = Expression(Atom(pr->m_tail[0].head().asString()));
+
+		if(pr->m_tail[1].isHeadString())
+		{
+			Discrete.m_tail.push_back(Expression(Atom(pr->m_tail[1].head().asString())));
+		}
+
+		Discrete.m_propertyList[property.head().asString()] = Expression(Atom(pr->m_tail[1].head()));
+
+	}
+
+	Discrete = Discrete.setPropertyList(Discrete, propsD);
+
+	
+	return Discrete;
+}
 
 Expression Expression::setContinuousPlot(Environment&env)
 {
@@ -374,7 +532,8 @@ Expression Expression::setContinuousPlot(Environment&env)
 	Expression YRange = results.eval(env);
 	Expression options = m_tail[2];
 
-	Expression Datapoints;
+
+	Expression Lines;
 	int n = XRange.m_tail.size();
 	int m = YRange.m_tail.size();
 	if(n != m)
@@ -382,31 +541,92 @@ Expression Expression::setContinuousPlot(Environment&env)
 		std::stringstream s; s << __FILE__ << ":" << __LINE__; throw ( s.str() );
 	}
 
+
+	double xmin = Bounds.m_tail[0].head().asNumber();
+	double xmax = Bounds.m_tail[1].head().asNumber();
+	double ymin = YRange.m_tail[0].head().asNumber();
+	double ymax = YRange.m_tail[0].head().asNumber();;
+	Expression Continous;
+	Continous.m_head = Atom("list");
+	std::map<std::string, Expression> props;
+	props["\"object-name\""] = Expression(Atom("\"line\""));
+	props["\"thickness\""] = Expression(Atom(0));
+	// this only makes points it needs to make lines
+	Expression Datapoint;
+	Datapoint.m_head = Atom("list");
+	Lines.m_head = Atom("list");
 	auto xi = XRange.tailConstBegin();
 	auto yi = YRange.tailConstBegin();
-
-	// this only makes points it needs to make lines
-	for(int i = 0; i < n; ++i)	{
-
+	for(int i = 0; i < n; ++i)
+	{
 		std::vector<Expression> Point;
 		Point.emplace_back(*xi);
 		Point.emplace_back(*yi);
-		Datapoints.m_tail.push_back(Expression(Point));
+		Datapoint.m_tail.push_back(Expression(Point));
+		if(yi->head().asNumber() < ymin)
+		{
+			ymin = yi->head().asNumber();
+		}
+		else if(yi->head().asNumber() > ymax)
+		{
+			ymax = yi->head().asNumber();
+		}
 		++xi;
 		++yi;
+
 	}
 
-	Expression Continous;
+	double scaleX = 20 / abs(xmax - xmin);
 
+	double scaleY = -20 / abs(ymax - ymin);
+
+	auto xii = XRange.tailConstBegin();
+	auto yii = YRange.tailConstBegin();
+	//for(int i = 0; i < n; ++i)
+	Expression Datapoints;
+	Datapoints.m_head = Atom("list");
+	for (auto po = Datapoint.tailConstBegin(); po != Datapoint.tailConstEnd(); ++po)
+	{	
+		std::vector<Expression> Points;
+		Points.emplace_back(xii->head().asNumber()*scaleX);
+		Points.emplace_back(yii->head().asNumber()*scaleY);
+		Datapoints.m_tail.push_back(Expression(Points));
+		//po->m_tail[0].head().asNumber()
+		++xii;
+		++yii;
+	}
+	
+	auto pointIt = Datapoints.tailConstBegin();
+	int count  = Datapoints.m_tail.size();
+	int i = 0;
+	while(pointIt != Datapoints.tailConstEnd() && i < (count- 1)  )
+	{		
+		Expression Line;
+		Line.m_head = Atom("list");
+		Line.m_tail.push_back(*pointIt);		
+		++pointIt;
+		Line.m_tail.push_back( *pointIt);
+		Line = Line.setPropertyList(Line, props);
+		Continous.m_tail.push_back(Line);
+		//Lines.m_tail.push_back(Line);
+		//Lines = Lines.setPropertyList(Lines, props);
+		
+		i++;
+	}
+	//Lines = Lines.setPropertyList(Lines, props);
+	Continous.m_tail.push_back(Lines);
+	
+	Continous = Continous.PlotBoardersAndOptions(xmin, xmax, ymin, ymax, scaleX, scaleY, Continous, options);
 	// change this to not use discreet plot
-	return Expression(Continous.setDiscretePlot(Datapoints, options));
+	// return //Continous.setDiscretePlot(Datapoints, options));
+	return Expression(Continous);
 }
 
 Expression Expression::MakeRange(Expression Bounds)
 {
 	double lowerBound = Bounds.m_tail[0].head().asNumber();
 	double upperBound = Bounds.m_tail[1].head().asNumber();
-	double DeltaX = abs(upperBound - lowerBound) / 50;
+	double DeltaX = (upperBound - lowerBound) / 50;
 	Expression rangeList;
 	rangeList.m_head = Atom("list");
 	double i = lowerBound;

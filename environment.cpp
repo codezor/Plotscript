@@ -615,7 +615,7 @@ range(const std::vector<Expression>& args)
   if ( !(increment >= 0)) {
     	throw SemanticError("Error: negative or zero increment in range");
   }
-  else if( lowerBound > upperBound )
+  else if( lowerBound >= upperBound )
   {	  
 	  throw SemanticError("Error: begin greater than end in range");	
   }

@@ -65,8 +65,8 @@ void Interpreter::parseStreamQueue()
 				catch(const SemanticError& ex)
 				{
 					OutMessage_t out;
-					out.error = ex.what();
-					out.type = OutMessage_t::Errorstring;
+					out.ext = ex;
+					out.type = OutMessage_t::err;
 					m_output.push(out);
 					
 					continue;

@@ -202,159 +202,7 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 	// TODO: Axies creation common among plots should  be seperate function 
 	// Creation of the axies  ------------------------------------------------------------
 	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
-/*
-	Expression xaxis;
-	xaxis.m_head = Atom("list");
-	
-	Expression xaxisP1;
-	Expression xaxisP2;
-	xaxisP1.m_head = Atom("list");
-	xaxisP1.m_head = Atom("list");
-	
-	Expression yaxis;
-	yaxis.m_head= Atom("list");
-	
-	Expression yaxisP1;
-	Expression yaxisP2;
-	yaxisP1.m_head = Atom("list");
-	yaxisP1.m_head = Atom("list");
-	
-	// if the x min > 0 then no axis should be drawn
-	if (xmin>0){
-		xaxisP1.m_tail.push_back(Expression(xmin*scaleX));
-		xaxisP2.m_tail.push_back(Expression(xmin*scaleX));
-	}
-	// no axis should be drawn
-	else if(xmax < 0)
-	{
-		xaxisP1.m_tail.push_back(Expression(xmax*scaleX));
-		xaxisP2.m_tail.push_back(Expression(xmax*scaleX));
-	}
-	// The only time the x axis should be drawn
-	else
-	{
-		xaxisP1.m_tail.push_back(Expression(0.0));
-		xaxisP2.m_tail.push_back(Expression(0.0));
-		
-	}
-	xaxisP1.m_tail.push_back(Expression(ymin*scaleY));
-	xaxisP2.m_tail.push_back(Expression(ymax*scaleY));
 
-	xaxis.m_tail.push_back(xaxisP1);
-	xaxis.m_tail.push_back(xaxisP2);
-	if(xmax >= 0 && xmin <= 0)
-	{
-		xaxis = xaxis.setPropertyList(xaxis, props);
-	}
-	yaxisP1.m_tail.push_back(Expression(xmin*scaleX));
-	yaxisP2.m_tail.push_back(Expression(xmax*scaleX));
-	if(ymin > 0)
-	{
-		yaxisP1.m_tail.push_back(Expression(ymin*scaleY));
-		yaxisP2.m_tail.push_back(Expression(ymin*scaleY));
-	}
-	else if(ymax < 0)
-	{
-		yaxisP1.m_tail.push_back(Expression(ymax*scaleY));
-		yaxisP2.m_tail.push_back(Expression(ymax*scaleY));
-	}
-	// The only time the y axis should be drawn
-	else
-	{
-		yaxisP1.m_tail.push_back(Expression(0.0));
-		yaxisP2.m_tail.push_back(Expression(0.0));
-		
-	}
-	if(ymax >= 0 && ymin <= 0)
-	{
-		yaxis = yaxis.setPropertyList(yaxis, props);
-	}
-	yaxis.m_tail.push_back(yaxisP1);
-	yaxis.m_tail.push_back(yaxisP2);	
-	
-	// Drawing the boarders 
-	Expression minXY;
-	minXY.m_head = Atom("list");
-	minXY.m_tail.push_back (Expression(Atom(xmin*scaleX)));
-	minXY.m_tail.push_back(Expression(Atom(ymin*scaleY)));
-	
-	
-	Expression maxXY;
-	maxXY.m_head = Atom("list");
-	maxXY.m_tail.push_back(Expression(Atom(xmax*scaleX)));
-	maxXY.m_tail.push_back(Expression(Atom(ymax*scaleY)));
-	
-	Expression minXmaxY;
-	minXmaxY.m_head = Atom("list");
-	minXmaxY.m_tail.push_back(Expression(Atom(xmin*scaleX)));
-	minXmaxY.m_tail.push_back(Expression(Atom(ymax*scaleY)));
-	
-
-	Expression maxXminY;
-	maxXminY.m_head= Atom("list");
-	maxXminY.m_tail.push_back(Expression(Atom(xmax *scaleX)));
-	maxXminY.m_tail.push_back(Expression(Atom(ymin*scaleY)));
-	
-	
-	Expression TopLine;
-	TopLine.m_head = Atom("list");
-	TopLine.m_tail.push_back(minXY);
-	TopLine.m_tail.push_back(maxXminY);
-	TopLine = TopLine.setPropertyList(TopLine, props);
-
-	Expression BottomLine;
-	BottomLine.m_head = Atom("list");
-	BottomLine.m_tail.push_back(minXmaxY);
-	BottomLine.m_tail.push_back(maxXY);
-	BottomLine = BottomLine.setPropertyList(BottomLine, props);
-	
-	Expression RightLine;
-	RightLine.m_head = Atom("list");
-	RightLine.m_tail.push_back(minXY);
-	RightLine.m_tail.push_back(minXmaxY);
-	RightLine = RightLine.setPropertyList(RightLine, props);
-
-	Expression LeftLine;
-	LeftLine.m_head = Atom("list");
-	LeftLine.m_tail.push_back(maxXY);
-	LeftLine.m_tail.push_back(maxXminY);
-	LeftLine = LeftLine.setPropertyList(LeftLine, props);
-	
-	// Insert Lines
-	Discrete.m_tail.push_back(TopLine);
-	Discrete.m_tail.push_back(BottomLine);
-	Discrete.m_tail.push_back(RightLine);
-	Discrete.m_tail.push_back(LeftLine);
-	Discrete.m_tail.push_back(xaxis);
-	Discrete.m_tail.push_back(yaxis);
-
-	// push back scaled axis
-	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)xmin) + "\"" )));
-	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)ymin) + "\"")));
-	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string((int)xmax) + "\"")));
-	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymax) + "\"")));
-	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
-	Discrete.m_propertyList["\"xmin\""] = Expression(Atom(xmin));
-	Discrete.m_propertyList["\"xmax\""] = Expression(Atom(xmax));
-	Discrete.m_propertyList["\"ymin\""] = Expression(Atom(ymin));
-	Discrete.m_propertyList["\"ymax\""] = Expression(Atom(ymax));
-
-	std::map<std::string, Expression> propsD;
-	for(auto pr = options.tailConstBegin(); pr != options.tailConstEnd(); ++pr)
-	{
-		// Make a property list
-		Expression property = Expression(Atom( pr->m_tail[0].head().asString() ));
-		
-		if(pr->m_tail[1].isHeadString())
-		{
-			Discrete.m_tail.push_back(Expression(Atom(pr->m_tail[1].head().asString())));
-		}
-
-		Discrete.m_propertyList[property.head().asString()] = Expression(Atom(pr->m_tail[1].head()));
-		
-	}	
-
-	//Discrete.setPropertyList(Discrete, propsD);	*/
 	Discrete= Discrete.PlotBoardersAndOptions(xmin, xmax, ymin, ymax, scaleX, scaleY, Discrete, options);
 	return Discrete;
 };
@@ -554,7 +402,6 @@ Expression Expression::setContinuousPlot(Environment&env)
 		std::stringstream s; s << __FILE__ << ":" << __LINE__; throw ( s.str() );
 	}
 
-
 	double xmin = Bounds.m_tail[0].head().asNumber();
 	double xmax = Bounds.m_tail[1].head().asNumber();
 	double ymin = YRange.m_tail[0].head().asNumber();
@@ -586,11 +433,9 @@ Expression Expression::setContinuousPlot(Environment&env)
 		}
 		++xi;
 		++yi;
-
 	}
 
 	double scaleX = 20.0 / abs(xmax - xmin);
-
 	double scaleY = -20.0 / abs(ymax - ymin);
 	
 	auto xii = XRange.tailConstBegin();
@@ -640,7 +485,7 @@ Expression Expression::MakeRange(Expression Bounds)
 {
 	double lowerBound = Bounds.m_tail[0].head().asNumber();
 	double upperBound = Bounds.m_tail[1].head().asNumber();
-	double DeltaX = (upperBound - lowerBound) / 51.0;
+	double DeltaX = (upperBound - lowerBound) / 52.0;
 	Expression rangeList;
 	rangeList.m_head = Atom("list");
 	double i = lowerBound;

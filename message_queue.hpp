@@ -2,6 +2,7 @@
 www.justsoftwaresolutions.co.uk/threading/implementing-a-thread-safe-queue-using-condition-variables.html
 */
 
+
 #include <condition_variable>
 #include <mutex>
 #include <queue>
@@ -10,9 +11,10 @@ struct OutMessage_t
 {
 	std::string error;
 	Expression exp;
+	std::exception ext;
 	enum MessageType
 	{
-		Errorstring, noterr
+		Errorstring, noterr, err 
 	};
 	MessageType type;
 };

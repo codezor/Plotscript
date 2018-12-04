@@ -84,7 +84,7 @@ void
 error(const std::string& err_str)
 {
 
-	std::cerr  << err_str << std::endl;
+	std::cerr  << "Error: "<< err_str << std::endl;
 
 }
 
@@ -272,6 +272,10 @@ void repl()
 			else if(results.type == OutMessage_t::noterr)
 			{
 				std::cout << results.exp << std::endl;
+			}
+			else if(results.type == OutMessage_t::err)
+			{
+				std::cerr << results.ext.what() << std::endl;
 			}
 			
 			continue;

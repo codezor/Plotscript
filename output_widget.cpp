@@ -49,7 +49,7 @@ void OutputWidget::DisplayPoint(double x, double y, double size) {
 	//CrossHair();
 	QPen pen;
 	pen.setColor(Qt::black);
-	pen.setWidth(0);
+	pen.setWidth(size);
 	QGraphicsEllipseItem *Point =scene->addEllipse((x), (y), size, size, pen, QBrush(Qt::SolidPattern));
 	Point->moveBy(-Point->boundingRect().width() / 2, -Point->boundingRect().height() / 2);
 	Point->setTransformOriginPoint(Point->boundingRect().width() / 2, Point->boundingRect().height() / 2);

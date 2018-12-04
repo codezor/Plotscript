@@ -70,10 +70,7 @@ void Interpreter::parseStreamQueue()
 					m_output.push(out);
 					
 					continue;
-				}
-
-
-				
+				}				
 
 			}
 		}

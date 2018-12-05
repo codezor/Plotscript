@@ -30,7 +30,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 	resetButton->setObjectName("reset");
 
 	interruptButton = new QPushButton("Interrupt", parent);
-	interruptButton->setObjectName("interrupt");
+	interruptButton->setObjectName("interrupt");	
 
 	layout = new QGridLayout;
 	layout->addWidget(startButton, 0, 0);
@@ -194,18 +194,12 @@ void NotebookApp::eval_from_command(std::string argexp) {
 // contains both parse and evaluate which will need to be done in a seperate thread
 void NotebookApp::repl(std::string line) //TODO: rename since this technically isn't a loop now
 {
-
-	//std::thread *m_plotscript_thread_ptr = nullptr;
 	// interp;
 	std::stringstream outstream;
 	std::string out;
 	QString TextforOut;
-	//std::thread *m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);
 	
-	//while(true){
-	//message_queue<OutMessage_t> &m_output = message_queue<OutMessage_t>::get_instance();
 	message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
-
 
 	std::istringstream expression(line);
 	
@@ -291,9 +285,9 @@ void NotebookApp::resetButtonPressed()
 }
 void NotebookApp::interruptButtonPressed()
 {
-	//xpression::interrupt();
 	emit(ClearScene());
-	emit ExpressionReady("Error: interpreter kernel interrupted" );
+	
+	emit ExpressionReady("Error: interpreter kernel interrupted");
 	repl("%reset");
 }
 void NotebookApp::plotScriptInputReady(QString InputText) {
@@ -324,17 +318,8 @@ void NotebookApp::outputPolling()
 		if(!m_output.empty())
 		{
 			OutMessage_t results;
-			m_output.wait_and_pop(results);
+			m_output.try_pop(results);			
 			
-			//while(m_output.try_pop(results) == false)
-			//{
-				//if(m_interrupt == true  )
-				//{
-					//emit ExpressionReady("Error: interpreter kernel interrupted");
-					//m_interrupt = false;
-					//break;
-				//}
-			//}
 			if(results.type == OutMessage_t::Errorstring)
 			{
 

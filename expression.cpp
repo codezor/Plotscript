@@ -924,10 +924,10 @@ Expression Expression::handle_map(Environment& env) {
 }
 
 
-void Expression::interrupt()
+/*void Expression::interrupt()
 {
 	m_interrupt = true;
-}
+}*/
 
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
@@ -937,11 +937,11 @@ Expression::eval(Environment& env)
 {
 	// handle interrupt
 	// handle interrupt
-	if(m_interrupt == true)
+	/*if(m_interrupt == true)
 	{
 		m_interrupt = false; // reset the interrupt signal
 		throw SemanticError("Error: interpreter kernel interrupted");
-	}
+	}*/
 
 
 	if (m_tail.empty() && m_head.asSymbol() != "list") {

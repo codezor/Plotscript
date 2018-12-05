@@ -538,6 +538,21 @@ TEST_CASE("Testing get-property", "[interpreter]" )
 	}
 }
 
+TEST_CASE("Testing discrete-plot", "[interpreter]")
+{
+	{
+		std::string getinput = " (begin (discrete-plot (list (list -1 -1) (list 1 1))  (list (list \"title\" \"The Title\") (list \"abscissa-label\" \"X Label\")  (list \"ordinate-label\" \"Y Label\") )))";
+		INFO(getinput);
+		Expression getresult = run(getinput);
+		
+		Interpreter interp;
+		std::istringstream iss(getinput);
+
+		bool ok = interp.parseStream(iss);
+		CHECK(ok == true);
+	}
+}
+
 TEST_CASE( "Test arithmetic procedures", "[interpreter]" ) {
 
   {

@@ -113,8 +113,8 @@ public:
 	//std::map<std::string, Expression> m_propertyList; // TODO: Make this private
 
 
-	static bool m_interrupt;
-	static void interrupt(); // Usage: Expression::interrupt();
+	//static bool m_interrupt;
+	//static void interrupt(); // Usage: Expression::interrupt();
 
 private:
   // the head of the expression

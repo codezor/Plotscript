@@ -90,20 +90,10 @@ void Interpreter::parseStreamQueue()
 
 Expression Interpreter::evaluate(){
 	// eval consumes the AST
-	Expression temp_exp = ast;
-	Environment temp_env = env;
-
-	try
-	{
-		Expression res = ast.eval(env);
-		return res;
-	}
-	catch(Expression::Interrupted & e)
-	{
-		ast = temp_exp;
-		env = temp_env;
-		throw e;
-	}
+	
+	Expression res = ast.eval(env);
+	return res;
+		
 }
 void Interpreter::clearInterp()
 {

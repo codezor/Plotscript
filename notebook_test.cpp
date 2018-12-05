@@ -12,10 +12,9 @@ class NotebookTest : public QObject
 private slots:
 	// TODO: implement additional tests here
 	void initTestCase();
-
-
-
 	// TODO: implement additional tests here
+	void testDiscretePlotLayout();
+
 private:
 
 	NotebookApp notebook;

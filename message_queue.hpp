@@ -14,7 +14,7 @@ struct OutMessage_t
 	
 	enum MessageType
 	{
-		Errorstring, noterr,  
+		Errorstring, noterr  
 	};
 	MessageType type;
 };

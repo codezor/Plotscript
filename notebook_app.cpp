@@ -224,8 +224,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 				delete m_plotscript_thread_ptr;
 				//m_plotscript_thread_ptr->~thread();
 				m_plotscript_thread_ptr = nullptr;
-				//is_thread_alive = false;
-				//continue;
+				
 			}
 
 		}
@@ -239,9 +238,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 
 				}
 				m_plotscript_thread_ptr->join();
-				//m_plotscript_thread_ptr->detach();
-
-					//ExitProccess				
+				//ExitProccess				
 				delete m_plotscript_thread_ptr;
 				m_plotscript_thread_ptr = nullptr;
 				interp.clearInterp();
@@ -561,4 +558,21 @@ void NotebookApp::EnableInputWidget()
 {
 
 	input->setReadOnly(false);
+}
+
+NotebookApp::~NotebookApp()
+{
+	if(m_plotscript_thread_ptr != nullptr)
+	{
+		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
+		m_input.push("%stop");
+		while(!m_input.empty())
+		{
+
+		}
+		m_plotscript_thread_ptr->join();
+		//ExitProccess				
+		delete m_plotscript_thread_ptr;
+		m_plotscript_thread_ptr = nullptr;
+	}
 }

@@ -26,7 +26,7 @@ class NotebookApp : public QWidget
 
 public:
 	NotebookApp(QWidget* parent = nullptr);
-
+	~NotebookApp();
 private slots:		
 	// Keypress in the input widget has occurred
 	void plotScriptInputReady(QString  InputText);

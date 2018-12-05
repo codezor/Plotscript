@@ -1,3 +1,88 @@
+// This is an example of how to to trap Cntrl-C in a cross-platform manner
+// it creates a simple REPL event loop and shows how to interrupt it.
+
+#include <csignal>
+#include <cstdlib>
+
+// This global is needed for communication between the signal handler
+// and the rest of the code. This atomic integer counts the number of times
+// Cntl-C has been pressed by not reset by the REPL code.
+volatile sig_atomic_t global_status_flag = 0;
+
+// *****************************************************************************
+// install a signal handler for Cntl-C on Windows
+// *****************************************************************************
+#if defined(_WIN64) || defined(_WIN32)
+#include <windows.h>
+
+// this function is called when a signal is sent to the process
+BOOL WINAPI interrupt_handler(DWORD fdwCtrlType)
+{
+
+	switch(fdwCtrlType)
+	{
+	case CTRL_C_EVENT: // handle Cnrtl-C
+	  // if not reset since last call, exit
+		if(global_status_flag > 0)
+		{
+			exit(EXIT_FAILURE);
+		}
+		++global_status_flag;
+		return TRUE;
+
+	default:
+		return FALSE;
+	}
+}
+
+// install the signal handler
+inline void install_handler()
+{
+	SetConsoleCtrlHandler(interrupt_handler, TRUE);
+}
+// *****************************************************************************
+
+// *****************************************************************************
+// install a signal handler for Cntl-C on Unix/Posix
+// *****************************************************************************
+#elif defined(__APPLE__) || defined(__linux) || defined(__unix) ||             \
+    defined(__posix)
+#include <unistd.h>
+
+// this function is called when a signal is sent to the process
+void interrupt_handler(int signal_num)
+{
+
+	if(signal_num == SIGINT)
+	{ // handle Cnrtl-C
+// if not reset since last call, exit
+		if(global_status_flag > 0)
+		{
+			exit(EXIT_FAILURE);
+		}
+		++global_status_flag;
+	}
+}
+
+// install the signal handler
+inline void install_handler()
+{
+
+	struct sigaction sigIntHandler;
+
+	sigIntHandler.sa_handler = interrupt_handler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+
+	sigaction(SIGINT, &sigIntHandler, NULL);
+}
+#endif
+// *****************************************************************************
+
+
+
+
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -97,8 +182,7 @@ info(const std::string& err_str)
 
 void EvalOne(Interpreter& interp, std::istringstream& expression)
 {
-	//message_queue<std::string>  input;
-	//message_queue<Expression> &output= message_queue<Expression>::get_instance();
+	
 	// parsing and evaluating should occur in a seperate thread	
 	if(!interp.parseStream(expression))
 	{		
@@ -197,51 +281,6 @@ eval_from_command(std::string argexp)
 
 	return eval_from_stream(expression, interp);
 }
-
-// Im sure I shouln't do this 
-/*int eval_from_message_queue(message_queue<std::string> &queue)
-{
-	while(!queue.empty())
-	{
-		std::string string;// = queue.front();
-		//std::string const string = 
-		queue.wait_and_pop(string);
-		// Eval from command uses eval from stream. Eval from stream instantiates a new interpereter.
-		int const result = eval_from_command(string);
-		if(result != EXIT_SUCCESS)
-		{
-			return result;
-		}
-		//queue.pop();
-	}
-
-	return EXIT_SUCCESS;
-}*/
-
-
-/*void plotscript_thread_main()
-{
-	//message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
-	message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
-	
-	Interpreter interp;
-	startUp(interp);
-
-	while(true)
-	{	
-			//prompt();
-			std::string line;
-			m_input.wait_and_pop(line);
-
-			if(line.empty())
-				continue;
-
-			std::istringstream expression(line);
-			EvalOne(interp, expression);	
-
-	}
-}*/
-
 
 // A REPL is a repeated read-eval-print loop
 // contains a parse and evaluate
@@ -360,8 +399,6 @@ void repl()
 			}
 		}	
 }
-
-
 
 int
 main(int argc, char* argv[])

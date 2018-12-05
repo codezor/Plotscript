@@ -203,7 +203,34 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 
 	std::istringstream expression(line);
 	
-		if(line == "%stop")
+
+
+
+	if(line == "%reset")
+	{
+		if(m_plotscript_thread_ptr != nullptr)
+		{
+
+			emit(ClearScene());
+			emit ExpressionReady("Error: interpreter kernel interrupted");
+
+			m_input.push("%stop");
+			while(!m_input.empty())
+			{
+
+			}
+			m_plotscript_thread_ptr->join();
+			//ExitProccess				
+			delete m_plotscript_thread_ptr;
+			m_plotscript_thread_ptr = nullptr;
+			interp.clearInterp();
+			startUp(interp);
+			m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);
+			//continue;
+
+		}
+	}
+	else if (line == "%stop")
 		{
 			if(m_plotscript_thread_ptr != nullptr)
 			{
@@ -285,10 +312,7 @@ void NotebookApp::resetButtonPressed()
 }
 void NotebookApp::interruptButtonPressed()
 {
-	emit(ClearScene());
-	
-	emit ExpressionReady("Error: interpreter kernel interrupted");
-	repl("%reset");
+	repl("%interrupt");
 }
 void NotebookApp::plotScriptInputReady(QString InputText) {
 	

@@ -35,7 +35,8 @@ void Interpreter::parseStreamQueue()
 			{
 				break;
 			}
-
+			auto temp_ast = ast;
+			auto temp_env = env;
 			std::istringstream expression(line);
 			if(!parseStream(expression))
 			{
@@ -49,12 +50,13 @@ void Interpreter::parseStreamQueue()
 
 			else
 			{
+				
 				try
 				{
-					evaluate();
+					
 					//std::cout << exp;
 					//m_output.push(exp);message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
-					
+					evaluate();
 					OutMessage_t out;
 					out.exp = ast.eval(env);
 					out.type = OutMessage_t::noterr;
@@ -65,12 +67,19 @@ void Interpreter::parseStreamQueue()
 				catch(const SemanticError& ex)
 				{
 					OutMessage_t out;
+					
 					out.error = ex.what();
+					if(out.error == "Error: interpreter kernel interrupted")
+					{
+						ast = temp_ast;
+						env = temp_env;
+					}
 					out.type = OutMessage_t::Errorstring;
 					m_output.push(out);
 					
 					continue;
-				}				
+				}	
+				
 
 			}
 		}

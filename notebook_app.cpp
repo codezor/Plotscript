@@ -286,11 +286,15 @@ void NotebookApp::startButtonPressed()
 
 void NotebookApp::resetButtonPressed()
 {
+	
 	repl("%reset");
 }
 void NotebookApp::interruptButtonPressed()
 {
-	repl("%interupt");
+	//xpression::interrupt();
+	emit(ClearScene());
+	emit ExpressionReady("Error: interpreter kernel interrupted" );
+	repl("%reset");
 }
 void NotebookApp::plotScriptInputReady(QString InputText) {
 	
@@ -354,7 +358,6 @@ void NotebookApp::outputPolling()
 	}
 	
 }
-
 
 void NotebookApp::whatGoesWhere(Expression exp) {	
 

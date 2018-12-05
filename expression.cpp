@@ -9,16 +9,25 @@
 #include <map>
 #include <iomanip>
 
-Expression::Expression() {}
+Expression::Expression() {
+	// handle interrupt
+	//if(m_interrupt == true)
+	//{
+		//m_interrupt = false; // reset the interrupt signal
+		//throw SemanticError("Error: interpreter kernel interrupted");
+	//}
+}
 
-Expression::Expression(const Atom& a)
+Expression::Expression(const Atom& a) : Expression()
+
 {
   m_head = a;
   
 }
 
 // recursive copy includes property list
-Expression::Expression(const Expression& a)
+Expression::Expression(const Expression& a) : Expression()
+
 {
   m_head = a.m_head;
   for (auto e : a.m_tail) {
@@ -28,7 +37,9 @@ Expression::Expression(const Expression& a)
 }
 
 // Constructor with property list
-Expression::Expression(const Expression& a,std::map<std::string, Expression>& es) {
+Expression::Expression(const Expression& a,std::map<std::string, Expression>& es)
+	: Expression()
+{
 		
 	m_head = a.m_head;
 	for (auto e : a.m_tail) {
@@ -496,7 +507,8 @@ Expression Expression::MakeRange(Expression Bounds)
 	}
 	return rangeList;
 }
-Expression::Expression(const std::vector<Expression>& es)
+Expression::Expression(const std::vector<Expression>& es) : Expression()
+
 {
 	// maybe set the head to list and then modify list printing to ignore the "list" head?
   m_head = Atom("list");
@@ -801,7 +813,7 @@ Expression Expression::store_lamba(Environment& env, Expression& original) {
 
 Expression
 Expression::handle_apply(Environment& env) {
-		
+	
 	env.is_known(Atom());
 	// Check only two areguments
 	if (m_tail.size() != 2) {
@@ -823,9 +835,7 @@ Expression::handle_apply(Environment& env) {
 
 	if (!m_tail[1].isHeadList())
 	{
-
-			throw SemanticError("Error: second argument to apply not a list");
-		
+		throw SemanticError("Error: second argument to apply not a list");		
 	}
 
 	Expression results;
@@ -928,11 +938,13 @@ Expression
 Expression::eval(Environment& env)
 {
 	// handle interrupt
+	// handle interrupt
 	if(m_interrupt == true)
 	{
 		m_interrupt = false; // reset the interrupt signal
-		throw Interrupted();
+		throw SemanticError("Error: interpreter kernel interrupted");
 	}
+
 
 	if (m_tail.empty() && m_head.asSymbol() != "list") {
     return handle_lookup(m_head, env);
@@ -975,6 +987,7 @@ Expression::eval(Environment& env)
     }
     return apply(m_head, results, env);
   }
+
 }
 
 std::ostream&

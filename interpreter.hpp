@@ -11,11 +11,16 @@ It maintains an environment during evaluation.
 #include <istream>
 #include <string>
 
+// threading 
 #include <thread>
 #include <queue>
 #include <condition_variable>
 #include <mutex>
 #include <future>
+
+// Signal 
+#include <csignal>
+#include <cstdlib>
 
 // module includes
 #include "environment.hpp"
@@ -51,7 +56,19 @@ public:
    */
   Expression evaluate();
   void clearInterp();
+  /*void interrupt_handler(int signal_num)
+  {
 
+	  if(signal_num == SIGINT)
+	  { // handle Cn rtl-C
+  // if not reset since last call, exit
+		  if(global_status_flag > 0)
+		  {
+			  exit(EXIT_FAILURE);
+		  }
+		  ++global_status_flag;
+	  }
+  }*/
 private:
   // the environment
   Environment env;

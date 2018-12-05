@@ -25,7 +25,8 @@ BOOL WINAPI interrupt_handler(DWORD fdwCtrlType)
 	  // if not reset since last call, exit
 		if(global_status_flag > 0)
 		{
-			exit(EXIT_FAILURE);
+
+			//exit(EXIT_FAILURE);
 		}
 		++global_status_flag;
 		return TRUE;
@@ -54,11 +55,12 @@ void interrupt_handler(int signal_num)
 {
 
 	if(signal_num == SIGINT)
-	{ // handle Cnrtl-C
+	{ // handle Cn rtl-C
 // if not reset since last call, exit
 		if(global_status_flag > 0)
 		{
-			exit(EXIT_FAILURE);
+
+			//exit(EXIT_FAILURE);
 		}
 		++global_status_flag;
 	}
@@ -79,16 +81,10 @@ inline void install_handler()
 #endif
 // *****************************************************************************
 
-
-
-
-
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-
-
 
 #include <thread>
 #include <queue>
@@ -161,7 +157,13 @@ readline()
 {
 	std::string line;
 	std::getline(std::cin, line);
-
+	if(std::cin.fail() || std::cin.eof())
+	{
+		std::cin.clear(); // reset cin state
+		line.clear(); //clear input string
+		std::cout << "Error: interpreter kernel interrupted" << std::endl;
+		line = "%reset";
+	}
 	return line;
 }
 
@@ -169,8 +171,7 @@ void
 error(const std::string& err_str)
 {
 
-	std::cerr  << "Error: "<< err_str << std::endl;
-
+	std::cerr << "Error: " << err_str << std::endl;
 }
 
 void
@@ -182,10 +183,10 @@ info(const std::string& err_str)
 
 void EvalOne(Interpreter& interp, std::istringstream& expression)
 {
-	
+
 	// parsing and evaluating should occur in a seperate thread	
 	if(!interp.parseStream(expression))
-	{		
+	{
 		error("Error: Invalid Expression. Could not parse.");
 	}
 	else
@@ -286,19 +287,18 @@ eval_from_command(std::string argexp)
 // contains a parse and evaluate
 void repl()
 {
+	
 	Interpreter interp;
-	
 	startUp(interp);
+	std::thread *kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);	
+	//bool interrupted = false;
 
-	std::thread *kernalThread =new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);
-	
-	
-    while(!std::cin.eof())	
+	while(!std::cin.eof())
 	{
-
+		global_status_flag = 0;
 		message_queue<OutMessage_t> &m_output = message_queue<OutMessage_t>::get_instance();
-		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
-
+		message_queue<std::string> &m_input = message_queue<std::string>::get_instance();		
+		
 		if(!m_output.empty())
 		{
 			OutMessage_t results;
@@ -306,22 +306,23 @@ void repl()
 			if(results.type == OutMessage_t::Errorstring)
 			{
 				error(results.error);
-				//continue;
+				continue;
 			}
 			else if(results.type == OutMessage_t::noterr)
 			{
 				std::cout << results.exp << std::endl;
 			}
-			
-			
+			continue;
+		}
+
+		prompt();
+		std::string line = readline();		
+
+		if(line.empty()){
 			continue;
 		}
 		
-		prompt();
-		std::string line = readline();
-		if(line.empty())
-			continue;
-		//else 
+		
 		if(line == "%stop")
 		{
 			if(kernalThread != nullptr)
@@ -342,6 +343,7 @@ void repl()
 			}
 
 		}
+
 		else if(line == "%reset")
 		{
 			if(kernalThread != nullptr)
@@ -353,19 +355,19 @@ void repl()
 				}
 				kernalThread->join();
 				//kernalThread->detach();
-				
+
 					//ExitProccess				
 				delete kernalThread;
 				kernalThread = nullptr;
 				interp.clearInterp();
 				startUp(interp);
-				kernalThread = new std::thread(&Interpreter::parseStreamQueue,&interp);
+				kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
 				continue;
 
 			}
 		}
 		else if(line == "%start")
-		{			
+		{
 			if(kernalThread == nullptr)
 			{
 				kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
@@ -385,39 +387,41 @@ void repl()
 			return;
 		}
 		else
-		{				
+		{
 			if(kernalThread == nullptr)
-			{	error("Interpreter kernel not running");
+			{
+				error("Interpreter kernel not running");
 				continue;
 			}
-				m_input.push(line);
-				while(m_output.empty())
+			m_input.push(line);			
+			while(m_output.empty())
+			{
+				if(global_status_flag > 0)
 				{
 
+					std::cout << "flage greater than zero" << std::endl;
+					break;
 				}
-				continue;
-			}
-		}	
+			}		
+			
+			continue;
+		}
+	}
 }
 
 int
 main(int argc, char* argv[])
 {
 	//std::thread MainThread = std::thread(repl );
-	
-	
+	install_handler();
 	if(argc == 2)
 	{
-
 		// this will parse and evaluate
 		return eval_from_file(argv[1]);
-
 	}
 
 	else if(argc == 3)
 	{
-
-
 		if(std::string(argv[1]) == "-e")
 		{
 			// this will parse and evaluate 
@@ -429,16 +433,7 @@ main(int argc, char* argv[])
 		}
 
 	}
-
-	/*else
-	{
-		repl();
-	}*/
-	//if(MainThread.joinable())
-	//{ 
-		//MainThread.join();
-		//return 0;
-	//}
+		
 	repl();
 	return EXIT_SUCCESS;
 }

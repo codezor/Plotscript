@@ -48,8 +48,9 @@ TEST_CASE("Test default constructor", "[environment]")
   REQUIRE(env.is_proc(Atom("append")));
   REQUIRE(env.is_proc(Atom("join")));
   REQUIRE(env.is_proc(Atom("range")));
-
-
+  REQUIRE(env.is_proc(Atom("set-property")));
+  REQUIRE(env.is_proc(Atom("get-property")));
+  REQUIRE(env.is_proc(Atom("discrete-plot")));
 
   REQUIRE(!env.is_proc(Atom("op")));
 

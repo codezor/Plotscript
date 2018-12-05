@@ -133,7 +133,7 @@ subneg(const std::vector<Expression>& args)
     Expression y = mul(std::vector<Expression>{ NEG, args[1] });
     return Expression(add(std::vector<Expression>{ x, y }));
   }
-  throw SemanticError("Error in call to subneg: invalid number of arguments.");
+  throw SemanticError("Error: in call to subneg: invalid number of arguments.");
 };
 
 Expression
@@ -206,7 +206,7 @@ div(const std::vector<Expression>& args)
   }
   else
   {
-	  throw SemanticError("Error in call to division: invalid number of arguments.");
+	  throw SemanticError("Error: in call to division: invalid number of arguments.");
   }
   
 };
@@ -216,7 +216,7 @@ Expression
 sqrt(const std::vector<Expression>& args)
 {
   if (!nargs_equal(args, 1)) {
-    throw SemanticError("Error in call to sqrt: invalid number of arguments.");
+    throw SemanticError("Error: in call to sqrt: invalid number of arguments.");
   }
   require_numeric(args[0], "sqrt");
 
@@ -252,7 +252,7 @@ Expression
 exp(const std::vector<Expression>& args)
 {
   if (!nargs_equal(args, 2)) {
-    throw SemanticError("Error in call to exp: invalid number of arguments.");
+    throw SemanticError("Error: in call to exp: invalid number of arguments.");
   }
   require_numeric(args[0], "exp");
   require_numeric(args[1], "exp");

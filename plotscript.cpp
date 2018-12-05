@@ -397,9 +397,7 @@ void repl()
 			while(m_output.empty())
 			{
 				if(global_status_flag > 0)
-				{
-
-					std::cout << "flage greater than zero" << std::endl;
+				{					
 					break;
 				}
 			}		

@@ -924,8 +924,6 @@ Expression Expression::handle_map(Environment& env) {
 }
 
 
-bool Expression::m_interrupt = false;
-
 void Expression::interrupt()
 {
 	m_interrupt = true;

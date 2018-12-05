@@ -1,4 +1,7 @@
+#include <QGraphicsLayout>
+#include <QGraphicsEllipseItem>
 #include <QTest>
+#include "catch.hpp"
 #include "notebook_app.hpp"
 #include "input_widget.hpp"
 #include "output_widget.hpp"
@@ -7,9 +10,9 @@ class NotebookTest : public QObject
 	Q_OBJECT
 
 private slots:
-
+	// TODO: implement additional tests here
 	void initTestCase();
-	void testDiscretePlotLayout();
+
 
 
 	// TODO: implement additional tests here

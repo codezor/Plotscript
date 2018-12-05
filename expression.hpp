@@ -112,7 +112,7 @@ public:
 // the properties of an expression 
 	//std::map<std::string, Expression> m_propertyList; // TODO: Make this private
 
-	struct Interrupted : public std::exception {};
+
 	static bool m_interrupt;
 	static void interrupt(); // Usage: Expression::interrupt();
 

@@ -332,7 +332,7 @@ Expression Expression::PlotBoardersAndOptions(double xmin, double xmax, double y
 	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymin) + "\"")));
 	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )xmax) + "\"")));
 	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymax) + "\"")));
-	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
+	
 	//Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
 	Discrete.m_propertyList["\"xmin\""] = Expression(Atom(xmin));
 	Discrete.m_propertyList["\"xmax\""] = Expression(Atom(xmax));

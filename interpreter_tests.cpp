@@ -545,11 +545,11 @@ TEST_CASE("Testing discrete-plot", "[interpreter]")
 		INFO(getinput);
 		Expression getresult = run(getinput);
 		
-		//Interpreter interp;
-		//std::istringstream iss(getinput);
+		Interpreter interp;
+		std::istringstream iss(getinput);
 
-		//bool ok = interp.parseStream(iss);
-		//CHECK(ok == true);
+		bool ok = interp.parseStream(iss);
+		CHECK(ok == true);
 	}
 }
 

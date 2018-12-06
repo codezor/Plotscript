@@ -52,10 +52,8 @@ void Interpreter::parseStreamQueue()
 			{
 				
 				try
-				{
+				{	
 					
-					//std::cout << exp;
-					//m_output.push(exp);message_queue<Expression> &m_output = message_queue<Expression>::get_instance();
 					evaluate();
 					OutMessage_t out;
 					out.exp = ast.eval(env);
@@ -89,10 +87,9 @@ void Interpreter::parseStreamQueue()
 
 
 Expression Interpreter::evaluate(){
-	// eval consumes the AST
+	// eval consumes the AST	
 	
-	Expression res = ast.eval(env);
-	return res;
+	return  ast.eval(env);;
 		
 }
 void Interpreter::clearInterp()

@@ -464,7 +464,7 @@ Expression Expression::MakeRange(Expression Bounds)
 {
 	double lowerBound = Bounds.m_tail[0].head().asNumber();
 	double upperBound = Bounds.m_tail[1].head().asNumber();
-	double DeltaX = (upperBound - lowerBound) / 52.0;
+	double DeltaX = (upperBound - lowerBound) / 51;
 	Expression rangeList;
 	rangeList.m_head = Atom("list");
 	double i = lowerBound;

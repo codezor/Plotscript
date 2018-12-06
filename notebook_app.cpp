@@ -84,7 +84,7 @@ inline void install_handler()
 #include <queue>
 #include <condition_variable>
 #include <mutex>
-
+#include <chrono>    
 #include "notebook_app.hpp"
 
 //#include "message_queue.hpp"
@@ -93,7 +93,7 @@ NotebookApp::NotebookApp(QWidget* parent)
 	: QWidget(parent)
 {
 	m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);
-	
+	install_handler();
 	input = new InputWidget;
 	output = new OutputWidget;
 	input->setObjectName("input");
@@ -292,10 +292,14 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			m_input.push("%stop");
 			emit(ClearScene());
 			emit ExpressionReady("Error: interpreter kernel interrupted");
-			while(!m_input.empty())
-			{
+			
+		//	while(!m_input.empty())
+			//{
 
-			}
+			//}
+			
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
 			m_plotscript_thread_ptr->join();
 						
 			delete m_plotscript_thread_ptr;
@@ -312,10 +316,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			if(m_plotscript_thread_ptr != nullptr)
 			{
 				m_input.push(line);
-				while(!m_input.empty())
-				{
-
-				}
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				m_plotscript_thread_ptr->join();
 				delete m_plotscript_thread_ptr;
 				
@@ -329,10 +330,7 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			if(m_plotscript_thread_ptr != nullptr)
 			{
 				m_input.push("%stop");
-				while(!m_input.empty())
-				{
-
-				}
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				m_plotscript_thread_ptr->join();
 				//ExitProccess				
 				delete m_plotscript_thread_ptr;
@@ -385,6 +383,7 @@ void NotebookApp::resetButtonPressed()
 }
 void NotebookApp::interruptButtonPressed()
 {
+	raise();
 	repl("%interrupt");
 }
 void NotebookApp::plotScriptInputReady(QString InputText) {

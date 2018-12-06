@@ -12,7 +12,7 @@ Defines the Expression type and assiciated functions.
 #include <list>
 #include <map>
 #include <utility>
-//#include <unordered_map>
+
 
 // forward declare Environment
 class Environment;
@@ -75,7 +75,6 @@ public:
   Expression setDiscretePlot(Expression DATA, Expression options);
 
   /// returns a continous plot
- // Expression setContinuousPlot(Expression Func, Expression Bounds, Expression Options);
   Expression PlotBoardersAndOptions(double xmin, double xmax, double ymin, double ymax, double scaleX, double scaleY, Expression Discrete, Expression options);
 
   /// convienience member to determine if head atom is a number
@@ -105,16 +104,8 @@ public:
   /// equality comparison for two expressions (recursive)
   bool operator==(const Expression& exp) const noexcept;
   
-//  Tree view used for debugging 
- //void tree_view(std::string) const;
   
 	Expression MakeRange(Expression);
-// the properties of an expression 
-	//std::map<std::string, Expression> m_propertyList; // TODO: Make this private
-
-
-	//static bool m_interrupt;
-	//static void interrupt(); // Usage: Expression::interrupt();
 
 private:
   // the head of the expression
@@ -139,8 +130,7 @@ private:
   Expression handle_map(Environment& env);
   Expression store_lamba(Environment& env, Expression& original);
   Expression setContinuousPlot(Environment&env);
-  // list
-  //bool m_isList = false;
+ 
 };
 
 /// Render expression to output stream

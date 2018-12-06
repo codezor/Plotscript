@@ -10,15 +10,10 @@
 #include <iomanip>
 
 Expression::Expression() {
-	// handle interrupt
-	//if(m_interrupt == true)
-	//{
-		//m_interrupt = false; // reset the interrupt signal
-		//throw SemanticError("Error: interpreter kernel interrupted");
-	//}
+	
 }
 
-Expression::Expression(const Atom& a) : Expression()
+Expression::Expression(const Atom& a) 
 
 {
   m_head = a;
@@ -26,7 +21,7 @@ Expression::Expression(const Atom& a) : Expression()
 }
 
 // recursive copy includes property list
-Expression::Expression(const Expression& a) : Expression()
+Expression::Expression(const Expression& a) 
 
 {
   m_head = a.m_head;
@@ -35,7 +30,6 @@ Expression::Expression(const Expression& a) : Expression()
   }
   m_propertyList.insert(a.m_propertyList.begin(), a.m_propertyList.end());
 }
-
 // Constructor with property list
 Expression::Expression(const Expression& a,std::map<std::string, Expression>& es)
 	: Expression()
@@ -45,8 +39,7 @@ Expression::Expression(const Expression& a,std::map<std::string, Expression>& es
 	for (auto e : a.m_tail) {
 		m_tail.push_back(e);
 	}	
-	m_propertyList.insert(es.begin(), es.end());
-		
+	m_propertyList.insert(es.begin(), es.end());		
 }
 
 Expression
@@ -70,12 +63,10 @@ Expression Expression::setPropertyList(const Expression expression_to_add, std::
 	// Expand property list or overwrite properties
 	if (!expression_to_add.isPropertyListEmpty()) {
 		// preserve existing property list
-		std::map<std::string, Expression> temp_pl = expression_to_add.m_propertyList;
-		
+		std::map<std::string, Expression> temp_pl = expression_to_add.m_propertyList;		
 		property.insert(temp_pl.begin(), temp_pl.end());
 		
-	}		
-	
+	}			
 	return Expression(expression_to_add, property);
 }
 // TODO: pull redundent information
@@ -89,8 +80,7 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 	double ymin;
 	double xmax;
 	double ymax;
-	//double xavg;
-	//double yavg;
+	
 
 	xmin = DATA.m_tail[0].m_tail[0].head().asNumber();
 	ymin = DATA.m_tail[0].m_tail[1].head().asNumber();
@@ -104,7 +94,6 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 		if(e->m_tail[0].head().asNumber() > xmax)
 		{
 			xmax = e->m_tail[0].head().asNumber();
-
 		}
 		// find xmin
 		if(e->m_tail[0].head().asNumber() < xmin)
@@ -121,9 +110,7 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 		if(e->m_tail[1].head().asNumber() < ymin)
 		{
 			ymin = e->m_tail[1].head().asNumber();
-		}
-		//e->m_head = const Atom("list");
-		// point list
+		}		
 	}	
 
 	double scaleX = 20 / abs( xmax - xmin );
@@ -164,10 +151,7 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 		}
 		temppoint = temppoint.setPropertyList(temppoint, propsPoints);
 		Points.m_tail.push_back(temppoint);
-	
-	//scale
-	}
-	
+	}	
 	std::map<std::string, Expression> props;
 	props["\"object-name\""] = Expression(Atom("\"line\""));
 	props["\"thickness\""] = Expression(Atom(0));
@@ -175,9 +159,8 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 	for(auto e = Points.tailConstBegin(); e != Points.tailConstEnd(); ++e)
 	{
 		Expression Line;
-		Line.m_head = Atom("list");
+		Line.m_head = Atom("list");		
 		
-		//Line.m_propertyList["\"object-name\""] = Expression(Atom("\"line\""));
 		Expression temp;
 		temp.m_head = Atom("list");
 		// line drawn from ymax to point
@@ -195,8 +178,7 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 			temp.m_tail.push_back(Expression(ymin*scaleY));
 			Line.m_tail.push_back(*e);
 			Line.m_tail.push_back(temp);
-		}
-		
+		}		
 		// drawn from axis
 		else
 		{
@@ -208,15 +190,12 @@ Expression Expression::setDiscretePlot(Expression DATA, Expression options)
 		Line = Line.setPropertyList(Line, props);
 		Discrete.m_tail.push_back(*e);
 		Discrete.m_tail.push_back(Line);
-	}
-	// make lines
-	// TODO: Axies creation common among plots should  be seperate function 
-	// Creation of the axies  ------------------------------------------------------------
+	}	
 	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
-
 	Discrete= Discrete.PlotBoardersAndOptions(xmin, xmax, ymin, ymax, scaleX, scaleY, Discrete, options);
 	return Discrete;
 };
+
 Expression Expression::PlotBoardersAndOptions(double xmin, double xmax, double ymin, double ymax , double scaleX, double scaleY, Expression Discrete, Expression options)
 {	
 	std::map<std::string, Expression> props;
@@ -924,25 +903,12 @@ Expression Expression::handle_map(Environment& env) {
 }
 
 
-/*void Expression::interrupt()
-{
-	m_interrupt = true;
-}*/
-
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
 Expression
 Expression::eval(Environment& env)
-{
-	// handle interrupt
-	// handle interrupt
-	/*if(m_interrupt == true)
-	{
-		m_interrupt = false; // reset the interrupt signal
-		throw SemanticError("Error: interpreter kernel interrupted");
-	}*/
-
+{	
 
 	if (m_tail.empty() && m_head.asSymbol() != "list") {
     return handle_lookup(m_head, env);
@@ -1000,12 +966,10 @@ operator<<(std::ostream& out, const Expression& exp)
 	}
   out << "(";
   if ((!exp.isHeadLambda()) && (!exp.isHeadList())) {
-    out << exp.head(); // << " ";
+    out << exp.head(); 
   }
   for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
-    // out << *e;
-    //++e;
-
+  
     if (e != exp.tailConstBegin() ||
         (exp.isHeadSymbol() && !exp.isHeadList() &&
          !exp.isHeadLambda())) {

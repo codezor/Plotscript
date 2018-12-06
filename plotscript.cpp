@@ -97,55 +97,6 @@ inline void install_handler()
 #include "semantic_error.hpp"
 
 
-/*typedef int Message;
-typedef message_queue<Message> MessageQueue;
-class Consumer
-{
-public:
-	// Looks like a  function call but it only produces this one thing
-	Consumer(MessageQueue* messageQueuePtr, int identifier)
-	{
-		mq = messageQueuePtr;
-		id = identifier;
-	}
-	void operator()() const
-	{
-		for(int i = 0; i < 10; ++i)
-		{
-			Message m;
-			mq->wait_and_pop(m);
-			int work_time = unif(gen); // generate random work time
-			std::cout << "Consumer " << id << " has taken product " << m
-				<< " will work for " << work_time << " ms." << std::endl;
-			std::this_thread::sleep_for(
-				std::chrono::milliseconds(work_time)); // random sleep time
-		}
-	}
-private:
-	int id;
-	MessageQueue* mq;
-};
-class Producer
-{
-public:
-	Producer(MessageQueue* messageQueuePtr)
-	{
-		mq = messageQueuePtr;
-	}
-	void operator()() const
-	{
-		for(int i = 0; i < 10; ++i)
-		{
-			mq->push(i);
-			std::cout << "Producer has added product " << i << std::endl;
-			int work_time = unif(gen);
-			std::this_thread::sleep_for(std::chrono::milliseconds(work_time));
-		}
-	}
-private:
-	MessageQueue* mq;
-};*/
-
 void
 prompt()
 {
@@ -285,14 +236,11 @@ eval_from_command(std::string argexp)
 
 // A REPL is a repeated read-eval-print loop
 // contains a parse and evaluate
-void repl()
-{
+void repl(){
 	
 	Interpreter interp;
 	startUp(interp);
-	std::thread *kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);//(plotscript_thread_main);	
-	//bool interrupted = false;
-
+	std::thread *kernalThread = new std::thread(&Interpreter::parseStreamQueue, &interp);
 	while(!std::cin.eof())
 	{
 		global_status_flag = 0;
@@ -327,8 +275,7 @@ void repl()
 		{
 			if(kernalThread != nullptr)
 			{
-				//0exitSignal.set_value(false);
-				//kernalThread->join();
+				
 				m_input.push(line);
 				while(!m_input.empty())
 				{
@@ -354,7 +301,6 @@ void repl()
 
 				}
 				kernalThread->join();
-				//kernalThread->detach();
 
 					//ExitProccess				
 				delete kernalThread;

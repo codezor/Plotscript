@@ -1,7 +1,90 @@
+// This is an example of how to to trap Cntrl-C in a cross-platform manner
+// it creates a simple REPL event loop and shows how to interrupt it.
+
+#include <csignal>
+#include <cstdlib>
+
+// This global is needed for communication between the signal handler
+// and the rest of the code. This atomic integer counts the number of times
+// Cntl-C has been pressed by not reset by the REPL code.
+volatile sig_atomic_t global_status_flag = 0;
+
+// *****************************************************************************
+// install a signal handler for Cntl-C on Windows
+// *****************************************************************************
+#if defined(_WIN64) || defined(_WIN32)
+#include <windows.h>
+
+// this function is called when a signal is sent to the process
+BOOL WINAPI interrupt_handler(DWORD fdwCtrlType)
+{
+
+	switch(fdwCtrlType)
+	{
+	case CTRL_C_EVENT: // handle Cnrtl-C
+	  // if not reset since last call, exit
+		if(global_status_flag > 0)
+		{
+			
+		}
+		++global_status_flag;
+		return TRUE;
+
+	default:
+		return FALSE;
+	}
+}
+
+// install the signal handler
+inline void install_handler()
+{
+	SetConsoleCtrlHandler(interrupt_handler, TRUE);
+}
+// *****************************************************************************
+
+// *****************************************************************************
+// install a signal handler for Cntl-C on Unix/Posix
+// *****************************************************************************
+#elif defined(__APPLE__) || defined(__linux) || defined(__unix) ||             \
+    defined(__posix)
+#include <unistd.h>
+
+// this function is called when a signal is sent to the process
+void interrupt_handler(int signal_num)
+{
+
+	if(signal_num == SIGINT)
+	{ // handle Cn rtl-C
+// if not reset since last call, exit
+		if(global_status_flag > 0)
+		{
+
+			
+		}
+		++global_status_flag;
+	}
+}
+
+// install the signal handler
+inline void install_handler()
+{
+
+	struct sigaction sigIntHandler;
+
+	sigIntHandler.sa_handler = interrupt_handler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+
+	sigaction(SIGINT, &sigIntHandler, NULL);
+}
+#endif
+// *****************************************************************************
+
 #include <thread>
 #include <queue>
 #include <condition_variable>
 #include <mutex>
+
 #include "notebook_app.hpp"
 
 //#include "message_queue.hpp"
@@ -39,9 +122,8 @@ NotebookApp::NotebookApp(QWidget* parent)
 	layout->addWidget(interruptButton, 0, 3);
 	layout->addWidget(input, 1, 0, 1, 4);
 	layout->addWidget(output, 2, 0, 1, 4);
-
+	
 	setLayout(layout);
-
 
 	//Start Up file should be called before input is avaliable	
 	startUp(interp);
@@ -202,40 +284,33 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 	message_queue<std::string> &m_input = message_queue<std::string>::get_instance();
 
 	std::istringstream expression(line);
-	
 
-
-
-	if(line == "%reset")
+	if(line == "%interrupt")
 	{
 		if(m_plotscript_thread_ptr != nullptr)
-		{
-
+		{			
+			m_input.push("%stop");
 			emit(ClearScene());
 			emit ExpressionReady("Error: interpreter kernel interrupted");
-
-			m_input.push("%stop");
 			while(!m_input.empty())
 			{
 
 			}
 			m_plotscript_thread_ptr->join();
-			//ExitProccess				
+						
 			delete m_plotscript_thread_ptr;
 			m_plotscript_thread_ptr = nullptr;
 			interp.clearInterp();
 			startUp(interp);
 			m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);
-			//continue;
-
+			
 		}
+		emit OutputWidgetDisplayed();
 	}
 	else if (line == "%stop")
 		{
 			if(m_plotscript_thread_ptr != nullptr)
 			{
-				//0exitSignal.set_value(false);
-				//m_plotscript_thread_ptr->join();
 				m_input.push(line);
 				while(!m_input.empty())
 				{
@@ -243,11 +318,11 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 				}
 				m_plotscript_thread_ptr->join();
 				delete m_plotscript_thread_ptr;
-				//m_plotscript_thread_ptr->~thread();
+				
 				m_plotscript_thread_ptr = nullptr;
 				
 			}
-
+			emit OutputWidgetDisplayed();
 		}
 		else if(line == "%reset")
 		{
@@ -265,9 +340,9 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 				interp.clearInterp();
 				startUp(interp);
 				m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);
-				//continue;
-
+				
 			}
+			emit OutputWidgetDisplayed();
 		}
 		else if(line == "%start")
 		{
@@ -276,15 +351,14 @@ void NotebookApp::repl(std::string line) //TODO: rename since this technically i
 			{
 				m_plotscript_thread_ptr = new std::thread(&Interpreter::parseStreamQueue, &interp);
 			}
-
-			//continue;
-		}//
+			emit OutputWidgetDisplayed();
+			
+		}
 		else
 		{			
 			if(m_plotscript_thread_ptr == nullptr)
 			{
-				//emit ExpressionReady("Error: Interpreter kernel not running");
-				//continue;
+				
 			}
 			else
 			{
@@ -306,8 +380,7 @@ void NotebookApp::startButtonPressed()
 }
 
 void NotebookApp::resetButtonPressed()
-{
-	
+{	
 	repl("%reset");
 }
 void NotebookApp::interruptButtonPressed()
@@ -317,13 +390,10 @@ void NotebookApp::interruptButtonPressed()
 void NotebookApp::plotScriptInputReady(QString InputText) {
 	
 	// Turn input to string	
-	std::string line = InputText.toStdString();
-	//input->setReadOnly(true);
-	// Clear output screan
+	std::string line = InputText.toStdString();	
 	emit(ClearScene());
 	repl(line);
-	outputPolling();
-	//return EXIT_SUCCESS;
+	outputPolling();	
 }
 void NotebookApp::outputPolling()
 {
@@ -333,6 +403,7 @@ void NotebookApp::outputPolling()
 		if(m_plotscript_thread_ptr == nullptr)
 		{
 			emit ExpressionReady("Error: Interpreter kernel not running");
+			emit OutputWidgetDisplayed();
 			break; //continue;
 		}
 
@@ -350,17 +421,17 @@ void NotebookApp::outputPolling()
 				QString TextforOut;
 				TextforOut = QString::fromStdString(results.error);
 
-				emit ExpressionReady(TextforOut);				
+				emit ExpressionReady(TextforOut);	
+				emit OutputWidgetDisplayed();
 				break;
 			}
 			else if(results.type == OutMessage_t::noterr)
 			{
-				Expression exp = exp;//interp.evaluate();
+				Expression exp = exp;
 				whatGoesWhere(results.exp);				
 				break;
-				//std::cout << results.exp << std::endl;
-			}
-			
+				
+			}			
 
 			continue;
 		}
@@ -369,9 +440,7 @@ void NotebookApp::outputPolling()
 }
 
 void NotebookApp::whatGoesWhere(Expression exp) {	
-
 	
-
 		if(!exp.isPropertyListEmpty())
 		{
 			std::string propertyKey = "\"object-name\"";

@@ -777,8 +777,7 @@ Environment::add_exp(const Atom& sym, const Expression& exp)
 	}
 	
 	if(isBuiltIn(sym.asSymbol()))
-	{
-		//if()
+	{		
 		throw SemanticError("Attempt to overwrite built-in symbol in environemnt");
 	}
 	
@@ -919,12 +918,8 @@ Environment::reset()
   // Procedure discrete-plot
   envmap.emplace("discrete-plot", EnvResult(ProcedureType, discreteplot));
 
-  // Procedure continuous-plots
- // envmap.emplace("continuous-plot", EnvResult(ProcedureType, continuousplot));
-
  // envmap.emplace("tee", EnvResult(ProcedureType, tree_view));
 }
-
 
 /*void Environment::TreeView(std::string indent) {
 

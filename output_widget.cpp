@@ -35,9 +35,8 @@ OutputWidget::OutputWidget(QWidget* parent) : QWidget(parent){
 
 void OutputWidget::DisplayItem(QString Expression) {
 		
-	//QFont f("Courier");
-	//f.setPointSize(1);
-	QGraphicsTextItem* Text = scene->addText(Expression);// ->setPos(0, 0);
+	
+	QGraphicsTextItem* Text = scene->addText(Expression);
 	Text->setParent(scene);
 	Text->setPos(0,0);
 	
@@ -71,7 +70,6 @@ void OutputWidget::DisplayLine(double x1, double y1, double x2, double y2, doubl
 }
 
 void OutputWidget::DisplayText(QString write, double x, double y, double rotation, double scale) {
-
 	
 	QPointF org(x, y);
 	
@@ -83,7 +81,6 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	QGraphicsTextItem* Text = scene->addText(write);
 	Text->setFont(font);
 	Text->setParent(scene);	
-
 	
 	Text->setScale(scale);	
 		
@@ -95,8 +92,6 @@ void OutputWidget::DisplayText(QString write, double x, double y, double rotatio
 	//CrossHair();
 	qDebug() << "scene: Position: " << scene->sceneRect();
 	qDebug() << "Text: Bounding Rect: " << Text->boundingRect() << "Position: " << Text->pos();
-
-	
 	
 }
 

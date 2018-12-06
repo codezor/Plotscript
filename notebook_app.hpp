@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <QTimer>
 #include <QPushButton>
 #include <QButtonGroup>
 #include <QGraphicsGridLayout>

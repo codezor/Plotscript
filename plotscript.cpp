@@ -282,10 +282,8 @@ void repl(){
 
 				}
 				kernalThread->join();
-				delete kernalThread;
-				//kernalThread->~thread();
-				kernalThread = nullptr;
-				//is_thread_alive = false;
+				delete kernalThread;				
+				kernalThread = nullptr;				
 				continue;
 			}
 

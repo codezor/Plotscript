@@ -326,24 +326,13 @@ Expression Expression::PlotBoardersAndOptions(double xmin, double xmax, double y
 	Discrete.m_tail.push_back(LeftLine);
 	Discrete.m_tail.push_back(xaxis);
 	Discrete.m_tail.push_back(yaxis);
-	std::string temp;
+	
 	// push back scaled axis
-	std::stringstream strsxmin;
-	strsxmin << std::setprecision(0);
-	strsxmin << xmin;
-	Discrete.m_tail.push_back(Expression(Atom("\"" + strsxmin.str() + "\"")));
-	std::stringstream strsymin;
-	strsymin << std::setprecision(0);
-	strsymin << ymin;
-	Discrete.m_tail.push_back(Expression(Atom("\"" + strsymin.str() + "\"")));
-	std::stringstream strsxmax;
-	strsxmax << std::setprecision(0);
-	strsxmax << xmax;
-	Discrete.m_tail.push_back(Expression(Atom("\"" + strsxmax.str() + "\"")));
-	std::stringstream strsymax;
-	strsymax << std::setprecision(0);
-	strsymax << ymax;
-	Discrete.m_tail.push_back(Expression(Atom("\"" + strsymax.str() + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )xmin) + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymin) + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )xmax) + "\"")));
+	Discrete.m_tail.push_back(Expression(Atom("\"" + std::to_string(( int )ymax) + "\"")));
+	Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
 	//Discrete.m_propertyList["\"object-name\""] = Expression(Atom("\"discrete-plot\""));
 	Discrete.m_propertyList["\"xmin\""] = Expression(Atom(xmin));
 	Discrete.m_propertyList["\"xmax\""] = Expression(Atom(xmax));

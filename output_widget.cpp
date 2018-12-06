@@ -170,10 +170,10 @@ void OutputWidget::DisplayDiscretePlot(QString title, QString xlable, QString yl
 
 
 	// Adding tic marks
-	QString XminT = QString::fromStdString(std::to_string(( int )xmin));
-	QString XmaxT = QString::fromStdString(std::to_string(( int )xmax));
-	QString YminT = QString::fromStdString(std::to_string(( int )ymin));
-	QString YmaxT = QString::fromStdString(std::to_string(( int )ymax));
+	QString XminT = QString::fromStdString(std::to_string(( int )std::ceil(xmin)));
+	QString XmaxT = QString::fromStdString(std::to_string(( int )std::ceil(xmax)));
+	QString YminT = QString::fromStdString(std::to_string(( int )std::ceil(ymin)));
+	QString YmaxT = QString::fromStdString(std::to_string(( int )std::ceil(ymax)));
 
 	QGraphicsTextItem *XMIN = scene->addText(XminT);
 	QGraphicsTextItem *XMAX = scene->addText(XmaxT);

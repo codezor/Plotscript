@@ -545,13 +545,28 @@ TEST_CASE("Testing discrete-plot", "[interpreter]")
 		INFO(getinput);
 		Expression getresult = run(getinput);
 		
+		//Interpreter interp;
+		//std::istringstream iss(getinput);
+
+		//bool ok = interp.parseStream(iss);
+		//CHECK(ok == true);
+	}
+}
+
+/*TEST_CASE("Testing continuous-plot", "[interpreter]")
+{
+	{
+		std::string getinput = " (begin(define f (lambda (x) (+ (* 2 x) 1))) (continuous-plot f (list -2 2) (list (list \"title\" \"A continuous linear function\") (list \"abscissa - label\" \"x\")(list \"ordinate-label\" \"y\"))))";
+		INFO(getinput);
+		Expression getresult = run(getinput);
+
 		Interpreter interp;
 		std::istringstream iss(getinput);
 
 		bool ok = interp.parseStream(iss);
 		CHECK(ok == true);
 	}
-}
+}*/
 
 TEST_CASE( "Test arithmetic procedures", "[interpreter]" ) {
 
